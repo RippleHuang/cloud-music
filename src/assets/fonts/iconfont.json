@@ -1,0 +1,142 @@
+{
+  "id": "1838613",
+  "name": " ",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "9056533",
+      "name": "我的电台",
+      "font_class": "wodediantai",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "9590612",
+      "name": "我的收藏",
+      "font_class": "wodeshoucang",
+      "unicode": "e69a",
+      "unicode_decimal": 59034
+    },
+    {
+      "icon_id": "9946632",
+      "name": "音量",
+      "font_class": "yinliang",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "10810705",
+      "name": "心动",
+      "font_class": "xindong",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "11076723",
+      "name": "直播",
+      "font_class": "zhibo",
+      "unicode": "e799",
+      "unicode_decimal": 59289
+    },
+    {
+      "icon_id": "11106936",
+      "name": "三 点",
+      "font_class": "sandian",
+      "unicode": "e690",
+      "unicode_decimal": 59024
+    },
+    {
+      "icon_id": "11487977",
+      "name": "arrow-right",
+      "font_class": "arrow-right",
+      "unicode": "e743",
+      "unicode_decimal": 59203
+    },
+    {
+      "icon_id": "12011691",
+      "name": "arrow-down",
+      "font_class": "arrow-down",
+      "unicode": "e7b2",
+      "unicode_decimal": 59314
+    },
+    {
+      "icon_id": "12824305",
+      "name": "下载管理_下载中_44",
+      "font_class": "xiazaiguanli_xiazaizhong_",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "13863193",
+      "name": "添加",
+      "font_class": "add-fill",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "14104092",
+      "name": "歌单 (1)",
+      "font_class": "gedan1",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "362640",
+      "name": "电台",
+      "font_class": "diantai",
+      "unicode": "e6f4",
+      "unicode_decimal": 59124
+    },
+    {
+      "icon_id": "2767689",
+      "name": "推荐歌单",
+      "font_class": "icon-",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "2938495",
+      "name": "排行榜",
+      "font_class": "paihangbang",
+      "unicode": "e670",
+      "unicode_decimal": 58992
+    },
+    {
+      "icon_id": "5043162",
+      "name": "每日推荐",
+      "font_class": "meirituijian",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "5395149",
+      "name": "歌单",
+      "font_class": "icon-test",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "6995615",
+      "name": "最近播放",
+      "font_class": "zuijinbofang",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "7165497",
+      "name": "歌单播放量_24",
+      "font_class": "gedanbofangliang_",
+      "unicode": "e6b2",
+      "unicode_decimal": 59058
+    },
+    {
+      "icon_id": "7165498",
+      "name": "歌单信息_40",
+      "font_class": "gedanxinxi_",
+      "unicode": "e6b3",
+      "unicode_decimal": 59059
+    }
+  ]
+}

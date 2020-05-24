@@ -1,22 +1,35 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import FindIndex from '../pages/findIndex/FindIndex'
 
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '/', redirect: '/find' },
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '/find',
+    name: 'FindIndex',
+    component: FindIndex
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/home',
+    name: 'HomeIndex',
+    component: () => import(/* webpackChunkName: "home" */ '../pages/homeIndex/HomeIndex')
+  },
+  {
+    path: '/friend',
+    name: 'FriendIndex',
+    component: () => import(/* webpackChunkName: "friend" */ '../pages/friendIndex/FriendIndex')
+  },
+  {
+    path: '/video',
+    name: 'VideoIndex',
+    component: () => import(/* webpackChunkName: "video" */ '../pages/videoIndex/VideoIndex')
+  },
+  {
+    path: '/search',
+    name: 'SearchIndex',
+    component: () => import(/* webpackChunkName: "search" */ '../pages/searchIndex/SearchIndex')
   }
 ]
 
