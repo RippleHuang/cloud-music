@@ -1,5 +1,5 @@
 <template>
-<footer class="small-play">
+<footer class="small-play van-hairline--top">
   <div class="img-info">
     <img src="../assets/3.jpg">
   </div>
@@ -8,7 +8,7 @@
     <p class="music-lrc">这里是歌手信息</p>
   </div>
   <div class="func">
-    <van-circle v-model="currentRate" :rate="30" :speed="100" size=".6rem" color="#df001b" layer-color="#a6a5a9">
+    <van-circle v-model="currentRate" :rate="30" :speed="100" size=".6rem" color="#d03c32" layer-color="#4c4c4c">
       <i class="iconfont icon-gedanbofangliang_"></i>
     </van-circle>
     <i class="iconfont icon-icon-test"></i>
@@ -31,12 +31,12 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 5;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 1rem;
-  background-color: #fff;
-  border-top: 1px solid #ebedf0;
+  background-color: rgba(255, 255, 255, .9);
   overflow: hidden;
   .img-info {
     display: flex;
@@ -53,20 +53,20 @@ export default {
     }
   }
   .music-info {
-    flex: 3;
+    flex: 2.39;
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: 1rem;
     .music-name {
       margin: 0;
-      font-size: .35rem;
+      font-size: .28rem;
       overflow: hidden;
     }
     .music-lrc {
-      margin: .15rem 0 0;
-      font-size: .25rem;
-      color: rgba(0, 0, 0, .6);
+      margin: .08rem 0 0;
+      font-size: .22rem;
+      color: #7f7f7f;
       overflow: hidden;
     }
   }
@@ -77,16 +77,16 @@ export default {
     flex: 1;
     height: 1rem;
     .van-circle {
-      padding: .095rem .115rem;
+      padding: .1rem .115rem;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
       i {
-        height: 6vh;
-        font-size: 6vw;
+        height: .42rem;
+        font-size: .42rem;
       }
     }
     .icon-icon-test {
-      font-size: 9vw;
+      font-size: .6rem;
     }
   }
 }

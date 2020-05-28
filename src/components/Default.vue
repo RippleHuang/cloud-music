@@ -34,20 +34,21 @@ export default {
   @include public;
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 5;
   justify-content: space-around;
-  height: 1rem;
-  line-height: 1rem;
-  background-color: #dd001b;
+  height: 1.2rem;
+  line-height: 1.2rem;
+  background: linear-gradient(to right, #db3e35, #dd001b);
   .van-icon {
-    font-size: 5vw;
+    margin-top: -0.05rem;
+    font-size: .5rem;
   }
   .nav-left {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 1rem;
+    height: 1.2rem;
   }
   .nav-right {
     @extend .nav-left;
@@ -62,20 +63,18 @@ export default {
     justify-content: space-around;
     color: white;
     li {
-      width: 1rem;
-      height: 1rem;
-      line-height: 1rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      line-height: 1.2rem;
       text-align: center;
       border-radius: 50%;
-      font-size: .28rem;
-      color: rgba(255, 255, 255, .8);
-      transition: font-size .2s linear;
-    }
-    .router-link-active {
       font-weight: bold;
       font-size: .3rem;
+      color: rgba(255, 255, 255, .6);
+    }
+    .router-link-active {
+      font-size: .34rem;
       color: white;
-      transition: font-size .2s linear;
     }
   }
 }

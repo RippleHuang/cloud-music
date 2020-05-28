@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import FindIndex from '../pages/findIndex/FindIndex'
+import FindIndex from '../views/findIndex/FindIndex'
 
 Vue.use(VueRouter)
 
@@ -14,22 +14,22 @@ const routes = [
   {
     path: '/home',
     name: 'HomeIndex',
-    component: () => import(/* webpackChunkName: "home" */ '../pages/homeIndex/HomeIndex')
+    component: () => import(/* webpackChunkName: "home" */ '../views/homeIndex/HomeIndex')
   },
   {
     path: '/friend',
     name: 'FriendIndex',
-    component: () => import(/* webpackChunkName: "friend" */ '../pages/friendIndex/FriendIndex')
+    component: () => import(/* webpackChunkName: "friend" */ '../views/friendIndex/FriendIndex')
   },
   {
     path: '/video',
     name: 'VideoIndex',
-    component: () => import(/* webpackChunkName: "video" */ '../pages/videoIndex/VideoIndex')
+    component: () => import(/* webpackChunkName: "video" */ '../views/videoIndex/VideoIndex')
   },
   {
     path: '/search',
     name: 'SearchIndex',
-    component: () => import(/* webpackChunkName: "search" */ '../pages/searchIndex/SearchIndex')
+    component: () => import(/* webpackChunkName: "search" */ '../views/searchIndex/SearchIndex')
   }
 ]
 

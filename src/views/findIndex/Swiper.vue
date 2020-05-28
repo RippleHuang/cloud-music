@@ -1,24 +1,33 @@
 <template>
   <div class="swiper-con">
     <van-swipe :autoplay="5000">
-      <van-swipe-item v-for="(image, index) in images" :key="index">
-        <img class="swipe-img" v-lazy="image" />
-        <span class="title">123456</span>
+      <van-swipe-item v-for="(image, index) in swiperList" :key="index">
+        <img class="swipe-img" :src="image.pic" lazy-load />
+        <span class="title" :style="{background:image.titleColor}">{{image.typeTitle}}</span>
       </van-swipe-item>
     </van-swipe>
     <div class="mask"></div>
   </div>
 </template>
 <script>
+import { bannerSwiper } from '@/api/apis'
 export default {
   name: 'Swiper',
   data () {
     return {
-      images: [
-        'https://img.yzcdn.cn/vant/apple-1.jpg',
-        'https://img.yzcdn.cn/vant/apple-2.jpg'
-      ]
+      swiperList: []
     }
+  },
+  methods: {
+    getBannerSwiper () {
+      bannerSwiper()
+        .then(data => {
+          this.swiperList = data.banners
+        })
+    }
+  },
+  mounted () {
+    this.getBannerSwiper()
   }
 }
 </script>
@@ -26,25 +35,25 @@ export default {
 .swiper-con {
   position: relative;
   width: 100%;
-  height: 3rem;
+  height: 2.75rem;
   .mask {
     position: absolute;
-    top: -0.01rem;
+    top: -0.03rem;
     z-index: -3;
     width: 100%;
-    height: 2.4rem;
-    background-color: #dd001b;
+    height: 2.3rem;
+    background: linear-gradient(to right, #db3e35, #dd001b);
   }
   .van-swipe {
     width: 100%;
-    height: 3rem;
+    height: 2.75rem;
     padding: .15rem .25rem 0;
     box-sizing: border-box;
     overflow: hidden;
     .swipe-img {
       width: 92.8%;
       height: 100%;
-      border-radius: .1rem;
+      border-radius: .15rem;
     }
     .van-swipe-item {
       position: relative;
@@ -54,7 +63,6 @@ export default {
         right: .52rem;
         bottom: 0;
         color: #fff;
-        background-color: rgb(221, 0, 27, .9);
         font-size: smaller;
         padding: 3px 6px;
         opacity: 0.8;

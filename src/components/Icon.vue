@@ -18,23 +18,27 @@ export default {
 </script>
 <style lang="scss" scopd>
 .icon-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   .icon-con {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: .75rem;
-    height: .75rem;
-    margin-bottom: .05rem;
-    background: linear-gradient(to right, #ff1d11, #dd001b);
+    width: .9rem;
+    height: .9rem;
+    margin-bottom: .25rem;
+    background: linear-gradient(to right, #fc4f3c, #df4337);
     color: #fff;
     border-radius: 50%;
     i {
-      font-size: 5vw;
+      font-size: 6vw;
     }
   }
   .icon-text {
-    text-align: center;
-    font-size: 0.17rem;
+    color: rgba(0, 0, 0, .7);
+    font-size: .21rem;
   }
 }
 </style>

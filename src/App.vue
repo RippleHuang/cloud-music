@@ -21,10 +21,10 @@ export default {
 
 <style lang="scss" scoped>
 * {
-  letter-spacing: .02rem;
+  letter-spacing: .005rem;
 }
+// 给底部留空 small-play的高度
 #app {
-  width: 100vw;
-  height: 100vh;
+  padding-bottom: 1rem;
 }
 </style>

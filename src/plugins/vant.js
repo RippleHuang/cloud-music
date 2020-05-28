@@ -1,8 +1,23 @@
 import Vue from 'vue'
-import { Icon, Circle, Swipe, SwipeItem, Lazyload } from 'vant'
+import {
+  Button,
+  Icon,
+  Circle,
+  Swipe,
+  SwipeItem,
+  Lazyload
+} from 'vant'
 
+Vue.use(Button)
 Vue.use(Icon)
 Vue.use(Circle)
 Vue.use(Swipe)
 Vue.use(SwipeItem)
-Vue.use(Lazyload)
+Vue.use(Lazyload, {
+  lazyComponent: true,
+  preLoad: 1.3,
+  error: require('../assets/img/timg.jpg'),
+  loading: require('../assets/img/loading.jpg'),
+  attempt: 1,
+  listenEvents: ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']
+})

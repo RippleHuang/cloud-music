@@ -192,7 +192,6 @@ sub {
 
 html {
   height: 100%;
-  font-size: 14vw;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -204,19 +203,7 @@ body {
   -webkit-text-size-adjust: none;
 }
 
-hr {
-  height: .02rem;
-  margin: .1rem 0;
-  border: medium none;
-  border-top: .02rem solid #cacaca;
-}
-
 a {
   color: #25a4bb;
   text-decoration: none;
-}
-
-#audio_pb1 {
-  box-sizing: border-box ;
-  padding-bottom: 1rem;
 }
