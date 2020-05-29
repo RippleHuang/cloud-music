@@ -14,7 +14,6 @@
           :key="index"
           :imgUrl="item.picUrl"
           :dec="item.name"
-          :dishId="item.id"
         ></img-card>
       </div>
       <div class="images-con" v-show="type==='newSong'">
@@ -23,7 +22,7 @@
           :key="index"
           :imgUrl="item.album.blurPicUrl"
           :dec="item.name"
-          @click.native="beginAudio(item)"
+          :newPlatetype="type"
         ></img-card>
       </div>
     </div>

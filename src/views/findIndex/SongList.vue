@@ -4,8 +4,8 @@
       <h3 class="title">推荐歌单</h3>
       <van-button class="title-btn" round type="info">歌单广场</van-button>
     </div>
-    <loading style="height: 4.58rem; padding-bottom:2.58rem" v-show="loading"/>
-    <div v-show="!loading" class="song-list-con">
+    <loading style="height: 4.58rem; padding-bottom:2.58rem" v-show="!loadingImg"/>
+    <div v-show="loadingImg" class="song-list-con">
       <img-card
         v-for="(item, index) in songList"
         :key="index"
@@ -13,6 +13,7 @@
         :dec="item.name"
         :playCount="item.playCount"
         :albumId="item.id"
+        :loadingImg.sync="loadingImg"
       >
       </img-card>
     </div>
@@ -29,7 +30,7 @@ export default {
   data () {
     return {
       songList: [],
-      loading: true
+      loadingImg: false
     }
   },
   methods: {
@@ -37,7 +38,6 @@ export default {
       recSongList()
         .then(data => {
           this.songList = getRandomNumberArray(data.playlists, 6)
-          this.loading = false
         })
         .catch(err => {
           Toast('加载失败,请稍后尝试')

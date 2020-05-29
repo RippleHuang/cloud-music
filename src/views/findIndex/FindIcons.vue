@@ -1,5 +1,5 @@
 <template>
-<div class="apply-content">
+<div class="find-icon-content">
   <icon
     v-for="(item, index) in FindIcons"
     :icons="item"
@@ -12,17 +12,17 @@
 import Icon from '@/components/Icon'
 import { FindIcons } from '@/getIcons/icons'
 export default {
-  name: 'Apply',
+  name: 'FindIcons',
   data () {
     return {
       FindIcons
     }
   },
   mounted () {
-    this.iniData()
+    this.initData()
   },
   methods: {
-    iniData () {
+    initData () {
       this.FindIcons = FindIcons()
     }
   },
@@ -35,12 +35,12 @@ export default {
 html{
   font-size:62.5%
 }
-.apply-content {
+.find-icon-content {
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
   height: 1.6rem;
-  padding: 0.2rem 0 0.3rem;
+  padding: .3rem 0;
 }
 </style>

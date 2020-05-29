@@ -2,7 +2,7 @@
   <div class="swiper-con">
     <van-swipe :autoplay="5000">
       <van-swipe-item v-for="(image, index) in swiperList" :key="index">
-        <img class="swipe-img" :src="image.pic" lazy-load />
+        <img class="swipe-img" :src="image.pic" />
         <span class="title" :style="{background:image.titleColor}">{{image.typeTitle}}</span>
       </van-swipe-item>
     </van-swipe>
@@ -60,14 +60,14 @@ export default {
       .title {
         position: absolute;
         display: block;
-        right: .52rem;
+        right: .518rem;
         bottom: 0;
         color: #fff;
+        padding: .1rem .18rem;
+        opacity: 0.9;
+        border-radius: .15rem 0;
         font-size: smaller;
-        padding: 3px 6px;
-        opacity: 0.8;
-        border-top-left-radius: .1rem;
-        border-bottom-right-radius: .1rem;
+        letter-spacing: .01rem;
       }
     }
   }

@@ -1,5 +1,5 @@
 <template>
-<footer class="small-play van-hairline--top">
+<footer class="small-play van-hairline--top on-touch">
   <div class="img-info">
     <img src="../assets/3.jpg">
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="icon-list">
+  <div class="icon-list" :class="{compile}">
     <div class="icon-con">
       <i :class="icons.icon"></i>
     </div>
@@ -12,12 +12,23 @@ export default {
   props: {
     icons: {
       type: [Object, Array]
+    },
+    compile: {
+      type: Boolean
     }
   }
 }
 </script>
 <style lang="scss" scopd>
+// 我的页面编辑图标
+.compile {
+  &:last-of-type > .icon-con {
+    color: #ccc;
+    background: #f5f6f8;
+  }
+}
 .icon-list {
+  // 列方式排列
   flex: 1;
   display: flex;
   flex-direction: column;

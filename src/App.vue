@@ -26,5 +26,9 @@ export default {
 // 给底部留空 small-play的高度
 #app {
   padding-bottom: 1rem;
+  // 禁止文字被选中
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 </style>

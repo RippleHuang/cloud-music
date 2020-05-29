@@ -3,11 +3,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import fastclick from 'fastclick'
-import './utils/rem.js'
+import './plugins/vant.js'
+import './utils/rem'
 import './assets/styles/reset.css'
 import './assets/styles/global.scss'
-import './assets/fonts/iconfont.css'
-import './plugins/vant.js'
 
 Vue.config.productionTip = false
 
