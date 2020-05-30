@@ -60,7 +60,32 @@ const homeIcons = [{
   icon: 'iconfont icon-bianji'
 }
 ]
-
+// 我的页面功能icon列表
+const homeAppIcons = [{
+  text: '本地音乐',
+  icon: 'iconfont icon-icon-',
+  num: 0
+},
+{
+  text: '最近播放',
+  icon: 'iconfont icon-zuijinbofang',
+  num: 0
+},
+{
+  text: '下载管理',
+  icon: 'iconfont icon-xiazai',
+  num: 0
+},
+{
+  text: '我的电台',
+  icon: 'iconfont icon-diantai',
+  num: 0
+},
+{
+  text: '我的收藏',
+  icon: 'iconfont icon-wodeshoucang',
+  num: 0
+}]
 // 发现页面icon列表
 const findIcons = [{
   text: '每日推荐',
@@ -90,8 +115,10 @@ const findIcons = [{
 
 export default {
   homeIcons,
-  findIcons
+  findIcons,
+  homeAppIcons
 }
 
 export const FindIcons = () => findIcons
 export const HomeIcons = () => homeIcons
+export const HomeAppIcons = () => homeAppIcons

@@ -5,7 +5,9 @@ import {
   Circle,
   Swipe,
   SwipeItem,
-  Lazyload
+  Lazyload,
+  Collapse,
+  CollapseItem
 } from 'vant'
 
 Vue.use(Button)
@@ -21,3 +23,5 @@ Vue.use(Lazyload, {
   attempt: 1,
   listenEvents: ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']
 })
+Vue.use(Collapse)
+Vue.use(CollapseItem)

@@ -1,5 +1,5 @@
 <template>
-<footer class="small-play van-hairline--top on-touch">
+<footer class="small-play van-hairline--top">
   <div class="img-info">
     <img src="../assets/3.jpg">
   </div>
@@ -36,8 +36,11 @@ export default {
   justify-content: space-between;
   align-items: center;
   height: 1rem;
-  background-color: rgba(255, 255, 255, .9);
+  background-color: rgba(255, 255, 255, .96);
   overflow: hidden;
+  &:active {
+    background-color: #bebec0;
+  }
   .img-info {
     display: flex;
     justify-content: center;
