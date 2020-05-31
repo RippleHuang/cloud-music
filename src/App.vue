@@ -1,9 +1,11 @@
 <template>
   <div id="app">
-    <div class="content">
-      <default></default>
+    <div class="container">
+      <div class="content">
+        <default></default>
+      </div>
+      <play-footer></play-footer>
     </div>
-    <play-footer></play-footer>
   </div>
 </template>
 
@@ -23,9 +25,9 @@ export default {
 * {
   letter-spacing: .005rem;
 }
-// 给底部留空 small-play的高度
+// 给头部底部留空 small-play的高度
 #app {
-  padding-bottom: 1rem;
+  padding: 1.2rem 0 1rem;
   // 禁止文字被选中
   -webkit-user-select: none;
   -moz-user-select: none;

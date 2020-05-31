@@ -7,7 +7,9 @@ import {
   SwipeItem,
   Lazyload,
   Collapse,
-  CollapseItem
+  CollapseItem,
+  Tab,
+  Tabs
 } from 'vant'
 
 Vue.use(Button)
@@ -21,7 +23,9 @@ Vue.use(Lazyload, {
   error: require('../assets/img/timg.jpg'),
   loading: require('../assets/img/loading.jpg'),
   attempt: 1,
-  listenEvents: ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']
+  listenEvents: ['scroll']
 })
 Vue.use(Collapse)
 Vue.use(CollapseItem)
+Vue.use(Tab)
+Vue.use(Tabs)

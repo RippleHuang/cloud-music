@@ -39,7 +39,7 @@ export default {
   background-color: rgba(255, 255, 255, .96);
   overflow: hidden;
   &:active {
-    background-color: #bebec0;
+    background-color: #e1e1e4;
   }
   .img-info {
     display: flex;

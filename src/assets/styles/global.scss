@@ -1,3 +1,12 @@
+// 隐藏滚动条
+html {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
 // 点击效果
 .on-touch {
   &:active {
@@ -33,18 +42,60 @@
   }
 }
 // 修改vant的折叠面板样式
-.van-cell {
-  padding: 0;
-  .van-cell__title {
-    height: .9rem;
-    padding-left: .15rem;
-    // 通过触发左侧标题来使其整个van-cell改变，
-    // 单独触发right-icons时不触发van-cell的active事件
-    &:active,&:active + .right-icons {
-      background: rgba(1, 1, 1, .1);
+.van-collapse {
+  [class*="van-hairline"]::after {
+    border: none;
+  }
+  .van-cell {
+    padding: 0;
+    .van-cell__title {
+      height: .9rem;
+      padding-left: .15rem;
+      // 通过触发左侧标题来使其整个van-cell改变，
+      // 单独触发right-icons时不触发van-cell的active事件
+      &:active,&:active + .right-icons,&:active + .right-icon {
+        background: rgba(1, 1, 1, .1);
+      }
     }
   }
+  .van-collapse-item__wrapper {
+    width: 100%;
+    .van-collapse-item__content {
+      display: flex;
+      width: 100%;
+      padding: 0;
+    }  
+  }
 }
-.van-collapse-item__content {
-  padding: 0;
+// 修改vant的选项卡样式
+.nav-tabs {
+  height: 0;
+  padding-top: .75rem;
+  // 去除边框
+  [class*="van-hairline"]::after {
+    border: none;
+  }
+  .van-tabs__wrap {
+    position: fixed;
+    top: 1.18rem;
+    width: 100%;
+    height: .75rem;
+  }
+  // 标题样式
+  .van-tab {
+    font-size: .23rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.7);
+    &:active {
+      background-color: rgba(1, 1, 1, 0.1);
+    }
+  }
+  // 标题激活样式
+  .van-tab--active {
+    font-size: .24rem;
+    color: #fff;
+  }
+  .van-tabs__content {
+    display: none;
+  }
 }

@@ -191,7 +191,6 @@ sub {
 }
 
 html {
-  height: 100%;
   font-size: 14vw;
   -webkit-tap-highlight-color: transparent;
 }
