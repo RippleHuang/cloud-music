@@ -1,7 +1,7 @@
 <template>
-<div>
+<div class="default-content">
   <nav class="nav-wrapper">
-    <div class="nav-left on-touch">
+    <div class="nav-left on-touch" @click="visible = true">
       <van-icon class="left-icon" name="wap-nav" color="#fff" />
     </div>
     <ul class="nav-center">
@@ -14,14 +14,26 @@
       <router-link to="/search"><van-icon name="search" color="#fff" /></router-link>
     </div>
   </nav>
+  <van-popup v-model="visible" position="left" :style="{ width: '82%' }">
+    <left-popup></left-popup>
+  </van-popup>
   <keep-alive>
     <router-view></router-view>
   </keep-alive>
 </div>
 </template>
 <script>
+import LeftPopup from '@/components/LeftPopup'
 export default {
-  name: 'Default'
+  name: 'Default',
+  data () {
+    return {
+      visible: false
+    }
+  },
+  components: {
+    LeftPopup
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -81,10 +93,12 @@ export default {
       font-weight: bold;
       font-size: .3rem;
       color: rgba(255, 255, 255, .6);
+      transition: font-size .2s;
     }
     .router-link-active {
       font-size: .34rem;
       color: white;
+      transition: font-size .2s;
     }
   }
 }

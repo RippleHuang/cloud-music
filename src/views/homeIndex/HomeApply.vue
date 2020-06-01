@@ -41,7 +41,7 @@ export default {
     justify-content: center;
     .home-apply-item {
       display: flex;
-      height: 1rem;
+      height: 1.1rem;
       .item-icon {
         display: flex;
         justify-content: center;
@@ -66,7 +66,7 @@ export default {
         display: flex;
         align-items: center;
         flex: 6;
-        height: 1rem;
+        height: 1.1rem;
         border-bottom: .01rem solid #eee;
         .item-text {
           font-size: .3rem;

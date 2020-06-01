@@ -50,7 +50,7 @@ export default {
     display: flex;
     align-items: center;
     height: 1.6rem;
-    padding: .3rem 0;
+    padding: .4rem 0;
     .home-icon-list {
       margin-left: .52rem;
       &:first-of-type {

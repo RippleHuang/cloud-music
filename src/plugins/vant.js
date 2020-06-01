@@ -9,7 +9,8 @@ import {
   Collapse,
   CollapseItem,
   Tab,
-  Tabs
+  Tabs,
+  Popup
 } from 'vant'
 
 Vue.use(Button)
@@ -29,3 +30,4 @@ Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(Tab)
 Vue.use(Tabs)
+Vue.use(Popup)
