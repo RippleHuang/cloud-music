@@ -68,6 +68,9 @@ export default {
         flex: 6;
         height: 1rem;
         border-bottom: .01rem solid #eee;
+        .item-text {
+          font-size: .3rem;
+        }
         .item-num {
           margin-left: .1rem;
           color: rgba(0, 0, 0, .4);

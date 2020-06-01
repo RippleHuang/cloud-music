@@ -8,7 +8,7 @@
     <p class="music-lrc">这里是歌手信息</p>
   </div>
   <div class="func">
-    <van-circle v-model="currentRate" :rate="30" :speed="100" size=".6rem" color="#d03c32" layer-color="#4c4c4c">
+    <van-circle v-model="currentRate" :rate="30" :speed="100" size="7.5vw" color="#d03c32" layer-color="#4c4c4c">
       <i class="iconfont icon-gedanbofangliang_"></i>
     </van-circle>
     <i class="iconfont icon-icon-test"></i>
@@ -80,12 +80,12 @@ export default {
     flex: 1;
     height: 1rem;
     .van-circle {
-      padding: .1rem .115rem;
+      padding: 1.6vw 1.7vw;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      i {
-        height: .42rem;
-        font-size: .42rem;
+      letter-spacing: 0;
+      .icon-gedanbofangliang_ {
+        font-size: .32rem;
       }
     }
     .icon-icon-test {

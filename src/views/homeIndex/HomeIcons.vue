@@ -49,7 +49,6 @@ export default {
   .icons-group {
     display: flex;
     align-items: center;
-    white-space: nowrap;
     height: 1.6rem;
     padding: .3rem 0;
     .home-icon-list {

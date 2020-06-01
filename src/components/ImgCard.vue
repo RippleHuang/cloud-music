@@ -5,11 +5,12 @@
       <i class="iconfont icon-gedanbofangliang_"></i>
       {{playCount | filterPlayCount}}
     </span>
-    <!-- 发现页面新歌图标 -->
-    <span class="newsong-icon" v-if="newPlatetype === 'newSong'">
-      <i class="iconfont icon-bofang"></i>
-    </span>
     <div class="img-con">
+      <!-- 发现页面新歌图标 -->
+      <span class="newsong-icon" v-if="newPlatetype === 'newSong'">
+        <i class="iconfont icon-bofang"></i>
+      </span>
+      <!-- 蒙版 -->
       <div class="mask on-touch"></div>
       <!-- load图片加载完成事件 -->
       <img class="image-con" v-lazy="imgUrl" alt="" @load="imgLoad" />
@@ -61,7 +62,7 @@ export default {
 <style lang="scss" scoped>
 .img-card {
   position: relative;
-  width: 2.1rem;
+  width: 31.5%;
   margin-bottom: .35rem;
   .tag {
     position: absolute;
@@ -78,48 +79,49 @@ export default {
       font-size: .23rem;
     }
   }
-  .newsong-icon {
-    position: absolute;
-    top: 1.45rem;
-    right: .15rem;
-    z-index: 3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: .5rem;
-    height: .5rem;
-    border-radius: 50%;
-    background-color: rgb(255, 255, 255, .8);
-    overflow: hidden;
-    .icon-bofang {
-      display: flex;
-      align-items: center;
-      color: #dd001b;
-      font-size: .25rem;
-    }
-  }
   .img-con {
     position: relative;
     border-radius: .1rem;
     overflow: hidden;
+    .newsong-icon {
+      position: absolute;
+      top: 70%;
+      right: 7.5%;
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 25%;
+      height: 25%;
+      border-radius: 50%;
+      background-color: rgb(255, 255, 255, .8);
+      overflow: hidden;
+      .icon-bofang {
+        display: flex;
+        align-items: center;
+        color: #dd001b;
+        font-size: .25rem;
+      }
+    }
     .mask {
       position: absolute;
-      width: 2.1rem;
-      height: 2.1rem;
+      width: 100%;
+      height: 100%;
       z-index: 2;
       border-radius: .1rem;
       overflow: hidden;
       box-shadow: 0 12px 18px -8px rgb(110, 109, 109) inset;
     }
     .image-con {
-      width: 2.1rem;
-      height: 2.1rem;
+      width: 100%;
     }
   }
   .dec {
     margin-top: .15rem;
     line-height: .25rem;
-    font-size: .22rem;
+    font-size: 3.5vw;
+    // 字母不换行
+    word-break: break-all;
   }
 }
 </style>

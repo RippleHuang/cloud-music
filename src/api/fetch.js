@@ -3,7 +3,7 @@ import Qs from 'qs'
 import { Toast } from 'vant'
 
 if (process.env.NODE_ENV === 'development') {
-  axios.defaults.baseURL = 'http://localhost:3000'
+  axios.defaults.baseURL = 'http://192.168.1.103:3000'
 } else {
   axios.defaults.baseURL = ''
 }

@@ -25,7 +25,7 @@ export default {
 * {
   letter-spacing: .005rem;
 }
-// 给头部底部留空 small-play的高度
+// 给头部底部留空
 #app {
   padding: 1.2rem 0 1rem;
   // 禁止文字被选中

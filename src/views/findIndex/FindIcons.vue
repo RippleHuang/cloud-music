@@ -1,11 +1,13 @@
 <template>
 <div class="find-icon-content">
-  <icon
-    v-for="(item, index) in FindIcons"
-    :icons="item"
-    :key="index"
-  >
-  </icon>
+  <div class="find-icon-list">
+    <icon
+      v-for="(item, index) in FindIcons"
+      :icons="item"
+      :key="index"
+    >
+    </icon>
+  </div>
 </div>
 </template>
 <script>
@@ -32,15 +34,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-html{
-  font-size:62.5%
-}
 .find-icon-content {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 1.6rem;
-  padding: .3rem 0;
+  .find-icon-list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 92.8%;
+    height: 1.8rem;
+    padding: .3rem 0;
+  }
 }
 </style>

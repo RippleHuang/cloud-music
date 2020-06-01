@@ -26,3 +26,10 @@ export const favoriteAlbums = (params) => get('/album/sublist', params)// 获取
 export const favoriteArtists = (params) => get('/artist/sublist', params)// 获取收藏的歌手
 export const favoriteVideos = (params) => get('/mv/sublist', params)// 获取收藏的视频
 export const djSublist = (params) => get('/dj/sublist', params)// 获取订阅的电台
+// ======视频页面======
+export const getVideoTag = (params) => get('/video/group/list', params) // 获取视频标签导航
+export const getVideoGroup = (params) => get('/video/group', params) // 获取对应标签的视频详情
+export const getVideoUrl = (params) => get('/video/url', params) // 获取视频播放地址
+export const getVideoDetail = (params) => get('/video/detail', params) // 获取视频详情
+export const getVideoRelated = (params) => get('/related/allvideo', params) // 获取相关视频
+export const getVideoComments = (params) => get('/comment/video', params) // 获取视频评论

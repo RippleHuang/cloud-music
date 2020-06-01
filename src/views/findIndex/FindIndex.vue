@@ -1,25 +1,24 @@
 <template>
   <div>
-    <!-- <swiper />
+    <swiper />
     <findIcons />
     <song-list ref="songList" />
-    <new-plate /> -->
-    发现页面
+    <new-plate />
   </div>
 </template>
 <script>
-// import Swiper from './Swiper'
-// import FindIcons from './FindIcons'
-// import SongList from './SongList'
-// import NewPlate from './NewPlate'
+import Swiper from './Swiper'
+import FindIcons from './FindIcons'
+import SongList from './SongList'
+import NewPlate from './NewPlate'
 export default {
-  name: 'FindIndex'
-  // components: {
-  //   Swiper,
-  //   FindIcons,
-  //   SongList,
-  //   NewPlate
-  // }
+  name: 'FindIndex',
+  components: {
+    Swiper,
+    FindIcons,
+    SongList,
+    NewPlate
+  }
 }
 </script>
 <style>

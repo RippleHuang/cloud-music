@@ -35,32 +35,32 @@ export default {
 .swiper-con {
   position: relative;
   width: 100%;
-  height: 2.75rem;
+  height: 36%;
   .mask {
     position: absolute;
     top: -0.03rem;
     z-index: -3;
     width: 100%;
-    height: 2.3rem;
-    background: linear-gradient(to right, #db3e35, #dd001b);
+    height: 80%;
+    background:  #dd001b;
   }
   .van-swipe {
     width: 100%;
-    height: 2.75rem;
-    padding: .15rem .25rem 0;
+    padding-top: .2rem;
     box-sizing: border-box;
     overflow: hidden;
-    .swipe-img {
-      width: 92.8%;
-      height: 100%;
-      border-radius: .15rem;
-    }
     .van-swipe-item {
-      position: relative;
+      display: flex;
+      justify-content: center;
+      .swipe-img {
+        width: 92.8%;
+        height: 100%;
+        border-radius: .15rem;
+      }
       .title {
         position: absolute;
         display: block;
-        right: .518rem;
+        right: 3.65vw;
         bottom: 0;
         color: #fff;
         padding: .1rem .18rem;

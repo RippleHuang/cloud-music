@@ -29,22 +29,22 @@ export default {
 }
 .icon-list {
   // 列方式排列
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  white-space: nowrap;
   .icon-con {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: .9rem;
-    height: .9rem;
+    width: 1rem;
+    height: 1rem;
     margin-bottom: .25rem;
     background: linear-gradient(to right, #fc4f3c, #df4337);
     color: #fff;
     border-radius: 50%;
     i {
-      font-size: 6vw;
+      font-size: 6.5vw;
     }
   }
   .icon-text {

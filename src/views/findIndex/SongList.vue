@@ -71,10 +71,10 @@ export default {
       font-weight: 900;
     }
     .title-btn {
-      width: 1.35rem;
+      width: 1.65rem;
       height: .5rem;
-      padding: 0 .1rem;
-      font-size: .23rem;
+      padding: 0 .3rem;
+      font-size: 3.4vw;
       color: #3d3d3d;
       background-color: #fff;
       border: 1px solid #eaeaea;

@@ -256,7 +256,7 @@ export default {
               .list-title {
                 width: 4.8rem;
                 font-size: .28rem;
-                color: #3d3d3d;
+                color: black;
               }
               .first {
                 width: 3rem;
@@ -279,8 +279,8 @@ export default {
               height: .5rem;
               line-height: .5rem;
               padding: 0 .1rem;
-              font-size: .23rem;
-              color: #3d3d3d;
+              font-size: 3.4vw;
+              color: black;
               background-color: #fff;
               border: .01rem solid rgba(0, 0, 0, .1);
               i {
