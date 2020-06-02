@@ -1,4 +1,4 @@
-// 我的页面icon列表
+// ======我的页面icon列表======
 const homeIcons = [{
   text: '云村正能量',
   icon: 'iconfont icon-shumulu'
@@ -60,7 +60,7 @@ const homeIcons = [{
   icon: 'iconfont icon-bianji'
 }
 ]
-// 我的页面功能icon列表
+// ======我的页面功能icon列表======
 const homeAppIcons = [{
   text: '本地音乐',
   icon: 'iconfont icon-icon-',
@@ -86,7 +86,89 @@ const homeAppIcons = [{
   icon: 'iconfont icon-wodeshoucang',
   num: 0
 }]
-// 发现页面icon列表
+// ======侧边弹出层icon列表======
+// 头部icon
+const popupTopIcons = [{
+  text: '我的消息',
+  icon: 'iconfont icon-email'
+},
+{
+  text: '我的好友',
+  icon: 'iconfont icon-haoyou'
+},
+{
+  text: '听歌识曲',
+  icon: 'iconfont icon-tinggeshiqu'
+},
+{
+  text: '个性装扮',
+  icon: 'iconfont icon-gexingzhuangban'
+}]
+// 消费icon
+const popupShopIcons = [{
+  text: '演出',
+  icon: 'iconfont icon-piao'
+},
+{
+  text: '商城',
+  icon: 'iconfont icon-shangcheng'
+},
+{
+  text: '附近的人',
+  icon: 'iconfont icon-location'
+},
+{
+  text: '游戏推荐',
+  icon: 'iconfont icon-youxi1'
+},
+{
+  text: '口袋彩铃',
+  icon: 'iconfont icon-cailing'
+}]
+// 功能icon
+const popupAppIcons = [{
+  text: '我的订单',
+  icon: 'iconfont icon-wodedingdan'
+},
+{
+  text: '定时停止播放',
+  icon: 'iconfont icon-dingshi'
+},
+{
+  text: '扫一扫',
+  icon: 'iconfont icon-sao'
+},
+{
+  text: '音乐闹钟',
+  icon: 'iconfont icon-naozhong'
+},
+{
+  text: '在线听歌免流量',
+  icon: 'iconfont icon-zaixiantinggemianliuliang'
+},
+{
+  text: '优惠券',
+  icon: 'iconfont icon-youhuiquan'
+},
+{
+  text: '青少年模式',
+  icon: 'iconfont icon-anquan'
+}]
+// 设置icon
+const popupBottomIcons = [{
+  text: '夜间模式',
+  icon: 'iconfont icon-yejian'
+},
+{
+  text: '设置',
+  icon: 'iconfont icon-shezhi1'
+},
+{
+  text: '退出',
+  icon: 'iconfont icon-tuichu'
+}]
+
+// ======发现页面icon列表======
 const findIcons = [{
   text: '每日推荐',
   icon: 'iconfont icon-meirituijian',
@@ -116,9 +198,17 @@ const findIcons = [{
 export default {
   homeIcons,
   findIcons,
-  homeAppIcons
+  homeAppIcons,
+  popupTopIcons,
+  popupShopIcons,
+  popupAppIcons,
+  popupBottomIcons
 }
 
 export const FindIcons = () => findIcons
 export const HomeIcons = () => homeIcons
 export const HomeAppIcons = () => homeAppIcons
+export const PopupTopIcons = () => popupTopIcons
+export const PopupShopIcons = () => popupShopIcons
+export const PopupAppIcons = () => popupAppIcons
+export const PopupBottomIcons = () => popupBottomIcons

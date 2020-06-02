@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
-import store from './store'
+import router from 'router'
+import store from 'store'
 import fastclick from 'fastclick'
-import './plugins/vant.js'
-import './utils/rem'
-import './assets/styles/reset.css'
-import './assets/styles/global.scss'
+import 'plugins/vant.js'
+import 'utils/rem'
+import 'assets/styles/reset.css'
+import 'assets/styles/global.scss'
 
 Vue.config.productionTip = false
 

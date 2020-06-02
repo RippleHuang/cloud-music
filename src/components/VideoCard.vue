@@ -43,7 +43,7 @@
   </div>
 </template>
 <script>
-import { filterPlayCount, filterSetTime } from '@/utils/filters'
+import { filterPlayCount, filterSetTime } from 'utils/filters'
 export default {
   name: 'VideoCard',
   props: {

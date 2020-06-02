@@ -13,7 +13,7 @@
   </div>
 </template>
 <script>
-import { HomeAppIcons } from '@/getIcons/icons'
+import { HomeAppIcons } from 'getIcons/icons'
 export default {
   name: 'HomeApply',
   data () {

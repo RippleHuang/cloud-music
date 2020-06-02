@@ -20,10 +20,10 @@
   </div>
 </template>
 <script>
-import ImgCard from '@/components/ImgCard'
-import Loading from '@/components/Loading'
-import { recSongList } from '@/api/apis'
-import { getRandomNumberArray } from '@/utils/randomNumberArray'
+import ImgCard from 'components/ImgCard'
+import Loading from 'components/Loading'
+import { recSongList } from 'api/apis'
+import { getRandomNumberArray } from 'utils/randomNumberArray'
 import { Toast } from 'vant'
 export default {
   name: 'SongList',
@@ -39,9 +39,8 @@ export default {
         .then(data => {
           this.songList = getRandomNumberArray(data.playlists, 6)
         })
-        .catch(err => {
+        .catch(() => {
           Toast('加载失败,请稍后尝试')
-          console.log(err)
         })
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="swiper-con">
-    <van-swipe :autoplay="5000">
+    <van-swipe :autoplay="5000" :stop-propagation="false" indicator-color="#ca031b">
       <van-swipe-item v-for="(image, index) in swiperList" :key="index">
         <img class="swipe-img" :src="image.pic" />
         <span class="title" :style="{background:image.titleColor}">{{image.typeTitle}}</span>
@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-import { bannerSwiper } from '@/api/apis'
+import { bannerSwiper } from 'api/apis'
 export default {
   name: 'Swiper',
   data () {

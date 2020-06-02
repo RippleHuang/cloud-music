@@ -7,7 +7,7 @@
   </div>
 </template>
 <script>
-import NavBar from '@/components/NavBar'
+import NavBar from 'components/NavBar'
 export default {
   name: 'VideoIndex',
   data () {

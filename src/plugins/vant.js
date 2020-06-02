@@ -21,10 +21,10 @@ Vue.use(SwipeItem)
 Vue.use(Lazyload, {
   lazyComponent: true,
   preLoad: 1.3,
-  error: require('../assets/img/timg.jpg'),
-  loading: require('../assets/img/loading.jpg'),
-  attempt: 1,
-  listenEvents: ['scroll']
+  error: require('assets/img/timg.jpg'),
+  loading: require('assets/img/loading.jpg'),
+  attempt: 3,
+  listenEvents: ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']
 })
 Vue.use(Collapse)
 Vue.use(CollapseItem)

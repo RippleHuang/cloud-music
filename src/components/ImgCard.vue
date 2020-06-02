@@ -13,7 +13,7 @@
       <!-- 蒙版 -->
       <div class="mask on-touch"></div>
       <!-- load图片加载完成事件 -->
-      <img class="image-con" v-lazy="imgUrl" alt="" @load="imgLoad" />
+      <img class="image-con" :src="imgUrl" alt="" @load="imgLoad" />
     </div>
     <div class="dec van-multi-ellipsis--l2" >{{ dec }}</div>
   </div>

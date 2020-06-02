@@ -23,7 +23,7 @@
 </div>
 </template>
 <script>
-import LeftPopup from '@/components/LeftPopup'
+import LeftPopup from 'components/LeftPopup'
 export default {
   name: 'Default',
   data () {

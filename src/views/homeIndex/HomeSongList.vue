@@ -46,7 +46,7 @@
             <li class="song-list" v-for="(item, index) in createList" :key="index">
               <div class="left">
                 <div class="list-cover">
-                  <img :src="item.coverImgUrl" />
+                  <img v-lazy="item.coverImgUrl" alt="" />
                 </div>
                 <div class="list-info">
                   <!-- van-ellipsis 显示一行多余点点点省略 vant的内置样式 -->
@@ -86,7 +86,7 @@
             <li class="song-list" v-for="(item, index) in favoritesList" :key="index">
               <div class="left">
                 <div class="list-cover">
-                  <img :src="item.coverImgUrl" />
+                  <img v-lazy="item.coverImgUrl" alt="" />
                 </div>
                 <div class="list-info">
                   <p class="list-title van-ellipsis">{{item.name}}</p>
@@ -107,7 +107,8 @@
   </div>
 </template>
 <script>
-import { playlist } from '@/api/apis'
+import { playlist } from 'api/apis'
+import 'utils/imgLazy'
 export default {
   name: 'HomeSongList',
   props: ['index'],

@@ -11,8 +11,8 @@
 </div>
 </template>
 <script>
-import Icon from '@/components/Icon'
-import { FindIcons } from '@/getIcons/icons'
+import Icon from 'components/Icon'
+import { FindIcons } from 'getIcons/icons'
 export default {
   name: 'FindIcons',
   data () {

@@ -15,8 +15,8 @@
   </div>
 </template>
 <script>
-import Icon from '@/components/Icon'
-import { HomeIcons } from '@/getIcons/icons'
+import Icon from 'components/Icon'
+import { HomeIcons } from 'getIcons/icons'
 export default {
   name: 'HomeIcons',
   data () {

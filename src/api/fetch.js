@@ -1,9 +1,8 @@
 import axios from 'axios'
 import Qs from 'qs'
-import { Toast } from 'vant'
 
 if (process.env.NODE_ENV === 'development') {
-  axios.defaults.baseURL = 'http://192.168.1.103:3000'
+  axios.defaults.baseURL = '/api'
 } else {
   axios.defaults.baseURL = ''
 }
@@ -18,7 +17,6 @@ axios.interceptors.request.use(config => {
   }
   return config
 }, err => {
-  Toast('请求错误')
   return Promise.reject(err)
 })
 // 响应拦截
@@ -26,7 +24,6 @@ axios.interceptors.response.use(res => {
   // 处理响应数据
   return res
 }, err => {
-  Toast('加载失败，请稍后再试')
   return Promise.reject(err)
 })
 // 封装get
