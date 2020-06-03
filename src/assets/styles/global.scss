@@ -34,6 +34,16 @@ html {
     opacity: 0;
   }
 }
+// 修改vant popup
+.van-popup {
+  // 隐藏滚动条
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
 // 修改vant的折叠面板样式
 .van-collapse {
   [class*="van-hairline"]::after {

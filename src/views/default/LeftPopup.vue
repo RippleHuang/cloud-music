@@ -1,12 +1,11 @@
 <template>
   <div class="popup-container">
+    <!-- 头部 -->
     <div class="header">
       <div class="mask"></div>
-      <div class="header-content">
-        <p>登录网易云音乐</p>
-        <p>手机电脑多端同步，尽享海量高品质音乐</p>
-        <van-button class="title-btn" round type="info">立即登录</van-button>
-      </div>
+      <!-- 头部登录,显示登录 -->
+      <popup-top></popup-top>
+      <!-- 头部卡片 -->
       <div class="card">
         <div class="left">
           <span>开通黑胶VIP</span>
@@ -24,6 +23,7 @@
         </div>
       </div>
     </div>
+    <!-- 图标部分 -->
     <div class="shop">
       <ul class="icons-list">
         <li v-for="(item, index) in PopupShopIcons" :key="index" class="list-item on-touch">
@@ -44,6 +44,7 @@
         </li>
       </ul>
     </div>
+    <!-- 底部设置 -->
     <div class="bottom van-hairline--top">
       <div class="icons on-touch" v-for="(item, index) in PopupBottomIcons" :key="index">
         <i :class="item.icon"></i>
@@ -54,6 +55,7 @@
 </template>
 <script>
 import { PopupTopIcons, PopupShopIcons, PopupAppIcons, PopupBottomIcons } from 'getIcons/icons'
+import PopupTop from 'views/loginIndex/PopupTop'
 export default {
   name: 'LeftPopup',
   data () {
@@ -74,6 +76,9 @@ export default {
       this.PopupAppIcons = PopupAppIcons()
       this.PopupBottomIcons = PopupBottomIcons()
     }
+  },
+  components: {
+    PopupTop
   }
 }
 </script>
@@ -87,48 +92,22 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 6rem;
+    height: 6.5rem;
     // 底部背景
     .mask {
       position: absolute;
       top: 0;
       z-index: -3;
       width: 100%;
-      height: 62%;
+      height: 4rem;
       background:  #f3f3f3;
-    }
-    // 头部内容
-    &-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 3.6rem;
-      line-height: .5rem;
-      font-size: .24rem;
-      color: rgb(99, 97, 97);
-      .title-btn {
-        width: 2.2rem;
-        height: .6rem;
-        padding: 0 .3rem;
-        margin-top: .45rem;
-        font-size: 3.4vw;
-        color: rgb(112, 111, 111);
-        background-color: #f3f3f3;
-        border: .02rem solid #aaa;
-        &:active {
-          border: none;
-          color: black;
-        }
-      }
     }
     // 头部卡片
     .card {
       display: flex;
       justify-content: space-between;
       width: 88%;
-      height: 1.2rem;
+      height: 1.4rem;
       padding: .2rem 0 .2rem .2rem;
       box-sizing: border-box;
       background: linear-gradient(to right, #0c0c0c 0%, #444 100%);
@@ -243,6 +222,9 @@ export default {
     align-items: center;
     height: 1rem;
     background-color: #fff;
+    .icons:first-of-type {
+      padding-left: .2rem;
+    }
     .icons {
       display: flex;
       justify-content: center;

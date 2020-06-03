@@ -8,7 +8,7 @@
       <van-button v-show="type === 'plate'" class="title-btn" round type="info">更多新碟</van-button>
       <van-button v-show="type === 'newSong'" class="title-btn" round type="info">新歌推荐</van-button>
     </div>
-    <loading style="height: 4.58rem; padding-bottom:2.58rem" v-show="loading" />
+    <loading style="height: 3.58rem; padding-bottom:1.58rem" v-show="loading" />
     <div class="plate-list-con" v-show="!loading">
       <div class="images-con" v-show="type==='plate'">
         <img-card

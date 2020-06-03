@@ -7,9 +7,9 @@ import 'plugins/vant.js'
 import 'utils/rem'
 import 'assets/styles/reset.css'
 import 'assets/styles/global.scss'
-
 Vue.config.productionTip = false
 
+// 移动端0.3s延迟
 fastclick.attach(document.body)
 
 new Vue({

@@ -111,7 +111,7 @@ const popupShopIcons = [{
 },
 {
   text: '商城',
-  icon: 'iconfont icon-shangcheng'
+  icon: 'iconfont icon-gouwuche'
 },
 {
   text: '附近的人',
@@ -127,6 +127,10 @@ const popupShopIcons = [{
 }]
 // 功能icon
 const popupAppIcons = [{
+  text: '创作者中心',
+  icon: 'iconfont icon-dengpao1'
+},
+{
   text: '我的订单',
   icon: 'iconfont icon-wodedingdan'
 },

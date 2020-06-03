@@ -71,6 +71,7 @@ export default {
       // 歌名
       .music-name {
         margin: 0;
+        padding-top: .03rem;
         font-size: .28rem;
         white-space: nowrap;
         overflow: hidden;
