@@ -106,3 +106,34 @@ html {
     display: none;
   }
 }
+// 修改vant checkbox样式
+.van-checkbox {
+  display: flex;
+  align-items: center;
+  .van-checkbox__icon {
+    height: 100%;
+  }
+  .van-icon {
+    display: flex;
+    align-items: center;
+    border-radius: .05rem;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    font-size: .18rem;
+  }
+  .van-checkbox__label {
+    margin-left: .1rem;
+    font-size: .2rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+// 修改vant toast样式
+.van-toast {
+  top: 88% !important;
+  width: 74vw !important;
+  text-align: left !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  .van-toast--html,
+  .van-toast__text {
+    color: black;
+  }
+}

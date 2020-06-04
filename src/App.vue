@@ -6,7 +6,7 @@
           <router-view></router-view>
         </keep-alive>
       </div>
-      <play-footer></play-footer>
+      <play-footer v-show="false"></play-footer>
     </div>
   </div>
 </template>
@@ -28,9 +28,5 @@ export default {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  .container {
-    //底部播放条留空
-    padding-bottom: 1rem;
-  }
 }
 </style>
