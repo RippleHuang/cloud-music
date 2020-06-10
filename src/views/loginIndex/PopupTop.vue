@@ -1,19 +1,18 @@
 <template>
   <div class="popup-top">
     <!-- 未登录 -->
-    <div class="not-login">
+    <div class="not-login" v-if="!loginState">
       <p>登录网易云音乐</p>
       <p>手机电脑多端同步，尽享海量高品质音乐</p>
-      <!-- 监听原生事件 使用native修饰-->
-      <van-button class="title-btn" round type="info" to="/login">立即登录</van-button>
+      <van-button class="title-btn" round type="info" @click="toPass">立即登录</van-button>
     </div>
     <!-- 已登录 -->
-    <div class="logining" v-show="false">
+    <div class="logining" v-if="loginState">
       <div class="left-con">
-        <img class="account-bgi" src="../../assets/3.jpg" alt />
+        <img class="account-bgi" :src="avatarUrl" alt />
         <div class="information">
-          <span class="account-nickname">名字</span>
-          <span class="lv">Lv.1</span>
+          <span class="account-nickname">{{nickname}}</span>
+          <span class="lv">Lv.{{level}}</span>
         </div>
       </div>
       <div class="right-btn">
@@ -35,8 +34,20 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  name: 'PopupTop'
+  name: 'PopupTop',
+  computed: {
+    ...mapGetters(['loginState', 'level']),
+    avatarUrl: () => localStorage.getItem('avatarUrl'),
+    nickname: () => localStorage.getItem('nickname')
+  },
+  methods: {
+    toPass () {
+      // 默认有体验按钮
+      this.$router.push({ path: '/login', query: { login: localStorage.getItem('login') || 'login' } })
+    }
+  }
 }
 </script>
 <style lang='scss' scoped>
@@ -83,6 +94,7 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      flex: 2;
       // 用户头像
       .account-bgi {
         width: 1.35rem;
@@ -100,11 +112,12 @@ export default {
           letter-spacing: -0.03rem;
         }
         .lv {
+          display: flex;
+          justify-content: center;
+          align-items: center;
           width: .7rem;
           height: .38rem;
           margin-left: .15rem;
-          line-height: .38rem;
-          text-align: center;
           color: rgb(121, 116, 116);
           font: {
             size: .2rem;

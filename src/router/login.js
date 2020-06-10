@@ -5,6 +5,7 @@ const LoginPhone = () => import(/* webpackChunkName: "login-loginPhone" */ 'view
 const PhonePass = () => import(/* webpackChunkName: "login-phonepass" */ 'views/loginIndex/PhonePass')
 const ForgetPass = () => import(/* webpackChunkName: "login-forgetpass" */ 'views/loginIndex/ForgetPass')
 const PhoneVerify = () => import(/* webpackChunkName: "login-phoneverify" */ 'views/loginIndex/PhoneVerify')
+const NickName = () => import(/* webpackChunkName: "login-phoneverify" */ 'views/loginIndex/NickName')
 export default [
   // 登录相关路由
   {
@@ -24,13 +25,20 @@ export default [
       component: PhonePass,
       props: { name: '手机号登录' }
     }, {
-      path: 'forgetpass',
+      path: '/loginpage/forgetpass',
+      name: 'forgetpass',
       component: ForgetPass,
-      props: { name: '忘记密码' }
+      props: { name: '忘记密码', name1: '手机号注册' }
     }, {
-      path: 'phoneverify',
+      path: '/loginpage/phoneverify',
+      name: 'phoneverify',
       component: PhoneVerify,
       props: { name: '手机号验证' }
+    }, {
+      path: '/loginpage/nickname',
+      name: 'nickname',
+      component: NickName,
+      props: { name: '给自己取一个昵称' }
     }]
   }
 ]

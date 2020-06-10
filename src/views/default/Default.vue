@@ -19,7 +19,7 @@
   </van-popup>
   <div class="view-content">
     <keep-alive>
-      <router-view></router-view>
+      <router-view v-if="isReload"></router-view>
     </keep-alive>
   </div>
 </div>
@@ -28,10 +28,35 @@
 import LeftPopup from './LeftPopup'
 export default {
   name: 'Default',
+  provide () {
+    return {
+      reload: this.reload
+    }
+  },
   data () {
     return {
+      isReload: true,
       visible: false
     }
+  },
+  // 导航进入前关闭侧边栏
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.$data.visible = false
+    })
+  },
+  methods: {
+    reload () {
+      this.isReload = false
+      this.$nextTick(function () {
+        this.isReload = true
+      })
+    }
+  },
+  // 导航离开前关闭侧边栏
+  beforeRouteLeave (to, from, next) {
+    this.visible = false
+    next()
   },
   components: {
     LeftPopup

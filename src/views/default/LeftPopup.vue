@@ -26,7 +26,12 @@
     <!-- 图标部分 -->
     <div class="shop">
       <ul class="icons-list">
-        <li v-for="(item, index) in PopupShopIcons" :key="index" class="list-item on-touch">
+        <li
+          v-for="(item, index) in PopupShopIcons"
+          :key="index"
+          class="list-item on-touch"
+          @click="forEvent(item.event)"
+        >
           <div class="content">
             <i :class="item.icon" class="item-icon"></i>
             <span class="item-text">{{item.text}}</span>
@@ -36,7 +41,12 @@
     </div>
     <div class="app">
       <ul class="icons-list">
-        <li v-for="(item, index) in PopupAppIcons" :key="index" class="list-item on-touch">
+        <li
+          v-for="(item, index) in PopupAppIcons"
+          :key="index"
+          class="list-item on-touch"
+          @click="forEvent(item.event)"
+        >
           <div class="content">
             <i :class="item.icon" class="item-icon"></i>
             <span class="item-text">{{item.text}}</span>
@@ -45,8 +55,13 @@
       </ul>
     </div>
     <!-- 底部设置 -->
+    <!-- 循环绑定事件 -->
     <div class="bottom van-hairline--top">
-      <div class="icons on-touch" v-for="(item, index) in PopupBottomIcons" :key="index">
+      <div class="icons on-touch"
+        v-for="(item, index) in PopupBottomIcons"
+        :key="index"
+        @click="forEvent(item.event)"
+      >
         <i :class="item.icon"></i>
         <span>{{item.text}}</span>
       </div>
@@ -56,6 +71,7 @@
 <script>
 import { PopupTopIcons, PopupShopIcons, PopupAppIcons, PopupBottomIcons } from 'getIcons/icons'
 import PopupTop from 'views/loginIndex/PopupTop'
+import { logout } from 'api/apis'
 export default {
   name: 'LeftPopup',
   data () {
@@ -75,6 +91,43 @@ export default {
       this.PopupShopIcons = PopupShopIcons()
       this.PopupAppIcons = PopupAppIcons()
       this.PopupBottomIcons = PopupBottomIcons()
+    },
+    forEvent (event) {
+      this[event]()
+    },
+    // 循环出来的事件
+    no () {
+      this.$toast('登录,退出,签到可用,其他功能尚未实装,请尽请期待!')
+    },
+    // 循环出来的事件
+    loginout () {
+      if (this.$store.state.loginState) {
+        this.$dialog.confirm({
+          message: '确认退出当前账号？'
+        })
+          .then(() => {
+            logout()
+              .then(data => {
+                if (data.code === 200) {
+                  // 保存手机号,昵称 其他清空
+                  const phone = localStorage.getItem('phoneNumber')
+                  this.$store.dispatch('loginOut')
+                  // 跳转到登录页,并显示体验按
+                  this.$router.push('/login')
+                  localStorage.setItem('login', 'login')
+                  localStorage.setItem('phoneNumber', phone)
+                }
+              })
+              .catch(() => {
+                this.$toast('请求失败,请稍后尝试')
+              })
+          })
+          .catch(() => {
+            this.$toast('已取消')
+          })
+      } else {
+        this.$toast('您暂未登录')
+      }
     }
   },
   components: {

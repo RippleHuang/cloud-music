@@ -101,7 +101,7 @@ export default {
       }
       .title {
         width: 12vw;
-        height: 4vh;
+        height: .35rem;
         box-sizing: border-box;
         border-right: 1px solid rgba(0, 0, 0, .2);
       }
@@ -117,8 +117,8 @@ export default {
     .title-btn {
       width: 1.65rem;
       height: .5rem;
-      padding: 0 .3rem;
-      font-size: 3.4vw;
+      padding: 0 .15rem;
+      font-size: 3vw;
       color: #3d3d3d;
       background-color: #fff;
       border: 1px solid #eaeaea;

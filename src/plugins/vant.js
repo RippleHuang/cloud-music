@@ -12,7 +12,9 @@ import {
   Tabs,
   Popup,
   Checkbox,
-  CheckboxGroup
+  CheckboxGroup,
+  Toast,
+  Dialog
 } from 'vant'
 
 Vue.use(Button)
@@ -35,3 +37,5 @@ Vue.use(Tabs)
 Vue.use(Popup)
 Vue.use(Checkbox)
 Vue.use(CheckboxGroup)
+Vue.use(Toast)
+Vue.use(Dialog)

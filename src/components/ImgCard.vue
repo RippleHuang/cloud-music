@@ -13,7 +13,7 @@
       <!-- 蒙版 -->
       <div class="mask on-touch"></div>
       <!-- load图片加载完成事件 -->
-      <img class="image-con" :src="imgUrl" alt="" @load="imgLoad" />
+      <img class="image-con" v-lazy="imgUrl" alt="" @load="imgLoad" />
     </div>
     <div class="dec van-multi-ellipsis--l2" >{{ dec }}</div>
   </div>
@@ -117,9 +117,11 @@ export default {
     }
   }
   .dec {
-    margin-top: .15rem;
-    line-height: .25rem;
+    padding-top: .15rem;
+    line-height: .28rem;
+    box-sizing: border-box;
     font-size: 3.5vw;
+    letter-spacing: none;
     // 字母不换行
     word-break: break-all;
   }

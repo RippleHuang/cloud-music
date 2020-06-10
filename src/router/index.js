@@ -13,7 +13,6 @@ const routes = [
   /* 默认显示发现页面 */
   {
     path: '/',
-    name: 'default',
     component: Default,
     redirect: '/find',
     children: [

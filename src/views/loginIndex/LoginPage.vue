@@ -15,16 +15,27 @@ export default {
   name: 'LoginPage',
   data () {
     return {
-      name
+      name,
+      click: true
     }
   },
   methods: {
     initData (data) {
       this.name = data
+      // 手机号验证页面,手机号注册页面不需要回退
+      if (this.name === '手机号验证' || this.name === '手机号注册') {
+        this.click = false
+      } else {
+        this.click = true
+      }
     },
     rollback () {
-      // 回退，类似 window.history.go(n)
-      this.$router.go(-1)
+      if (this.click) {
+        // 回退，类似 window.history.go(n)
+        this.$router.go(-1)
+      } else {
+        this.$toast('该页面不能回退哦')
+      }
     }
   }
 }
@@ -47,13 +58,13 @@ export default {
       height: .9rem;
       border-radius: 50%;
       .icon-zuo {
-        font-size: .42rem;
+        font-size: .38rem;
         color: #fff;
       }
     }
     .title {
-      margin-top: .1rem;
-      font-size: .34rem;
+      margin-top: .05rem;
+      font-size: .36rem;
       color: #fff;
     }
   }

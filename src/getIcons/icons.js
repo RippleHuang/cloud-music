@@ -90,86 +90,106 @@ const homeAppIcons = [{
 // 头部icon
 const popupTopIcons = [{
   text: '我的消息',
-  icon: 'iconfont icon-email'
+  icon: 'iconfont icon-email',
+  event: 'no'
 },
 {
   text: '我的好友',
-  icon: 'iconfont icon-haoyou'
+  icon: 'iconfont icon-haoyou',
+  event: 'no'
 },
 {
   text: '听歌识曲',
-  icon: 'iconfont icon-tinggeshiqu'
+  icon: 'iconfont icon-tinggeshiqu',
+  event: 'no'
 },
 {
   text: '个性装扮',
-  icon: 'iconfont icon-gexingzhuangban'
+  icon: 'iconfont icon-gexingzhuangban',
+  event: 'no'
 }]
 // 消费icon
 const popupShopIcons = [{
   text: '演出',
-  icon: 'iconfont icon-piao'
+  icon: 'iconfont icon-piao',
+  event: 'no'
 },
 {
   text: '商城',
-  icon: 'iconfont icon-gouwuche'
+  icon: 'iconfont icon-gouwuche',
+  event: 'no'
 },
 {
   text: '附近的人',
-  icon: 'iconfont icon-location'
+  icon: 'iconfont icon-location',
+  event: 'no'
 },
 {
   text: '游戏推荐',
-  icon: 'iconfont icon-youxi1'
+  icon: 'iconfont icon-youxi1',
+  event: 'no'
 },
 {
   text: '口袋彩铃',
-  icon: 'iconfont icon-cailing'
+  icon: 'iconfont icon-cailing',
+  event: 'no'
 }]
 // 功能icon
 const popupAppIcons = [{
   text: '创作者中心',
-  icon: 'iconfont icon-dengpao1'
+  icon: 'iconfont icon-dengpao1',
+  event: 'no'
 },
 {
   text: '我的订单',
-  icon: 'iconfont icon-wodedingdan'
+  icon: 'iconfont icon-wodedingdan',
+  event: 'no'
 },
 {
   text: '定时停止播放',
-  icon: 'iconfont icon-dingshi'
+  icon: 'iconfont icon-dingshi',
+  event: 'no'
 },
 {
   text: '扫一扫',
-  icon: 'iconfont icon-sao'
+  icon: 'iconfont icon-sao',
+  event: 'no'
 },
 {
   text: '音乐闹钟',
-  icon: 'iconfont icon-naozhong'
+  icon: 'iconfont icon-naozhong',
+  event: 'no'
 },
 {
   text: '在线听歌免流量',
-  icon: 'iconfont icon-zaixiantinggemianliuliang'
+  icon: 'iconfont icon-zaixiantinggemianliuliang',
+  event: 'no'
 },
 {
   text: '优惠券',
-  icon: 'iconfont icon-youhuiquan'
+  icon: 'iconfont icon-youhuiquan',
+  event: 'no'
 },
 {
   text: '青少年模式',
-  icon: 'iconfont icon-anquan'
+  icon: 'iconfont icon-anquan',
+  event: 'no'
 }]
 // 设置icon
 const popupBottomIcons = [{
   text: '夜间模式',
-  icon: 'iconfont icon-yejian'
+  icon: 'iconfont icon-yejian',
+  event: 'no'
 },
 {
   text: '设置',
-  icon: 'iconfont icon-shezhi1'
+  icon: 'iconfont icon-shezhi1',
+  event: 'no'
 },
 {
   text: '退出',
-  icon: 'iconfont icon-tuichu'
+  icon: 'iconfont icon-tuichu',
+  event: 'loginout'
 }]
 
 // ======发现页面icon列表======

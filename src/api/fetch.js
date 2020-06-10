@@ -35,7 +35,7 @@ export function get (url, params) {
       resolve(res.data)
       // 请求成功
     }).catch(err => {
-      reject(err.data)
+      reject(err)
       // 请求错误
     })
   })
@@ -48,7 +48,7 @@ export function post (url, params) {
         resolve(res.data)
         // 请求成功
       }).catch(err => {
-        reject(err.data)
+        reject(err)
         // 请求错误
       })
   })

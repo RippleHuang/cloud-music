@@ -91,7 +91,7 @@ html {
     color: rgba(255, 255, 255, 0.8);
     // 解决在谷歌下字体部分缺失
     .van-tab__text {
-      padding-top: .02rem;
+      padding-top: .04rem;
     }
     &:active {
       background-color: rgba(1, 1, 1, 0.1);
@@ -116,9 +116,10 @@ html {
   .van-icon {
     display: flex;
     align-items: center;
+    margin-top: -0.03rem;
     border-radius: .05rem;
     border-color: rgba(255, 255, 255, 0.5) !important;
-    font-size: .18rem;
+    font-size: .16rem;
   }
   .van-checkbox__label {
     margin-left: .1rem;
@@ -126,14 +127,97 @@ html {
     color: rgba(255, 255, 255, 0.6);
   }
 }
-// 修改vant toast样式
+// 修改vant toast整体样式
 .van-toast {
-  top: 88% !important;
-  width: 74vw !important;
+  width: -moz-fit-content !important;
   text-align: left !important;
+  .van-toast__text {
+    // 谷歌 vant 自带 火狐需要前缀
+    width: -moz-fit-content;
+  }
+}
+// 修改登录页 vant toast 
+.login-toast {
+  top: 88% !important;
   background-color: rgba(255, 255, 255, 0.8) !important;
-  .van-toast--html,
   .van-toast__text {
     color: black;
+  }
+}
+// 修改手机登录页 vant toast样式
+.phone-toast {
+  background-color: rgba(209, 207, 207, 0.8) !important;
+  border-radius: .4rem !important;
+  .van-toast__text {
+    color: black;
+  }
+}
+// 加载 toast样式
+.van-toast--loading {
+  background-color: transparent !important;
+  .van-toast__loading {
+    color: rgb(131, 126, 127);
+  }
+}
+// 登录页公共样式
+.phone-login {
+  padding: .6rem .5rem 0;
+  box-sizing: border-box;
+  .phone-con {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 1.2rem;
+    margin-top: .4rem;
+    border-bottom: .01rem solid rgba(163, 161, 161, 0.8);
+    .phone-num {
+      width: 85%;
+      height: .55rem;
+      font-size: .36rem;
+      padding-left: .2rem;
+      margin-top: .32rem;
+      // 光标颜色
+      caret-color:#e60721;
+      // placeholder颜色,谷歌,火狐,ie
+      &::-webkit-input-placeholder {
+        color:rgb(158, 151, 152);
+      }
+      &:-moz-placeholder {
+        color:rgb(158, 151, 152);
+      }
+      &::-moz-placeholder {
+        color:rgb(158, 151, 152);
+      }
+      &:-ms-input-placeholder {
+        color:rgb(158, 151, 152);
+      }
+    }
+    // 清除按钮
+    .icon-chahao {
+      position: absolute;
+      right: 0;
+      bottom: .22rem;
+      display: none;
+      font-size: .46rem;
+      color: rgba(163, 161, 161, 0.8);
+    }
+    // :valid 选择器在表单元素的值需要根据指定条件验证时设置指定样式
+    //（这里要记得在input里面加上required="required"，表示必须）
+    .phone-num:valid + .icon-chahao {
+      display: block;
+    }
+  }
+  .next {
+    width: 100%;
+    height: 1rem;
+    margin-top: 1rem;
+    color: #fff;
+    font-size: .35rem;
+    font-weight: bold;
+    background-color: #e60721;
+    border: none;
+    &:active {
+      background-color: #c7182d;
+    }
   }
 }

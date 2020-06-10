@@ -1,5 +1,5 @@
 <template>
-  <div class="login-mask">
+  <div class="login-mask" @click.self="goBack">
     <div class="logo">
       <div class="circle"></div>
       <div class="circle"></div>
@@ -7,35 +7,57 @@
     </div>
     <div class="login">
       <van-button class="login-btn" round @click="phoneLogin">手机号登录</van-button>
+      <van-button
+        v-if="this.$route.query.login === 'login'"
+        class="experience-btn"
+        round
+        @click="noLogin"
+      >
+      立即体验
+      </van-button>
       <div class="login-icons">
         <span @click="unfinished"><i class="iconfont icon-weixin"></i></span>
         <span @click="unfinished"><i class="iconfont icon-qq"></i></span>
         <span @click="unfinished"><i class="iconfont icon-weibo"></i></span>
-        <span><i class="iconfont icon-wangyi"></i></span>
+        <span @click="unfinished"><i class="iconfont icon-wangyi"></i></span>
       </div>
       <div class="text">
-        <van-checkbox v-model="checked" icon-size=".31rem" shape="square" checked-color="rgba(255, 255, 255, .1)">同意</van-checkbox>
+        <van-checkbox v-model="checked" icon-size=".32rem" shape="square" checked-color="rgba(255, 255, 255, .1)">同意</van-checkbox>
         <span>《用户协议》《隐私政策》《儿童隐私政策》</span>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { Toast } from 'vant'
 export default {
   name: 'Login',
   data () {
     return {
-      checked: false
+      checked: false,
+      timer: ''
     }
+  },
+  created () {
+    // 每次进入界面时，先清除之前的所有定时器
+    clearInterval(this.timer)
+    this.timer = null
+  },
+  mounted () {
+    this.$toast('点击周围空白处即可回到首页')
   },
   methods: {
     hint () {
-      Toast('请先勾选同意《用户协议》《隐私政策》《儿童隐私政策》')
+      this.$toast({
+        message: '请先勾选同意《用户协议》《隐私政策》《儿童隐私政策》',
+        className: 'login-toast'
+      })
       // 抖动
       const text = document.querySelector('.text')
       text.classList.add('shake')
-      setTimeout(() => { text.classList.remove('shake') }, 500)
+      this.timer = setTimeout(() => { text.classList.remove('shake') }, 500)
+    },
+    goBack () {
+      this.$router.push('/find')
     },
     phoneLogin () {
       if (!this.checked) {
@@ -45,13 +67,31 @@ export default {
         this.$router.push('/loginpage')
       }
     },
+    noLogin () {
+      if (!this.checked) {
+        this.hint()
+      } else {
+        /* 跳转到find首页 */
+        this.goBack()
+        // 点击一次后隐藏
+        localStorage.setItem('login', 'nologin')
+      }
+    },
     unfinished () {
       if (!this.checked) {
         this.hint()
       } else {
-        Toast('只支持手机号登录和网易登录,其他尚未实装,敬请期待！')
+        this.$toast({
+          message: '只支持手机号登录,其他尚未实装,敬请期待！',
+          className: 'login-toast'
+        })
       }
     }
+  },
+  destroyed () {
+    // 每次离开当前界面时，清除定时器
+    clearInterval(this.timer)
+    this.timer = null
   }
 }
 </script>
@@ -107,6 +147,19 @@ export default {
       font-size: .35rem;
       &:active {
         background-color: rgba(255, 255, 255, .8);
+        border: none;
+      }
+    }
+    .experience-btn {
+      width: 72vw;
+      height: 1rem;
+      margin-top: .4rem;
+      color: #fff;
+      font-size: .35rem;
+      background-color: transparent;
+      border: .02rem solid rgba(255, 255, 255, .4);
+      &:active {
+        background-color: rgba(255, 255, 255, .3);
         border: none;
       }
     }

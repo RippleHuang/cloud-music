@@ -3,7 +3,7 @@
     <div class="container">
       <div class="content">
         <keep-alive>
-          <router-view></router-view>
+          <router-view v-if="isReload"></router-view>
         </keep-alive>
       </div>
       <play-footer v-show="false"></play-footer>
@@ -14,6 +14,24 @@
 import PlayFooter from 'components/PlayFooter'
 export default {
   name: 'app',
+  provide () {
+    return {
+      reload: this.reload
+    }
+  },
+  data () {
+    return {
+      isReload: true
+    }
+  },
+  methods: {
+    reload () {
+      this.isReload = false
+      this.$nextTick(function () {
+        this.isReload = true
+      })
+    }
+  },
   components: {
     PlayFooter
   }

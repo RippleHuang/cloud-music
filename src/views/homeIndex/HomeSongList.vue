@@ -276,11 +276,11 @@ export default {
             padding-right: .225rem;
             font-size: .24rem;
             .title-btn {
-              width: 1.6rem;
+              width: 1.75rem;
               height: .5rem;
               line-height: .5rem;
               padding: 0 .1rem;
-              font-size: 3.4vw;
+              font-size: 3vw;
               color: black;
               background-color: #fff;
               border: .01rem solid rgba(0, 0, 0, .1);
