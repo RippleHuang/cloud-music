@@ -1,5 +1,8 @@
 <template>
   <div class="phone-login">
+    <van-notice-bar mode="closeable">
+      由于接口问题,两分钟内只会向网易服务器发送一次请求,为了不影响体验,下次登录操作尽量两分钟之后进行
+    </van-notice-bar>
     <div class="phone-con">
       <input
       class="phone-num"
@@ -14,6 +17,7 @@
 </template>
 <script>
 import { phoneLogin, loginStatus, userDetail } from 'api/apis'
+import { mapMutations } from 'vuex'
 export default {
   name: 'PhonePass',
   props: {
@@ -25,18 +29,16 @@ export default {
     return {
       phonePass: '',
       text: '登录',
-      phone: ''
+      phone: localStorage.getItem('phoneNumber')
     }
   },
   created () {
     // 得到标题名
     this.$emit('viewData', this.name)
-    // 得到phone
-    this.phone = localStorage.getItem('phoneNumber')
   },
   methods: {
     // 登录
-    async nextLogin () {
+    nextLogin () {
       const toast = this.$toast({
         position: 'bottom',
         className: 'phone-toast'
@@ -47,12 +49,19 @@ export default {
         // 修改按钮text
         this.text = '登录中...'
         // 加载动画
-        await this.$toast.loading({
+        this.$toast.loading({
           duration: 500
         })
         this.passVerity(this.phone, this.phonePass)
       }
     },
+    ...mapMutations([
+      'LOGIN_STATE',
+      'SET_LEVEL',
+      'ACCOUNT_UID',
+      'NICK_NAME',
+      'AVATAR_URL'
+    ]),
     // 密码验证
     passVerity (phone, pass) {
       phoneLogin(phone, pass)
@@ -85,12 +94,10 @@ export default {
           // 存取用户信息
           const accountInfo = data.profile
           // 修改状态为 true
-          this.$store.dispatch('loginState', true)
-          // 存入头像昵称
-          localStorage.setItem('avatarUrl', accountInfo.avatarUrl)
-          localStorage.setItem('nickname', accountInfo.nickname)
-          // 存入uid信息
-          this.$store.dispatch('accountUid', accountInfo.userId)
+          this.LOGIN_STATE(true)
+          this.AVATAR_URL(accountInfo.avatarUrl)
+          this.NICK_NAME(accountInfo.nickname)
+          this.ACCOUNT_UID(accountInfo.userId)
           this.skipFind(accountInfo.userId)
         })
         .catch(() => {
@@ -102,7 +109,9 @@ export default {
       userDetail(id)
         .then(data => {
           // 存储lv信息
-          this.$store.dispatch('setLevel', data.level)
+          this.SET_LEVEL(data.level)
+          // // 清除加密密码
+          // sessionStorage.clear()
           // 跳转到主页
           this.$router.push('/find')
         })

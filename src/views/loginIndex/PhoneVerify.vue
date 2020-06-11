@@ -46,7 +46,6 @@ export default {
   },
   // 进入前判定从哪里进入
   beforeRouteEnter (to, from, next) {
-    console.log(to.path)
     const exp = /forgetpass/g
     const exp1 = /phone/g
     if (exp.test(from.path)) {

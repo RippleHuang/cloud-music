@@ -14,7 +14,8 @@ import {
   Checkbox,
   CheckboxGroup,
   Toast,
-  Dialog
+  Dialog,
+  NoticeBar
 } from 'vant'
 
 Vue.use(Button)
@@ -39,3 +40,4 @@ Vue.use(Checkbox)
 Vue.use(CheckboxGroup)
 Vue.use(Toast)
 Vue.use(Dialog)
+Vue.use(NoticeBar)

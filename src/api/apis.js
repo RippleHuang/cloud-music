@@ -1,14 +1,14 @@
 import { get, post } from './fetch'
 
 // ======登陆======
-export const phoneLogin = (phone, password) => post('/login/cellphone', { phone, password }) // 手机号登陆
-export const phoneRegistered = (phone) => post('/cellphone/existence/check', { phone })// 手机号是否被注册
-export const sendVerify = (phone) => post('/captcha/sent', { phone }) // 发送验证码
-export const verify = (phone, captcha) => post('/captcha/verify', { phone, captcha }) // 验证验证码
+export const phoneLogin = (phone, password) => post('/login/cellphone', { phone, password }) // 手机号登陆 参数 手机号 密码
+export const phoneRegistered = (phone) => post('/cellphone/existence/check', { phone })// 手机号是否被注册 参数 手机号
+export const sendVerify = (phone) => post('/captcha/sent', { phone }) // 发送验证码 参数 手机号
+export const verify = (phone, captcha) => post('/captcha/verify', { phone, captcha }) // 验证验证码 参数 手机号 验证码
 export const loginStatus = (params) => get('/login/status', params) // 登录状态
 export const logout = (params) => get('/logout', params) // 退出登录
-export const signIn = (params) => get('/daily_signin', params) // 签到
-export const register = (phone, password, captcha, nickname) => post('/register/cellphone', { phone, password, captcha, nickname }) // 注册修改密码
+export const signIn = (type) => get('/daily_signin', { type }) // 签到 type 默认 0, 其中 0 为安卓端签到 ,1 为 web/PC 签到 安卓端签到可获得 3 点经验 , web/PC 端签到可获得 2 点经验
+export const register = (phone, password, captcha, nickname) => post('/register/cellphone', { phone, password, captcha, nickname }) // 注册修改密码 参数 手机号 密码 验证码 昵称, 修改密码可以不需要昵称
 // ======发现页面======
 export const bannerSwiper = (params) => get('/banner?type=1', params) // 发现页面轮播图
 export const recSongList = (params) => post('/top/playlist', params) // 推荐歌单，歌单广场

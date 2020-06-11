@@ -3,7 +3,9 @@ import {
   LOGIN_STATE,
   SET_LEVEL,
   ACCOUNT_UID,
-  LOGIN_OUT
+  LOGIN_OUT,
+  NICK_NAME,
+  AVATAR_URL
 } from './mutations-types'
 export default {
   loginState ({ commit }, loginState) {
@@ -17,5 +19,11 @@ export default {
   },
   accountUid ({ commit }, uid) {
     commit(ACCOUNT_UID, uid)
+  },
+  nickName ({ commit }, nickname) {
+    commit(NICK_NAME, nickname)
+  },
+  avatarUrl ({ commit }, avatarUrl) {
+    commit(AVATAR_URL, avatarUrl)
   }
 }

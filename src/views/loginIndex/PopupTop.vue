@@ -11,7 +11,7 @@
       <div class="left-con">
         <img class="account-bgi" :src="avatarUrl" alt />
         <div class="information">
-          <span class="account-nickname">{{nickname}}</span>
+          <span class="account-nickname">{{nickName}}</span>
           <span class="lv">Lv.{{level}}</span>
         </div>
       </div>
@@ -22,10 +22,18 @@
           size="small"
           round
           class="sign"
+          @click.stop="signInClick"
+          v-show="!signIn"
         >
           <i class="iconfont icon-tubiaozhizuo-"></i>签到
         </van-button>
-        <van-button size="small" class="signed" round v-show="false">
+        <van-button
+          size="small"
+          class="signed"
+          round
+          v-show="signIn"
+          @click.stop="signInClick"
+        >
           已签到
           <i class="iconfont icon-arrow-right"></i>
         </van-button>
@@ -35,17 +43,74 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { signIn } from 'api/apis'
+import { format } from 'utils/date'
 export default {
   name: 'PopupTop',
+  data () {
+    return {
+      signIn: false
+    }
+  },
+  mounted () {
+    // 初始化签到样式
+    this.signInInit()
+  },
   computed: {
-    ...mapGetters(['loginState', 'level']),
-    avatarUrl: () => localStorage.getItem('avatarUrl'),
-    nickname: () => localStorage.getItem('nickname')
+    ...mapGetters(['loginState', 'level', 'nickName', 'avatarUrl'])
   },
   methods: {
     toPass () {
       // 默认有体验按钮
       this.$router.push({ path: '/login', query: { login: localStorage.getItem('login') || 'login' } })
+    },
+    // 签到样式
+    signInInit () {
+      const date = new Date()
+      const nowTime = format(date, '/').slice(0, 11) // 截取当前日期 yyyy/mm/dd
+      // 把日期转化为数值
+      const signInNum = nowTime.split('/').join('')
+      // 当前时间,转化为数字
+      const nowSign = JSON.parse(signInNum)
+      // 本地记录
+      if (localStorage.getItem('signInNum')) {
+        // 最后签到时间,转化为数字
+        const lastSign = JSON.parse(localStorage.getItem('signInNum'))
+        if (nowSign > lastSign) {
+          // 未签到
+          this.signIn = false
+        } else {
+          // 已签到
+          this.signIn = true
+        }
+      } else { // 默认未签到
+        this.signIn = false
+      }
+    },
+    // 保存最后签到时间
+    setSignIn () {
+      console.log(this.nickName, this.avatarUrl)
+      const date = new Date()
+      const nowTime = format(date, '/').slice(0, 11) // 截取当前日期
+      // 把日期转化为数值并保存到localStorage
+      const signInNum = nowTime.split('/').join('')
+      localStorage.setItem('signInNum', signInNum)
+    },
+    // 签到
+    signInClick () {
+      signIn()
+        .then(() => {
+          this.setSignIn()
+          this.signIn = true
+          this.$toast('签到成功')
+        })
+        .catch(err => {
+          if (err.response.status === 400) {
+            this.setSignIn()
+            this.signIn = true
+            this.$toast('今天已签到')
+          }
+        })
     }
   }
 }
@@ -143,8 +208,8 @@ export default {
       }
       // 已签到按钮
       .signed {
-        width: 1.2rem;
-        height: .45rem;
+        width: 1.3rem;
+        height: .48rem;
         padding: 0 0 0 .12rem;
         font-size: .2rem;
         color: rgb(99, 97, 97);

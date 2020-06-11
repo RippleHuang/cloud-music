@@ -20,7 +20,7 @@ function Limg () {
         // 给图片添加过渡效果，让图片显示
         let j = 0
         setInterval(function () {
-          j += 0.2
+          j += 0.15
           if (j <= 1) {
             item.style.opacity = j
             return false
@@ -32,13 +32,13 @@ function Limg () {
     }
   })
 }
-window.onscroll = function () {
-  Limg()
-}
 window.onload = function () {
   const img = document.querySelectorAll('img[data-src]')
   for (let i = 0; i < img.length; i++) {
     img[i].style.opacity = '0'
   }
+  Limg()
+}
+window.onscroll = function () {
   Limg()
 }

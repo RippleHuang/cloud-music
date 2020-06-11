@@ -101,7 +101,7 @@ export default {
       }
       .title {
         width: 12vw;
-        height: .35rem;
+        height: .36rem;
         box-sizing: border-box;
         border-right: 1px solid rgba(0, 0, 0, .2);
       }

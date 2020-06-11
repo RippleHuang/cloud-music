@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <van-collapse class="song-list" v-model="activeNames" :border="false">
+    <van-collapse class="song-list-con" v-model="activeNames" :border="false">
       <!-- 创建的歌单 -->
       <van-collapse-item name="create" :border="false" class="song-list-item" :is-link="false">
         <!-- 左边标题 -->
@@ -22,8 +22,8 @@
         </template>
         <!-- 歌单列表 -->
         <template #default>
-          <ul class="song-group">
-            <!-- 没登录的情况下列表项显示 -->
+          <!-- 没登录的情况下列表项显示 -->
+          <ul class="song-group" v-if="!$store.state.loginState">
             <li class="song-list">
               <div class="left">
                 <div class="list-cover">
@@ -42,28 +42,40 @@
                 </van-button>
               </div>
             </li>
-            <!-- 登录的情况下列表项显示 -->
-            <li class="song-list" v-for="(item, index) in createList" :key="index">
-              <div class="left">
-                <div class="list-cover">
-                  <img v-lazy="item.coverImgUrl" alt="" />
-                </div>
-                <div class="list-info">
-                  <!-- van-ellipsis 显示一行多余点点点省略 vant的内置样式 -->
-                  <p class="list-title van-ellipsis">{{item.name}}</p>
-                  <p class="list-num">{{item.trackCount}}首</p>
-                </div>
-              </div>
-              <div class="compile">
-                <i class="iconfont icon-sandian on-touch"></i>
-              </div>
-            </li>
+          </ul>
+          <!-- 登录的情况下列表项显示 -->
+          <ul class="song-group" v-if="$store.state.loginState">
+            <!-- 我喜欢的音乐 -->
+            <song-list
+              v-for="(item, index) in myLoveList" :key="index"
+              :coverImgUrl="item.coverImgUrl"
+              :name="item.name"
+              :trackCount="item.trackCount"
+              :privacy="item.privacy"
+              :myLove="myLove"
+            >
+            </song-list>
+            <!-- 由于我喜欢的音乐占了一个,索引+1 -->
+            <song-list
+              v-for="(item, index) in createList" :key="index+1"
+              :coverImgUrl="item.coverImgUrl"
+              :name="item.name"
+              :trackCount="item.trackCount"
+              :privacy="item.privacy"
+            >
+            </song-list>
           </ul>
         </template>
       </van-collapse-item>
       <!-- 收藏的歌单 -->
       <!-- 登录的情况下才显示 -->
-      <van-collapse-item name="favorites" :border="false" class="song-list-item" :is-link="false">
+      <van-collapse-item
+        v-if="$store.state.loginState"
+        name="favorites"
+        :border="false"
+        class="song-list-item"
+        :is-link="false"
+      >
         <!-- 左边标题 -->
         <template #title>
           <div class="left-title">
@@ -83,23 +95,15 @@
         <!-- 歌单列表 -->
         <template #default>
           <ul class="song-group">
-            <li class="song-list" v-for="(item, index) in favoritesList" :key="index">
-              <div class="left">
-                <div class="list-cover">
-                  <img v-lazy="item.coverImgUrl" alt="" />
-                </div>
-                <div class="list-info">
-                  <p class="list-title van-ellipsis">{{item.name}}</p>
-                  <p class="list-num">
-                    {{item.trackCount}}首
-                    <span class="nickname">by {{item.creator.nickname}}</span>
-                  </p>
-                </div>
-              </div>
-              <div class="compile">
-                <i class="iconfont icon-sandian on-touch"></i>
-              </div>
-            </li>
+            <song-list
+              v-for="(item, index) in favoritesList" :key="index"
+              :coverImgUrl="item.coverImgUrl"
+              :name="item.name"
+              :trackCount="item.trackCount"
+              :creatorNickname="item.creator.nickname"
+              :privacy="item.privacy"
+            >
+            </song-list>
           </ul>
         </template>
       </van-collapse-item>
@@ -108,9 +112,12 @@
 </template>
 <script>
 import { playlist } from 'api/apis'
+import SongList from 'components/SongList'
+import { mapGetters } from 'vuex'
 import 'utils/imgLazy'
 export default {
   name: 'HomeSongList',
+  inject: ['reload'],
   props: ['index'],
   data () {
     return {
@@ -120,31 +127,40 @@ export default {
       // 创建歌单详情
       createList: [],
       // 我的喜欢歌单
-      myLoveList: []
+      myLoveList: [],
+      myLove: true
     }
   },
-  mounted () {
-    this.favoritesIndex = this.index.favoritesNum
-    this.createIndex = this.index.createNum
-    this.getPlaylist(117966748)
+  computed: {
+    ...mapGetters(['accountUid'])
   },
   watch: {
+    // 当值第一次绑定的时候，不会执行监听函数，只有值发生改变才会执行
+    // 需要在最初绑定值的时候也执行函数，则就需要用到immediate属性
+    // 监听数组的变化 深度监视deep
     index: {
       deep: true,
       handler (val, oldVal) {
         this.createIndex = val.createNum
         this.favoritesIndex = val.favoritesNum
-        this.getPlaylist(117966748)
-      }
+        this.getPlaylist(this.accountUid)
+      },
+      immediate: true
     }
   },
   methods: {
     getPlaylist (id) {
       // 时间戳
       const date = +new Date()
-      playlist(id, date).then(data => {
-        this.sliceInfo(data.playlist)
-      })
+      playlist(id, date)
+        .then(data => {
+          this.sliceInfo(data.playlist)
+          // 刷新
+          this.reload()
+        })
+        .catch(() => {
+          this.$toast('请求失败,请稍后尝试')
+        })
     },
     sliceInfo (arr) {
       const from = this.createIndex
@@ -154,172 +170,19 @@ export default {
       this.createList = this.createList.slice(1)
       this.favoritesList = arr.slice(from, len)
     }
+  },
+  components: {
+    SongList
   }
 }
 </script>
 <style lang='scss' scoped>
 .container {
   display: flex;
-  .song-list {
+  .song-list-con {
     display: flex;
     flex-direction: column;
     width: 100%;
-    // 创建歌单
-    .song-list-item {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      // 标题及右图标
-      .left-title {
-        display: flex;
-        align-items: center;
-        height: .9rem;
-        i {
-          height: .9rem;
-          line-height: .9rem;
-          font-size: .48rem;
-          text-align: center;
-        }
-        .title {
-          font-size: .33rem;
-          font-weight: bold;
-        }
-        .num {
-          margin-left: .1rem;
-          font-size: .28rem;
-          color: rgba(0, 0, 0, .4);
-        }
-      }
-      .right-icons {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex: .25;
-        height: .9rem;
-        padding-right: .2rem;
-        i {
-          flex: 1;
-          height: .9rem;
-          line-height: .9rem;
-          text-align: center;
-          font-size: .33rem;
-        }
-      }
-      // 收藏歌单右侧按钮
-      .right-icon {
-        @extend .right-icons;
-        flex: .111;
-      }
-      // 创建歌单列表
-      .song-group {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        .song-list {
-          display: flex;
-          flex-direction: row;
-          width: 100%;
-          height: 1.2rem;
-          .left {
-            display: flex;
-            align-items: center;
-            flex: 3.2;
-            // 左侧图像
-            .list-cover {
-              padding: .1rem .225rem .1rem .27rem;
-              .bgc {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 1rem;
-                height: 1rem;
-                background: rgba(0, 0, 0, 0.8);
-                border-radius: .1rem;
-              }
-              img {
-                @extend .bgc;
-              }
-              i {
-                color: #fff;
-                font-size: .5rem;
-              }
-            }
-            // 歌单信息
-            .list-info {
-              display: flex;
-              flex-direction: column;
-              justify-content: space-around;
-              flex: 1;
-              height: 1rem;
-              padding: .1rem 0;
-              .list-title {
-                width: 4.8rem;
-                font-size: .28rem;
-                color: black;
-              }
-              .first {
-                width: 3rem;
-              }
-              .list-num {
-                font-size: .25rem;
-              }
-            }
-          }
-          // 心动按钮
-          .heart-module {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            height: 1.2rem;
-            padding-right: .225rem;
-            font-size: .24rem;
-            .title-btn {
-              width: 1.75rem;
-              height: .5rem;
-              line-height: .5rem;
-              padding: 0 .1rem;
-              font-size: 3vw;
-              color: black;
-              background-color: #fff;
-              border: .01rem solid rgba(0, 0, 0, .1);
-              i {
-                font-size: .24rem;
-                margin-right: .05rem;
-              }
-              &:active {
-                border: none;
-              }
-            }
-          }
-          // 歌单右侧编辑
-          .compile {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: .32;
-            height: 1.2rem;
-            padding-right: .225rem;
-            i {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              flex: 1;
-              height: 1.2rem;
-              font-size: .33rem;
-            }
-          }
-          // 通过兄弟选择器来使整个容器active
-          .left:active, .left:active ~* {
-            background: rgba(1, 1, 1, .1);
-            .title-btn {
-              background: transparent;
-            }
-          }
-        }
-      }
-    }
   }
 }
 </style>
