@@ -19,6 +19,7 @@
   </div>
 </template>
 <script>
+import { filterPlayCount } from 'utils/filters'
 export default {
   name: 'ImgCard',
   props: {
@@ -39,17 +40,7 @@ export default {
     }
   },
   filters: {
-    filterPlayCount: function (value) {
-      if (!value) {
-        return ''
-      }
-      if (value > 100000000) {
-        value = ((value / 100000000).toFixed(1)) + '亿'
-      } else if (value > 10000) {
-        value = Math.floor(value / 10000) + '万'
-      }
-      return value
-    }
+    filterPlayCount
   },
   methods: {
     imgLoad () {

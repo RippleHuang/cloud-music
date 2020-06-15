@@ -6,6 +6,7 @@ import village from './village'
 import video from './video'
 import search from './search'
 import login from './login'
+import user from './user'
 import Default from 'views/default/Default'
 Vue.use(VueRouter)
 
@@ -23,7 +24,8 @@ const routes = [
     ]
   },
   ...search,
-  ...login
+  ...login,
+  ...user
 ]
 
 const router = new VueRouter({

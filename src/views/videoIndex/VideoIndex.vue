@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="video-index">
     <nav-bar :list="chooseListTag"></nav-bar>
     <keep-alive>
       <router-view class="router-view" style="height: 87vh; overflow-y: scroll;"></router-view>

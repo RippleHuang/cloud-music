@@ -1,5 +1,5 @@
 <template>
-  <div class="loading-svg">
+  <div class="loading-svg" :style="{ 'height':`${height}rem`, 'padding-bottom': `${height -2}rem`}">
     <div class="bar">
       <span></span>
       <span></span>
@@ -11,7 +11,8 @@
 </template>
 <script>
 export default {
-  name: 'Loading'
+  name: 'Loading',
+  props: ['height']
 }
 </script>
 <style lang='scss' scoped>
@@ -23,15 +24,14 @@ export default {
   box-sizing: border-box;
   .bar {
     display: flex;
+    justify-content: center;
     flex-flow: row nowrap;
-    width: .7rem;
-    height: .25rem;
-    padding-top: .25rem;
-    margin-bottom: .25rem;
-    overflow: hidden;
+    width: .9rem;
+    height: .5rem;
+    margin-top: .16rem;
     span {
-      width: 0.07rem;
-      height: .25rem;
+      width: 0.08rem;
+      height: .5rem;
       margin-left: .075rem;
       background-color: #dd001b;
     }
@@ -52,11 +52,12 @@ export default {
 @keyframes grow {
   0%,
   100% {
-    transform: scaleY(1);
+    height: .3rem;
   }
 
   50% {
-    transform: scaleY(2);
+    height: .5rem;
+    margin-top: -0.2rem;
   }
 }
 </style>

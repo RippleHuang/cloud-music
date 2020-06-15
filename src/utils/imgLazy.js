@@ -20,7 +20,7 @@ function Limg () {
         // 给图片添加过渡效果，让图片显示
         let j = 0
         setInterval(function () {
-          j += 0.15
+          j += 0.2
           if (j <= 1) {
             item.style.opacity = j
             return false

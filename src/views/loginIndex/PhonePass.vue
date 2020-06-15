@@ -1,8 +1,5 @@
 <template>
   <div class="phone-login">
-    <van-notice-bar mode="closeable">
-      由于接口问题,两分钟内只会向网易服务器发送一次请求,为了不影响体验,下次登录操作尽量两分钟之后进行
-    </van-notice-bar>
     <div class="phone-con">
       <input
       class="phone-num"
@@ -10,7 +7,7 @@
       placeholder="请输入密码"
       v-model="phonePass"
       >
-      <router-link class="forget-link" tag="a" :to="{ name: 'forgetpass', params: { phone }}">忘记密码?</router-link>
+      <router-link class="forget-link" tag="a" :to="{ name: 'forgetpass' }">忘记密码?</router-link>
     </div>
     <van-button class="next" round @click="nextLogin">{{text}}</van-button>
   </div>
@@ -98,6 +95,16 @@ export default {
           this.AVATAR_URL(accountInfo.avatarUrl)
           this.NICK_NAME(accountInfo.nickname)
           this.ACCOUNT_UID(accountInfo.userId)
+          // 用户标识
+          if (localStorage.getItem('tag')) {
+            // 上次登录uid
+            const tag = JSON.parse(localStorage.getItem('tag'))
+            // 保存这次登录的uid
+            localStorage.setItem('tag', JSON.stringify([tag[1], accountInfo.userId]))
+          } else {
+            // 保持长度
+            localStorage.setItem('tag', JSON.stringify([accountInfo.userId, accountInfo.userId]))
+          }
           this.skipFind(accountInfo.userId)
         })
         .catch(() => {

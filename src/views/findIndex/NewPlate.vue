@@ -2,14 +2,14 @@
   <div class="plate-list">
     <div class="plate-list-header">
       <div class="header">
-        <span :class="{active:type==='plate'}" @click="type='plate'" class="title">新碟</span>
-        <span :class="{active:type==='newSong'}" @click="type='newSong'" class="title2">新歌</span>
+        <span :class="{ active: type === 'plate'}" @click="type='plate'" class="title">新碟</span>
+        <span :class="{ active: type === 'newSong'}" @click="type='newSong'" class="title2">新歌</span>
       </div>
       <van-button v-show="type === 'plate'" class="title-btn" round type="info">更多新碟</van-button>
       <van-button v-show="type === 'newSong'" class="title-btn" round type="info">新歌推荐</van-button>
     </div>
-    <loading style="height: 3.58rem; padding-bottom:1.58rem" v-show="loading" />
-    <div class="plate-list-con" v-show="!loading">
+    <loading :height="3.58" v-show="!loading" />
+    <div class="plate-list-con" v-show="loading">
       <div class="images-con" v-show="type==='plate'">
         <img-card
           v-for="(item, index) in dishList"
@@ -43,7 +43,7 @@ export default {
       dishList: [],
       newSongsList: [],
       type: 'plate',
-      loading: true
+      loading: false
     }
   },
   async created () {
@@ -55,7 +55,10 @@ export default {
       newDish()
         .then(data => {
           this.dishList = getRandomNumberArray(data.albums, 3)
-          this.loading = false
+          // 写在ajax请求中
+          this.$nextTick(() => {
+            this.loading = true
+          })
         })
         .catch(() => {
           Toast('加载失败,请稍后尝试')
@@ -65,7 +68,10 @@ export default {
       newSongs()
         .then(data => {
           this.newSongsList = getRandomNumberArray(data.data, 3)
-          this.loading = false
+          // 写在ajax请求中
+          this.$nextTick(() => {
+            this.loading = true
+          })
         })
         .catch(() => {
           Toast('加载失败,请稍后尝试')

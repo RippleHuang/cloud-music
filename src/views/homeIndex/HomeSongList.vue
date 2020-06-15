@@ -46,31 +46,33 @@
           <!-- 登录的情况下列表项显示 -->
           <ul class="song-group" v-if="$store.state.loginState">
             <!-- 我喜欢的音乐 -->
-            <song-list
+            <song-list-li
               v-for="(item, index) in myLoveList" :key="index"
               :coverImgUrl="item.coverImgUrl"
               :name="item.name"
               :trackCount="item.trackCount"
               :privacy="item.privacy"
-              :myLove="myLove"
+              :myLove="true"
+              :home="true"
             >
-            </song-list>
+            </song-list-li>
             <!-- 由于我喜欢的音乐占了一个,索引+1 -->
-            <song-list
+            <song-list-li
               v-for="(item, index) in createList" :key="index+1"
               :coverImgUrl="item.coverImgUrl"
               :name="item.name"
               :trackCount="item.trackCount"
               :privacy="item.privacy"
+              :home="true"
             >
-            </song-list>
+            </song-list-li>
           </ul>
         </template>
       </van-collapse-item>
       <!-- 收藏的歌单 -->
-      <!-- 登录的情况下才显示 -->
+      <!-- 有收藏的情况下才显示 -->
       <van-collapse-item
-        v-if="$store.state.loginState"
+        v-if="favoritesList > 0"
         name="favorites"
         :border="false"
         class="song-list-item"
@@ -95,15 +97,16 @@
         <!-- 歌单列表 -->
         <template #default>
           <ul class="song-group">
-            <song-list
+            <song-list-li
               v-for="(item, index) in favoritesList" :key="index"
               :coverImgUrl="item.coverImgUrl"
               :name="item.name"
               :trackCount="item.trackCount"
               :creatorNickname="item.creator.nickname"
               :privacy="item.privacy"
+              :home="true"
             >
-            </song-list>
+            </song-list-li>
           </ul>
         </template>
       </van-collapse-item>
@@ -112,7 +115,7 @@
 </template>
 <script>
 import { playlist } from 'api/apis'
-import SongList from 'components/SongList'
+import SongListLi from 'components/SongListLi'
 import { mapGetters } from 'vuex'
 import 'utils/imgLazy'
 export default {
@@ -127,8 +130,7 @@ export default {
       // 创建歌单详情
       createList: [],
       // 我的喜欢歌单
-      myLoveList: [],
-      myLove: true
+      myLoveList: []
     }
   },
   computed: {
@@ -150,9 +152,7 @@ export default {
   },
   methods: {
     getPlaylist (id) {
-      // 时间戳
-      const date = +new Date()
-      playlist(id, date)
+      playlist(id)
         .then(data => {
           this.sliceInfo(data.playlist)
           // 刷新
@@ -165,14 +165,14 @@ export default {
     sliceInfo (arr) {
       const from = this.createIndex
       const len = this.createIndex + this.favoritesIndex
-      this.createList = arr.slice(0, from)
-      this.myLoveList = this.createList.slice(0, 1)
-      this.createList = this.createList.slice(1)
+      const SongListCreate = arr.slice(0, from)
+      this.myLoveList = SongListCreate.slice(0, 1)
+      this.createList = SongListCreate.slice(1)
       this.favoritesList = arr.slice(from, len)
     }
   },
   components: {
-    SongList
+    SongListLi
   }
 }
 </script>
@@ -183,6 +183,55 @@ export default {
     display: flex;
     flex-direction: column;
     width: 100%;
+    // 歌单
+    .song-list-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      // 标题及右图标
+      .left-title {
+        display: flex;
+        align-items: center;
+        height: .9rem;
+        i {
+          height: .9rem;
+          line-height: .9rem;
+          font-size: .48rem;
+          text-align: center;
+        }
+        .title {
+          font-size: .33rem;
+          font-weight: bold;
+        }
+        .num {
+          margin-left: .1rem;
+          font-size: .28rem;
+          color: rgba(0, 0, 0, .4);
+        }
+      }
+      .right-icons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex: .25;
+        height: .9rem;
+        padding-right: .2rem;
+        i {
+          flex: 1;
+          height: .9rem;
+          line-height: .9rem;
+          text-align: center;
+          font-size: .33rem;
+        }
+      }
+      // 收藏歌单右侧按钮
+      .right-icon {
+        @extend .right-icons;
+        flex: .111;
+      }
+    }
   }
 }
 </style>

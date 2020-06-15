@@ -72,6 +72,7 @@
 import { PopupTopIcons, PopupShopIcons, PopupAppIcons, PopupBottomIcons } from 'getIcons/icons'
 import PopupTop from 'views/loginIndex/PopupTop'
 import { logout } from 'api/apis'
+import { mapGetters } from 'vuex'
 export default {
   name: 'LeftPopup',
   data () {
@@ -84,6 +85,9 @@ export default {
   },
   mounted () {
     this.initData()
+  },
+  computed: {
+    ...mapGetters(['nickName'])
   },
   methods: {
     initData () {
@@ -109,15 +113,17 @@ export default {
             logout()
               .then(data => {
                 if (data.code === 200) {
-                  // 保存手机号,签到信息 其他清空
+                  // 保存手机号,签到信息,用户标识 其他清空
                   const phone = localStorage.getItem('phoneNumber')
-                  const signInNum = localStorage.getItem('signInNum')
+                  const signIn = localStorage.getItem('signIn')
+                  const tag = localStorage.getItem('tag')
                   this.$store.dispatch('loginOut')
                   // 跳转到登录页,并显示体验按
-                  this.$router.push('/login')
                   localStorage.setItem('login', 'login')
+                  this.$router.push('/login')
                   localStorage.setItem('phoneNumber', phone)
-                  localStorage.setItem('signInNum', signInNum)
+                  localStorage.setItem('signIn', signIn)
+                  localStorage.setItem('tag', tag)
                 }
               })
               .catch(() => {

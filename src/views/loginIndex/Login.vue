@@ -8,7 +8,7 @@
     <div class="login">
       <van-button class="login-btn" round @click="phoneLogin">手机号登录</van-button>
       <van-button
-        v-if="this.$route.query.login === 'login'"
+        v-if="login === 'login'"
         class="experience-btn"
         round
         @click="noLogin"
@@ -34,8 +34,14 @@ export default {
   data () {
     return {
       checked: false,
-      timer: ''
+      timer: '',
+      login: ''
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.$data.login = localStorage.getItem('login')
+    })
   },
   created () {
     // 每次进入界面时，先清除之前的所有定时器

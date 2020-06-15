@@ -9,13 +9,15 @@
       <div class="list-info">
         <!-- 默认会显示用户姓名,需要替换 我喜欢的音乐样式调整 -->
         <p class="list-title van-ellipsis" :class="{ first:myLove }">{{myLove?'我喜欢的音乐':name}}</p>
-        <p class="list-num">
+        <p class="list-num van-ellipsis">
           {{trackCount}}首
-          <span v-if="creatorNickname !== ''" class="nickname">by {{creatorNickname}}</span>
+          <span v-if="creatorNickname">，by {{creatorNickname}}</span>
+          <span v-if="playCount === 0">，播放0次</span>
+          <span v-if="playCount">，播放{{playCount | filterPlayCountInfo }}次</span>
         </p>
       </div>
     </div>
-    <div class="compile">
+    <div class="compile" v-if="home">
       <van-button v-if="myLove" class="title-btn" round type="info" @click.stop>
         <i class="iconfont icon-xindong"></i>心动模式
       </van-button>
@@ -24,8 +26,9 @@
   </li>
 </template>
 <script>
+import { filterPlayCountInfo } from 'utils/filters'
 export default {
-  name: 'SongList',
+  name: 'SongListLi',
   props: {
     coverImgUrl: {
       type: String
@@ -37,15 +40,23 @@ export default {
       type: Number
     },
     creatorNickname: {
-      type: String,
-      default: ''
+      type: String
     },
     privacy: {
       type: Number
     },
     myLove: {
       type: Boolean
+    },
+    home: {
+      type: Boolean
+    },
+    playCount: {
+      type: Number
     }
+  },
+  filters: {
+    filterPlayCountInfo
   }
 }
 </script>
@@ -81,6 +92,9 @@ export default {
     border-width: 0 0 .5rem .5rem;
     border-color: transparent transparent rgba(0, 0, 0, .6) transparent;
   }
+}
+.list-num {
+  padding-bottom: .04rem;
 }
 // 心动按钮
 .compile {

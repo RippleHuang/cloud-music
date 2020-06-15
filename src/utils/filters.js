@@ -1,10 +1,21 @@
-// 超过一万转化万为单位 向下取整,超过一亿转化亿为单位 后一位小数四舍五入
+// 超过一万转化万为单位 向下取整, 超过一亿转化亿为单位 后一位小数四舍五入
 export const filterPlayCount = value => {
   if (!value) return ''
   if (value > 100000000) {
-    value = ((value / 100000000).toFixed(1)) + '亿'
+    value = (value / 100000000).toFixed(1) + '亿'
   } else if (value > 10000) {
     value = Math.floor(value / 10000) + '万'
+  }
+  return value
+}
+// 超过十万转化万为单位 小数点后一位向下取整
+// 超过一亿转化亿为单位 后一位小数四舍五入
+export const filterPlayCountInfo = value => {
+  if (!value) return ''
+  if (value > 100000000) {
+    value = (value / 100000000).toFixed(1) + '亿'
+  } else if (value > 100000) {
+    value = (Math.floor(value / 1000) / 10).toFixed(1) + '万'
   }
   return value
 }
@@ -60,7 +71,6 @@ export const filterAge = time => {
   for (let i = 1950; i < nowYear; i += 5) {
     ages.push(i)
   }
-  // 这里不能使用 forEach 因为forEach无法跳出循环！！！
   for (let i = 0; i < ages.length; i++) {
     const ele = ages[i]
     if (year <= ele + 5) {

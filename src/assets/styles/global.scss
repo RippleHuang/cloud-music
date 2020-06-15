@@ -70,25 +70,67 @@ html {
     }  
   }
 }
-// 修改vant的选项卡样式
-.nav-tabs {
-  height: 0;
-  padding-top: .75rem;
-  // 去除边框
-  [class*="van-hairline"]::after {
-    border: none;
+// 修改视频下vant的选项卡样式
+.video-index {
+  .nav-tabs {
+    height: 0;
+    padding-top: .75rem;
+    // 去除边框
+    [class*="van-hairline"]::after {
+      border: none;
+    }
+    .van-tabs__wrap {
+      position: fixed;
+      top: 1.18rem;
+      width: 100%;
+      height: .75rem;
+    }
+    // 标题样式
+    .van-tab {
+      font-size: .25rem;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.8);
+      // 解决在谷歌下字体部分缺失
+      .van-tab__text {
+        padding-top: .04rem;
+      }
+      &:active {
+        background-color: rgba(1, 1, 1, 0.1);
+      }
+    }
+    // 标题激活样式
+    .van-tab--active {
+      font-size: .26rem;
+      color: #fff;
+    }
+    .van-tabs__content {
+      display: none;
+    }
   }
+}
+// 修改用户信息下vant的选项卡样式
+.user-tab {
   .van-tabs__wrap {
-    position: fixed;
-    top: 1.18rem;
-    width: 100%;
-    height: .75rem;
+    // 粘性布局
+    position: sticky;
+    top: 1.23rem;
+    z-index: 6;
+    height: .8rem;
+    margin-bottom: -0.02rem;
+    border: none;
+    border-radius: .4rem .4rem 0 0;
+    .van-tabs__nav {
+      z-index: 6;
+    }
+  }
+  .van-tabs__content {
+    background-color: #fff;
+    border: none;
   }
   // 标题样式
   .van-tab {
-    font-size: .25rem;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.8);
+    color: black;
+    font-size: .28rem;
     // 解决在谷歌下字体部分缺失
     .van-tab__text {
       padding-top: .04rem;
@@ -99,11 +141,37 @@ html {
   }
   // 标题激活样式
   .van-tab--active {
-    font-size: .26rem;
-    color: #fff;
+    font-size: .3rem;
+    font-weight: bold;
+  }
+}
+// 修改用户歌单下vant tabs
+.list-all {
+  .van-tabs__wrap {
+    // 粘性布局
+    position: sticky;
+    top: 1.18rem;
+    height: .8rem;
+    margin-bottom: -0.02rem;
+    z-index: 6;
   }
   .van-tabs__content {
-    display: none;
+    background-color: #fff;
+    border: none;
+  }
+  // 标题样式
+  .van-tab {
+    color: black;
+    font-size: .24rem;
+    // 解决在谷歌下字体部分缺失
+    .van-tab__text {
+      padding-top: .04rem;
+    }
+  }
+  // 标题激活样式
+  .van-tab--active {
+    font-size: .26rem;
+    font-weight: bold;
   }
 }
 // 修改vant checkbox样式
@@ -222,155 +290,110 @@ html {
   }
 }
 // 歌单公共样式
-// 歌单
-.song-list-item {
+// 歌单列表
+.song-group {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-  // 标题及右图标
-  .left-title {
+  .song-list {
     display: flex;
-    align-items: center;
-    height: .9rem;
-    i {
-      height: .9rem;
-      line-height: .9rem;
-      font-size: .48rem;
-      text-align: center;
-    }
-    .title {
-      font-size: .33rem;
-      font-weight: bold;
-    }
-    .num {
-      margin-left: .1rem;
-      font-size: .28rem;
-      color: rgba(0, 0, 0, .4);
-    }
-  }
-  .right-icons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: .25;
-    height: .9rem;
-    padding-right: .2rem;
-    i {
-      flex: 1;
-      height: .9rem;
-      line-height: .9rem;
-      text-align: center;
-      font-size: .33rem;
-    }
-  }
-  // 收藏歌单右侧按钮
-  .right-icon {
-    @extend .right-icons;
-    flex: .111;
-  }
-  // 歌单列表
-  .song-group {
-    display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
-    .song-list {
+    height: 1.2rem;
+    .left {
       display: flex;
-      flex-direction: row;
-      width: 100%;
-      height: 1.2rem;
-      .left {
-        display: flex;
-        align-items: center;
-        flex: 3.2;
-        // 左侧图像
-        .list-cover {
-          padding: .1rem .225rem .1rem .27rem;
-          .bgc {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 1rem;
-            height: 1rem;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: .1rem;
-          }
-          .icon-xindong2 {
+      align-items: center;
+      flex: 3.2;
+      // 左侧图像
+      .list-cover {
+        padding: .1rem .225rem .1rem .27rem;
+        .bgc {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 1rem;
+          height: 1rem;
+          background: rgba(0, 0, 0, 0.8);
+          border-radius: .1rem;
+          i {
             color: #fff;
             font-size: .5rem;
           }
         }
-        // 歌单信息
-        .list-info {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          flex: 1;
-          height: 1rem;
-          padding: .1rem 0;
-          .list-title {
-            width: 4.8rem;
-            font-size: .28rem;
-            color: black;
-          }
-          .first {
-            width: 3rem;
-          }
-          .list-num {
-            font-size: .25rem;
-          }
-        }
       }
-      // 心动按钮
-      .heart-module {
+      // 歌单信息
+      .list-info {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        justify-content: space-around;
         flex: 1;
-        height: 1.2rem;
-        padding-right: .225rem;
-        font-size: .24rem;
-        .title-btn {
-          width: 1.75rem;
-          height: .5rem;
-          line-height: .5rem;
-          padding: 0 .1rem;
-          font-size: 3vw;
+        height: 1rem;
+        padding: .1rem 0;
+        .list-title {
+          width: 4.8rem;
+          padding-top: .04rem;
+          font-size: .29rem;
           color: black;
-          background-color: #fff;
-          border: .01rem solid rgba(0, 0, 0, .1);
-          .icon-xindong {
-            font-size: .24rem;
-            margin-right: .05rem;
-          }
-          &:active {
-            border: none;
-          }
+        }
+        .first {
+          width: 3rem;
+        }
+        .list-num {
+          width: 95%;
+          padding-top: .04rem;
+          color: rgb(112, 111, 111);
+          font-size: .24rem;
         }
       }
-      // 歌单右侧编辑
-      .compile {
+    }
+    // 心动按钮
+    .heart-module {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      height: 1.2rem;
+      padding-right: .225rem;
+      font-size: .24rem;
+      .title-btn {
+        width: 1.75rem;
+        height: .5rem;
+        line-height: .5rem;
+        padding: 0 .1rem;
+        font-size: 3vw;
+        color: black;
+        background-color: #fff;
+        border: .01rem solid rgba(0, 0, 0, .1);
+        .icon-xindong {
+          font-size: .24rem;
+          margin-right: .05rem;
+        }
+        &:active {
+          border: none;
+        }
+      }
+    }
+    // 歌单右侧编辑
+    .compile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: .32;
+      height: 1.2rem;
+      padding-right: .225rem;
+      .icon-sandian {
         display: flex;
         justify-content: center;
         align-items: center;
-        flex: .32;
+        flex: 1;
         height: 1.2rem;
-        padding-right: .225rem;
-        .icon-sandian {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex: 1;
-          height: 1.2rem;
-          font-size: .33rem;
-        }
+        font-size: .33rem;
       }
-      // 通过兄弟选择器来使整个容器active
-      .left:active, .left:active ~* {
-        background: rgba(1, 1, 1, .1);
-        .title-btn {
-          background: transparent;
-        }
+    }
+    // 通过兄弟选择器来使整个容器active
+    .left:active, .left:active ~* {
+      background: rgba(1, 1, 1, .1);
+      .title-btn {
+        background: transparent;
       }
     }
   }
