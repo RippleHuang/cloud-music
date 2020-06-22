@@ -4,8 +4,7 @@
       :title="$store.state.nickName + '的歌单'"
       :background="'#dd001b'"
       defaultShow
-    >
-    </default-nav>
+    />
     <van-tabs
       v-model="active"
       swipeable
@@ -22,8 +21,8 @@
             :trackCount="item.trackCount"
             :privacy="item.privacy"
             :playCount="item.playCount"
-          >
-          </song-list-li>
+            :bottom="0.17"
+          />
         </ul>
       </van-tab>
       <van-tab :title="`收藏的歌单${favoritesNum}`">
@@ -37,8 +36,7 @@
             :creatorNickname="item.creator.nickname"
             :privacy="item.privacy"
             :playCount="item.playCount"
-          >
-          </song-list-li>
+          />
         </ul>
       </van-tab>
   </van-tabs>

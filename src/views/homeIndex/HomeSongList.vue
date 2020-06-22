@@ -9,7 +9,7 @@
             <i v-show="activeNames.indexOf('create') === -1" class="iconfont icon-arrow-right"></i>
             <i v-show="activeNames.indexOf('create') !== -1" class="iconfont icon-arrow-down"></i>
             <span class="title">创建的歌单</span>
-            <span class="num">({{index.createNum}})</span>
+            <span class="num">({{songListNum.createNum}})</span>
           </div>
         </template>
         <!-- 右边按钮图标 -->
@@ -54,8 +54,10 @@
               :privacy="item.privacy"
               :myLove="true"
               :home="true"
-            >
-            </song-list-li>
+              :id="item.id"
+              @getHeartMode="getHeartMode"
+              @click.native="$router.push(`/showsong?albumId=${item.id}`)"
+            />
             <!-- 由于我喜欢的音乐占了一个,索引+1 -->
             <song-list-li
               v-for="(item, index) in createList" :key="index+1"
@@ -64,15 +66,15 @@
               :trackCount="item.trackCount"
               :privacy="item.privacy"
               :home="true"
-            >
-            </song-list-li>
+              @click.native="$router.push(`/showsong?albumId=${item.id}`)"
+            />
           </ul>
         </template>
       </van-collapse-item>
       <!-- 收藏的歌单 -->
       <!-- 有收藏的情况下才显示 -->
       <van-collapse-item
-        v-if="favoritesList > 0"
+        v-if="favoritesList.length > 0"
         name="favorites"
         :border="false"
         class="song-list-item"
@@ -84,7 +86,7 @@
             <i v-show="activeNames.indexOf('favorites') === -1" class="iconfont icon-arrow-right"></i>
             <i v-show="activeNames.indexOf('favorites') !== -1" class="iconfont icon-arrow-down"></i>
             <span class="title">收藏的歌单</span>
-            <span class="num">({{index.favoritesNum}})</span>
+            <span class="num">({{songListNum.favoritesNum}})</span>
           </div>
         </template>
         <!-- 右边按钮图标 -->
@@ -105,8 +107,8 @@
               :creatorNickname="item.creator.nickname"
               :privacy="item.privacy"
               :home="true"
-            >
-            </song-list-li>
+              @click.native="$router.push(`/showsong?albumId=${item.id}`)"
+            />
           </ul>
         </template>
       </van-collapse-item>
@@ -121,7 +123,14 @@ import 'utils/imgLazy'
 export default {
   name: 'HomeSongList',
   inject: ['reload'],
-  props: ['index'],
+  props: {
+    songListNum: {
+      type: Object
+    },
+    refresh: {
+      type: Number
+    }
+  },
   data () {
     return {
       activeNames: ['create'],
@@ -130,7 +139,12 @@ export default {
       // 创建歌单详情
       createList: [],
       // 我的喜欢歌单
-      myLoveList: []
+      myLoveList: [],
+      // 歌单id
+      songList: {
+        id: 0,
+        pid: 0
+      }
     }
   },
   computed: {
@@ -140,7 +154,7 @@ export default {
     // 当值第一次绑定的时候，不会执行监听函数，只有值发生改变才会执行
     // 需要在最初绑定值的时候也执行函数，则就需要用到immediate属性
     // 监听数组的变化 深度监视deep
-    index: {
+    songListNum: {
       deep: true,
       handler (val, oldVal) {
         this.createIndex = val.createNum
@@ -148,6 +162,17 @@ export default {
         this.getPlaylist(this.accountUid)
       },
       immediate: true
+    },
+    refresh: {
+      handler (newV, old) {
+        this.getPlaylist(this.accountUid)
+      }
+    },
+    songList: {
+      deep: true,
+      handler (val, oldVal) {
+        this.$emit('songList', val)
+      }
     }
   },
   methods: {
@@ -169,6 +194,13 @@ export default {
       this.myLoveList = SongListCreate.slice(0, 1)
       this.createList = SongListCreate.slice(1)
       this.favoritesList = arr.slice(from, len)
+    },
+    getHeartMode (id, pid) {
+      this.songList.id = id
+      this.songList.pid = pid
+    },
+    showSong () {
+      this.$router.push('/showsong')
     }
   },
   components: {

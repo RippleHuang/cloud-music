@@ -1,17 +1,24 @@
 <template>
   <div id="app">
     <div class="container">
-      <div class="content">
+      <!-- 为迷你播放器留空 全屏播放器时隐藏 -->
+      <div class="content"
+        :class="{
+          'small-height': $store.state.audioList.length,
+          'hidden': $store.state.fullScreen
+        }"
+      >
         <keep-alive>
           <router-view v-if="isReload"></router-view>
         </keep-alive>
       </div>
-      <play-footer v-show="false"></play-footer>
+      <!-- 通过是否有播放列表控制显示 -->
+      <play-music-index v-show="$store.state.audioList.length" />
     </div>
   </div>
 </template>
 <script>
-import PlayFooter from 'components/PlayFooter'
+import PlayMusicIndex from 'views/playMusic/PlayMusicIndex'
 export default {
   name: 'app',
   provide () {
@@ -21,7 +28,8 @@ export default {
   },
   data () {
     return {
-      isReload: true
+      isReload: true,
+      show: false
     }
   },
   methods: {
@@ -33,7 +41,7 @@ export default {
     }
   },
   components: {
-    PlayFooter
+    PlayMusicIndex
   }
 }
 </script>
@@ -46,5 +54,19 @@ export default {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  .container {
+    position: relative;
+  }
+  .small-height {
+    padding-bottom: 1rem;
+  }
+}
+// 一开始是不让 #app 滚动
+// .no-scroll {
+//   height: 100vh;
+//   overflow: hidden;
+// }
+.hidden {
+  display: none;
 }
 </style>

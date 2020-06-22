@@ -8,6 +8,7 @@ import search from './search'
 import login from './login'
 import user from './user'
 import Default from 'views/default/Default'
+const ShowSong = () => import(/* webpackChunkName: "showsong" */ 'views/default/ShowSong')
 Vue.use(VueRouter)
 
 const routes = [
@@ -25,7 +26,11 @@ const routes = [
   },
   ...search,
   ...login,
-  ...user
+  ...user,
+  {
+    path: '/showsong',
+    component: ShowSong
+  }
 ]
 
 const router = new VueRouter({

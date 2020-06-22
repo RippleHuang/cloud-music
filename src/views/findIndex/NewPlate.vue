@@ -16,7 +16,7 @@
           :key="index"
           :imgUrl="item.picUrl"
           :dec="item.name"
-        ></img-card>
+        />
       </div>
       <div class="images-con" v-show="type==='newSong'">
         <img-card
@@ -25,7 +25,7 @@
           :imgUrl="item.album.blurPicUrl"
           :dec="item.name"
           :newPlatetype="type"
-        ></img-card>
+        />
       </div>
     </div>
   </div>

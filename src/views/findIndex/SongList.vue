@@ -13,8 +13,8 @@
         :dec="item.name"
         :playCount="item.playCount"
         :albumId="item.id"
-      >
-      </img-card>
+        @loadingImg="loadingImg"
+      />
     </div>
   </div>
 </template>
@@ -38,14 +38,15 @@ export default {
       recSongList()
         .then(data => {
           this.songList = getRandomNumberArray(data.playlists, 6)
-          // 写在ajax请求中v-if加载完在执行
-          this.$nextTick(() => {
-            this.loading = true
-          })
         })
         .catch(() => {
           Toast('加载失败,请稍后尝试')
         })
+    },
+    loadingImg (data) {
+      this.$nextTick(() => {
+        this.loading = data
+      })
     }
   },
   mounted () {

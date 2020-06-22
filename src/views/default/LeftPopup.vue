@@ -4,7 +4,7 @@
     <div class="header">
       <div class="mask"></div>
       <!-- 头部登录,显示登录 -->
-      <popup-top></popup-top>
+      <popup-top />
       <!-- 头部卡片 -->
       <div class="card">
         <div class="left">
@@ -117,7 +117,7 @@ export default {
                   const phone = localStorage.getItem('phoneNumber')
                   const signIn = localStorage.getItem('signIn')
                   const tag = localStorage.getItem('tag')
-                  this.$store.dispatch('loginOut')
+                  this.$store.commit('LOGIN_OUT')
                   // 跳转到登录页,并显示体验按
                   localStorage.setItem('login', 'login')
                   this.$router.push('/login')

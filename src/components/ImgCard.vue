@@ -1,5 +1,5 @@
 <template>
-  <div class="img-card">
+  <div class="img-card" :style="{width}">
     <!-- 发现页面歌单显示播放数 -->
     <span class="tag" v-if="playCount">
       <i class="iconfont icon-gedanbofangliang_"></i>
@@ -15,7 +15,7 @@
       <!-- load图片加载完成事件 -->
       <img class="image-con" v-lazy="imgUrl" alt="" @load="imgLoad" />
     </div>
-    <div class="dec van-multi-ellipsis--l2" >{{ dec }}</div>
+    <div v-if="dec" class="dec van-multi-ellipsis--l2" >{{ dec }}</div>
   </div>
 </template>
 <script>
@@ -37,6 +37,9 @@ export default {
     },
     newPlatetype: {
       type: String
+    },
+    width: {
+      type: String
     }
   },
   filters: {
@@ -44,8 +47,7 @@ export default {
   },
   methods: {
     imgLoad () {
-      // sync修饰符绑定事件传递给父组件
-      this.$emit('update:loadingImg', true)
+      this.$emit('loadingImg', true)
     }
   }
 }
@@ -64,10 +66,8 @@ export default {
     letter-spacing: 0;
     color: #fff;
     .icon-gedanbofangliang_ {
-      position: relative;
-      right: -0.06rem;
       color: #fff;
-      font-size: .23rem;
+      font-size: .21rem;
     }
   }
   .img-con {

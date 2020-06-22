@@ -33,30 +33,42 @@ export const filterSetTime = value => {
   value = `${min}:${sec}`
   return value
 }
-// 将毫秒转换为 年.月.日
-export const filterSetYear = (value, splitY = '.', splitM = '.', splitD = '') => {
+export const setName = val => {
+  const reg = /<\/?.+?\/?>/g
+  val = val.replace(reg, '')
+  return val
+}
+// 将毫秒根据情况转换为 年 月 日 时:分
+export const filterSetDate = (value) => {
   const oDate = new Date(value)
   const oYear = oDate.getFullYear()
   const oMonth = oDate.getMonth() + 1
   const oDay = oDate.getDate()
-  value = `${oYear}${splitY}${oMonth}${splitM}${oDay}${splitD}`
+  const h = oDate.getHours()
+  const m = oDate.getMinutes()
+  // 现在时间
+  const now = new Date()
+  // 位数不足两位补全0
+  function supplement (nn) {
+    nn = nn < 10 ? '0' + nn : nn
+    return nn
+  }
+  // 拼接时间 hh:mm
+  const time = ' ' + supplement(h) + ':' + supplement(m)
+  if (now.getFullYear() > oYear) {
+    value = `${oYear}年${oMonth}月${oDay}日`
+  } else if (now.getMonth() + 1 > oMonth) {
+    value = `${oMonth}月${oDay}日`
+  } else if (now.getDate() > oDay) {
+    value = now.getDate() - 1 === oDay ? `昨天 ${time}` : `${oMonth}月${oDay}日`
+  } else if (now.getHours() > h) {
+    const minutes = now.getMinutes() - m >= 0 ? time : `${60 + now.getMinutes() - m}分钟前`
+    value = now.getHours() - 1 === h ? minutes : time
+  } else if (now.getHours() === h) {
+    value = now.getMinutes() - m <= 0 ? '刚刚' : `${now.getMinutes() - m}分钟前`
+  }
   return value
 }
-// 将毫秒设置为 月-日 格式
-export const filterSetMonth = (value, splitM = '-', splitD = '') => {
-  const oDate = new Date(value)
-  let oMonth = oDate.getMonth() + 1
-  let oDay = oDate.getDate()
-  if (oMonth < 10) {
-    oMonth = '0' + oMonth
-  }
-  if (oDay < 10) {
-    oDay = '0' + oDay
-  }
-  value = `${oMonth}${splitM}${oDay}${splitD}`
-  return value
-}
-
 export const filterAge = time => {
   if (!time) {
     // 这里是因为默认值为0的话会返回1970

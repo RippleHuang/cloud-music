@@ -20,8 +20,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 92.8%;
   box-sizing: border-box;
+  background-color: #fff;
   .bar {
     display: flex;
     justify-content: center;

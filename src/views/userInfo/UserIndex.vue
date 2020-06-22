@@ -8,7 +8,7 @@
       :gender="gender"
       :birthday="birthday"
       :coverImgUrl="coverImgUrl"
-    ></opacity-card>
+    />
     <div class="user-tab">
       <van-tabs
         v-model="active"
@@ -17,7 +17,7 @@
         line-width="0.6rem"
       >
         <van-tab title="主页">
-          <loading :height="4.58" v-show="!loading" />
+          <loading :height="7.58" v-show="!loading" />
           <div class="show" v-show="loading" @touchmove="scrollHandler">
             <ul class="song-group">
               <!-- 听歌排行 -->
@@ -43,8 +43,7 @@
                 :privacy="item.privacy"
                 :myLove="true"
                 :playCount="item.playCount"
-              >
-              </song-list-li>
+              />
             </ul>
             <!-- 创建的歌单 -->
             <ul class="song-group" v-if="createNum !== 1">
@@ -56,8 +55,7 @@
                 :trackCount="item.trackCount"
                 :privacy="item.privacy"
                 :playCount="item.playCount"
-              >
-              </song-list-li>
+              />
               <div class="more on-touch" v-if="createNum > 10" @click="moreList">更多歌单&nbsp;&gt;</div>
             </ul>
             <!-- 收藏的歌单 -->
@@ -71,8 +69,7 @@
                 :creatorNickname="item.creator.nickname"
                 :privacy="item.privacy"
                 :playCount="item.playCount"
-              >
-              </song-list-li>
+              />
               <div class="more on-touch" v-if="favoritesNum > 10" @click="moreList">更多歌单&nbsp;&gt;</div>
             </ul>
             <div class="basic-information">
@@ -98,27 +95,33 @@
             </div>
           </div>
         </van-tab>
-        <van-tab title="动态">
-          <user-dynamic :refresh="refresh"></user-dynamic>
+        <van-tab>
+          <template #title>动态<span class="size">{{size}}</span></template>
+          <div class="data-info" v-if="size === 0">暂时还没有动态哦</div>
+          <user-dynamic v-else :refresh="refresh" />
         </van-tab>
       </van-tabs>
     </div>
   </div>
 </template>
 <script>
-import OpacityCard from 'components/OpacityCard'
+import OpacityCard from './OpacityCard'
 import SongListLi from 'components/SongListLi'
 import Loading from 'components/Loading'
 import UserDynamic from './UserDynamic'
 import { mapGetters } from 'vuex'
-import { userDetail, userInfo, playlist } from 'api/apis'
+import { userDetail, userInfo, playlist, userEvent } from 'api/apis'
 import { filterAge } from 'utils/filters'
 import { getAstro } from 'utils/getAstro'
 export default {
   name: 'UserInfo',
   data () {
     return {
+      // tab激活
       active: 0,
+      // 预览图片
+      show: false,
+      // 用户信息
       gender: 1,
       signature: '',
       age: 0,
@@ -130,6 +133,7 @@ export default {
       astro: '',
       month: 0,
       coverImgUrl: 'http://p1.music.126.net/2zSNIqTcpHL2jIvU6hG0EA==/109951162868128395.jpg',
+      // 歌单信息
       createNum: 0,
       favoritesNum: 0,
       myLoveList: [],
@@ -137,35 +141,58 @@ export default {
       createListAll: [],
       favoritesList: [],
       favoritesListAll: [],
+      // 加载
       loading: false,
+      // 吸顶以及透明度
       isFixed: false,
       opacity: 1,
-      refresh: 0
+      // 后代组件是否刷新
+      refresh: 0,
+      // 动态数量
+      size: 0
     }
   },
   created () {
     this.getSongList()
+    this.getUserEvent()
     this.initData()
     window.addEventListener('scroll', this.scrollHandler, true)
   },
   computed: {
     ...mapGetters(['loginState', 'accountUid'])
   },
+  /* watch: {
+  *  $route (to, from) {
+  *    const tag = JSON.parse(localStorage.getItem('tag'))
+  *    // 通过此方法确定是否重新发送请求更新用户数据
+  *     if (tag[0] !== tag[1] && to.path === '/userInfo') {
+  *       this.loading = false
+  *       this.getSongList()
+  *       this.getUserEvent()
+  *       this.initData()
+  *       // 通知后代组件刷新
+  *       this.refresh = +new Date()
+  *       localStorage.setItem('tag', JSON.stringify([tag[1], this.accountUid]))
+  *     }
+  *   }
+  *},
+  */
+  /* 直接监听uid变化 */
   watch: {
-    $route (to, from) {
-      const tag = JSON.parse(localStorage.getItem('tag'))
-      // 通过此方法确定是否重新发送请求更新用户数据
-      if (tag[0] !== tag[1] && to.path === '/userInfo') {
+    '$store.state.accountUid' (val, oldVal) {
+      if (this.loginState) {
+        this.loading = false
         this.getSongList()
+        this.getUserEvent()
         this.initData()
-        // 通知子组件刷新
+        // 通知后代组件刷新
         this.refresh = +new Date()
-        localStorage.setItem('tag', JSON.stringify([tag[1], this.accountUid]))
       }
     }
   },
   methods: {
-    initData () {
+    // 用户数据
+    initData (data) {
       userDetail(this.accountUid)
         .then(data => {
           this.listenSongs = data.listenSongs
@@ -220,7 +247,6 @@ export default {
           this.createList = SongListCreate.slice(1, createNumSlice)
           // 收藏的音乐
           this.favoritesList = arr.slice(this.createNum, this.createNum + favoritesNumSlice)
-          // 写在ajax请求中
           this.$nextTick(() => {
             this.loading = true
           })
@@ -229,11 +255,21 @@ export default {
           this.$toast('请求失败,请稍后尝试')
         })
     },
+    // 获取用户动态数
+    getUserEvent () {
+      userEvent(this.accountUid)
+        .then(data => {
+          this.size = data.size
+        })
+        .catch(() => {
+          this.$toast('请求失败,请稍后尝试')
+        })
+    },
     rollback () {
       this.$router.go(-1)
     },
+    // 粘性时变化样式
     scrollHandler () {
-      clearTimeout(this.timer)
       var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
       var clientHeight = document.documentElement.clientHeight
       if (scrollTop / clientHeight >= 0.35) {
@@ -244,6 +280,7 @@ export default {
         this.isFixed = false
       }
     },
+    // 跳转到展示页
     moreList () {
       // 传递数组
       var data = [this.createNum, this.favoritesNum, this.createListAll, this.favoritesListAll]
@@ -311,6 +348,20 @@ export default {
         color: #7b7c7e;
         font-size: .25rem;
       }
+    }
+    .size {
+      position: absolute;
+      left: 60%;
+      top: .34rem;
+      font-size: .22rem;
+      color: rgb(180, 177, 177);
+    }
+    // 没有动态
+    .data-info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 3.2rem;
     }
   }
 }

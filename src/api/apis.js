@@ -16,7 +16,7 @@ export const catlist = (params) => get('/playlist/catlist', params) // 获取歌
 export const hot = (params) => get('/playlist/hot', params) // 获取热门歌单分类
 export const topList = (params) => get('/toplist/detail', params) // 获取所有榜单内容摘要
 export const idxList = (params) => get('/top/list', params) // 获取排行榜
-export const albumDetail = (id, s = 5) => post('/playlist/detail', { id, s }) // 获取歌单详情 id-歌单 最近的 s 个收藏者,默认5个
+export const albumDetail = (id, s = 5) => post(`/playlist/detail?timestamp=${+new Date()}`, { id, s }) // 获取歌单详情 id-歌单 最近的 s 个收藏者,默认5个
 export const recSongs = (params) => get('/recommend/songs', params) // 每日推荐歌曲
 export const dateRecSongList = (params) => get('/recommend/resource', params) // 每日推荐歌单，发现页展示的那六个
 export const newDish = (params) => post('/top/album', params) // 发现页新碟
@@ -34,6 +34,13 @@ export const favoriteAlbums = (params) => get('/album/sublist', params)// 获取
 export const favoriteArtists = (params) => get('/artist/sublist', params)// 获取收藏的歌手
 export const favoriteVideos = (params) => get('/mv/sublist', params)// 获取收藏的视频
 export const djSublist = (params) => get('/dj/sublist', params)// 获取订阅的电台
+// ======播放歌曲======
+export const songUrl = (id, br) => post(`/song/url?timestamp=${+new Date()}`, { id, br })// 获取歌曲url 参数 音乐id 码率,默认最大码率
+export const checkSong = (id, br) => post('/check/music', { id, br })// 查看歌曲是否可用 参数 音乐id 码率,默认最大码率
+export const songLyric = (id) => post(`/lyric?timestamp=${+new Date()}`, { id })// 获取歌词 参数 音乐id
+export const heartMode = (id, pid, sid) => post('/playmode/intelligence/list', { id, pid, sid })// 心动模式播放 参数 歌曲id 歌单id 要开始播放的歌曲id
+export const likeMusicList = (uid) => post(`/likelist?timestamp=${+new Date()}`, { uid })// 喜欢歌曲列表 参数 用户uid
+export const likeMusic = (id, like) => post(`/like?timestamp=${+new Date()}`, { id, like })// 喜欢歌曲 参数 音乐id 布尔值like
 // ======视频页面======
 export const getVideoTag = (params) => get('/video/group/list', params) // 获取视频标签导航
 export const getVideoGroup = (params) => get('/video/group', params) // 获取对应标签的视频详情

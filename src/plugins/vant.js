@@ -16,7 +16,10 @@ import {
   Toast,
   Dialog,
   NoticeBar,
-  ShareSheet
+  ShareSheet,
+  ImagePreview,
+  Slider,
+  ActionSheet
 } from 'vant'
 
 Vue.use(Button)
@@ -43,3 +46,6 @@ Vue.use(Toast)
 Vue.use(Dialog)
 Vue.use(NoticeBar)
 Vue.use(ShareSheet)
+Vue.use(ImagePreview)
+Vue.use(Slider)
+Vue.use(ActionSheet)

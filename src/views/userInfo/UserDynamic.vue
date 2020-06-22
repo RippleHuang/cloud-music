@@ -1,7 +1,7 @@
 <template>
   <div class="dynamic">
-    <div class="data-info" v-show="!dataInfo">暂时还没有动态哦</div>
-    <div class="dynamic-card van-hairline--bottom on-touch" v-for="(item, index) in dataMsg" :key="index">
+    <loading :height="7.58" v-show="!loading" />
+    <div class="dynamic-card van-hairline--bottom" v-for="(item, index) in dataMsg" :key="index">
       <div class="top">
         <div class="img-info">
           <img :src="avatarUrl" alt />
@@ -11,42 +11,103 @@
             {{nickName}}
             <span class="category">{{item.type.type}}</span>
           </h1>
-          <span class="time">{{item.time | filterSetYear}}</span>
+          <span class="time">{{item.time | filterSetDate}}</span>
         </div>
       </div>
       <div class="content">
-        <h1 class="msg">{{item.msg}}</h1>
+        <h1 class="msg" v-if="item.msg">{{item.msg}}</h1>
+        <!-- 用户发的图片,需要循环得到,没有不显示此节点 -->
         <div class="image" v-for="(img, index1) in item.pics" :key="index1">
           <img :src="img.originUrl" alt="">
         </div>
-        <div class="container-share">
-          <!-- <img :src="item[item.type.img]" alt=""> -->
-          {{item.type.img}}
+        <!-- 转发样式需修改 -->
+        <div class="container-share" :style="{padding: item.msgs ? '.2rem .1rem .1rem': '0'}">
+          <p class="share-msg" v-if="item.msgs">
+            <span class="share-name">@{{item.event.user.nickname}}</span>
+            :{{item.msgs}}
+          </p>
+          <!-- 视频 -->
+          <div class="viedo-img"
+            v-if="item.type.type === '分享视频:' ||
+                  item.type.type === '发布视频:' ||
+                  item.typeNum === 21 ||
+                  item.typeNum === 41 ||
+                  item.typeNum === 39"
+          >
+            <img :src="item.img" alt="">
+            <div class="mask"></div>
+            <span class="playtime">
+              <i class="iconfont icon-gedanbofangliang_"></i>
+              {{item.playTime | filterPlayCountInfo}}
+            </span>
+            <span class="duration">
+              <i class="iconfont icon-paihangbang"></i>
+              {{item.duration * 1000 | filterSetTime}}
+            </span>
+            <i class="iconfont icon-bofang"></i>
+          </div>
+          <!-- 其他 -->
+          <div class="cover"
+            v-else
+            :style="{backgroundColor: item.msgs ? 'white': 'rgb(241, 238, 238)'}"
+          >
+            <img :src="item.img" alt="">
+            <!-- 单曲图片图标 -->
+            <span class="newsong-icon" v-if="item.song || item.typeNum === 18">
+              <i class="iconfont icon-bofang"></i>
+            </span>
+            <div class="right-info">
+              <p class="info-name van-ellipsis">
+                <!-- 专栏,电台与歌单tag -->
+                <span class="tag" v-if="item.playlist">歌单</span>
+                <span class="tag" v-if="item.djRadio">{{item.djRadio.category}}</span>
+                <span class="tag" v-if="item.topic">专栏</span>
+                {{item.name}}
+                {{item.program}}
+              </p>
+              <p class="byname van-ellipsis"
+                v-if="item.playlist || item.djRadio || item.topic"
+              >
+              by {{item.byNickname}}
+              </p>
+              <p class="byname van-ellipsis" v-else>
+                <span class="tag" v-if="item.channels">{{item.channels}}</span>
+                {{item.byNickname}}
+              </p>
+            </div>
+          </div>
         </div>
         <div class="actions">
-          <div class="icon">
+          <div class="icon" @click="noAchieve">
             <i class="iconfont icon-xunhuan1-copy"></i>
             {{item.info.shareCount ? item.info.shareCount : '转发'}}
           </div>
-          <div class="icon">
+          <div class="icon" @click="noAchieve">
             <i class="iconfont icon-pinglun"></i>
             {{item.info.commentCount ? item.info.commentCount : '评论'}}
           </div>
-          <div class="icon">
+          <div class="icon" @click="noAchieve">
             <i class="iconfont icon-zanpress"></i>
             {{item.info.likedCount ? item.info.likedCount : '赞'}}
           </div>
-          <i class="iconfont icon-sandian"></i>
+          <i class="iconfont icon-sandian on-touch" @click="showShareUser = true"></i>
         </div>
       </div>
     </div>
+    <van-share-sheet
+      v-model="showShareUser"
+      title="分享"
+      :options="optionsUser"
+    />
   </div>
 </template>
 <script>
 import { userEvent } from 'api/apis'
 import { mapGetters } from 'vuex'
-import { filterSetYear } from 'utils/filters'
+import { filterSetDate, filterPlayCountInfo, filterSetTime } from 'utils/filters'
 import types from '@/getShareInfo/shareInfo'
+import shareTypes from '@/getShareInfo/shareEvent'
+import Loading from 'components/Loading'
 export default {
   name: 'UserDynamic',
   props: {
@@ -56,10 +117,22 @@ export default {
   },
   data () {
     return {
-      dataInfo: true,
       dataMsg: [],
-      type: '',
-      pic: 'http://p2.music.126.net/LpiNijwNVIo-21ShUh8ZhA==/109951165015551658.jpg'
+      loading: false,
+      size: 0,
+      showShareUser: false,
+      optionsUser: [
+        [
+          { name: '微信', icon: 'wechat' },
+          { name: '微博', icon: 'weibo' },
+          { name: 'QQ', icon: 'qq' },
+          { name: '复制链接', icon: 'link' },
+          { name: '二维码', icon: 'qrcode' }
+        ],
+        [
+          { name: '分享', icon: 'poster' }
+        ]
+      ]
     }
   },
   computed: {
@@ -68,24 +141,21 @@ export default {
   watch: {
     refresh: {
       handler (newV, old) {
-        this._getUserEvent(this.accountUid)
+        this.loading = false
+        this.getUserEvent(this.accountUid)
       },
       immediate: true
     }
   },
-  created () {
-    this._getUserEvent(this.accountUid)
-  },
   methods: {
     // 获取用户动态
-    _getUserEvent (id) {
+    getUserEvent (id) {
       userEvent(id)
         .then(data => {
-          if (data.size === 0) {
-            this.dataInfo = false
-            return
-          }
           this.dataMsg = this.getData(data.events)
+          this.$nextTick(() => {
+            this.loading = true
+          })
         })
         .catch(() => {
           this.$toast('请求失败,请稍后尝试')
@@ -95,7 +165,7 @@ export default {
       const res = []
       arr.forEach((val, index) => {
         res.push(JSON.parse(val.json))
-        var json = JSON.parse(val.json)
+        const json = JSON.parse(val.json)
         // 类型,原本数据为数字,为了规范加字母开头
         const typeDate = 'a' + val.type
         // 转发评论点赞信息
@@ -114,48 +184,82 @@ export default {
         res[index].pics = pics
         res[index].time = time
         // 是不是转发
-        // 文章和发布视频没有处理,如果有会报错
         if (dataJson) {
-          // 转发数据,这里只定义了转发分享单曲的,其他的还需要判断,由于返回没有类型,这里从简处理
-          const Data = JSON.parse(json[data][dataJson])
-          res[index].msgs = Data.msg
-          res[index].img = Data.song.album.blurPicUrl ? Data.song.album.blurPicUrl : this.pic
-          res[index].name = Data.song.name ? Data.song.name + `(${Data.song.alias[0]})` : '暂无名称'
-          res[index].byNickname = Data.song.artists[0].name ? Data.song.artists[0].name : '暂无'
+          // 转发数据
+          const eventData = JSON.parse(json[data][dataJson])
+          // 遍历key
+          const eventType = shareTypes[Object.keys(eventData)[1]]
+          const mold = eventType.data
+          const img = eventType.img
+          const name = eventType.name
+          const creator = eventType.creatorName[0]
+          const nickname = eventType.creatorName[1]
+          res[index].msgs = eventData.msg
+          res[index].typeNum = json.event.type
+          res[index].img = mold === 'song' ? eventData.song.album.blurPicUrl : eventData[mold][img]
+          res[index].name = mold === 'song' ? eventData.song.name + `(${eventData.song.alias[0]})` : eventData[mold][name]
+          // 视频
+          if (eventData.video) {
+            // 播放次数,时间
+            res[index].playTime = eventData.video.playTime
+            res[index].duration = eventData.video.duration
+          }
+          // 电台tag
+          if (eventData.channels) {
+            res[index].channels = eventData.program.channels[0]
+          }
+          // 转发电台判断
+          if (creator === nickname) {
+            res[index].byNickname = eventData[mold][creator]
+          } else {
+            res[index].byNickname = mold === 'song' ? eventData.song.artists[0].name : eventData[mold][creator][nickname]
+          }
         } else {
-          const img = res[index].type.img
-          const name = res[index].type.name
-          const dj = res[index].type.dj
-          const creator = res[index].type.creatorName[0]
-          const nickname = res[index].type.creatorName[1]
-          const image = dj ? json[data][dj][img] : json[data][img]
-          const byName = data === 'song' ? json[data].artists[0].name : json[data][creator][nickname]
-          res[index].img = image
-          res[index].name = data === 'song' ? json[data][name] + `(${json[data].alias[0]})` : json[data][name]
+          // 对应类型和数据
+          const mold = res[index].type
+          const jsonData = json[data]
+          // 获取对应字符
+          const img = mold.img
+          const name = mold.name
+          const creator = mold.creatorName[0]
+          const nickname = mold.creatorName[1]
+          const byName = data === 'song' ? jsonData.artists[0].name : jsonData[creator][nickname]
+          res[index].img = jsonData[img]
+          res[index].name = data === 'song' ? jsonData[name] + `(${jsonData.alias[0]})` : jsonData[name]
           res[index].byNickname = byName
+          // 视频
+          if (json.video) {
+            // 播放次数,时间
+            res[index].playTime = json.video.playTime
+            res[index].duration = json.video.duration
+          }
         }
       })
-      console.log(res)
       return res
+    },
+    noAchieve () {
+      this.$toast('此功能尚未开通, 敬请期待')
     }
   },
   filters: {
-    filterSetYear
+    filterSetDate,
+    filterPlayCountInfo,
+    filterSetTime
+  },
+  components: {
+    Loading
   }
 }
 </script>
 <style lang='scss' scoped>
 .dynamic {
-  .data-info {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   .dynamic-card {
-    padding: .4rem .3rem;
+    padding: .4rem .3rem 0;
+    // 头部
     .top {
       display: flex;
       height: .75rem;
+      // 头像
       .img-info {
         width: .75rem;
         margin-right: .2rem;
@@ -169,7 +273,7 @@ export default {
         line-height: 1.5;
         .nickname {
           font-size: .28rem;
-          color: #3399ea;
+          color: #4ca1e6;
           .category {
             color: #7b7c7d;
           }
@@ -189,11 +293,20 @@ export default {
         }
       }
     }
+    // 内容区
     .content {
       padding: .2rem .2rem 0 .95rem;
+      // 用户发言
+      .msg {
+        padding-bottom: .1rem;
+        color: black;
+        font-size: .3rem;
+        line-height: 1.4;
+      }
+      // 用户发的图片
       .image {
         width: 75%;
-        padding: .15rem 0 .1rem;
+        padding-bottom: .1rem;
         img {
           display: block;
           width: 75%;
@@ -201,15 +314,143 @@ export default {
           border-radius: .1rem;
         }
       }
+      // 分享内容
+      .container-share {
+        background-color: rgb(241, 238, 238);
+        border-radius: .1rem;
+        &:active {
+          background-color: rgb(1, 1, 1, .1);
+        }
+        // 转发作者发言
+        .share-msg {
+          margin-bottom: .2rem;
+          font-size: .26rem;
+          line-height: 1.4;
+          color: rgb(78, 76, 76);
+          .share-name {
+            font-size: .26rem;
+            color: #55a1df;
+          }
+        }
+        // 视频卡片
+        .viedo-img {
+          position: relative;
+          width: 100%;
+          padding: 0;
+          img {
+            width: 100%;
+            height: auto;
+            border-radius: .1rem;
+          }
+          // 蒙版
+          .mask {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(136, 134, 134, 0.5);
+          }
+          // 中间播放icon
+          .icon-bofang {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            color: rgba(255, 255, 255, .7);
+            font-size: .8rem;
+            transform: translate(-50%, -50%);
+          }
+          .duration {
+            position: absolute;
+            right: .1rem;
+            bottom: .1rem;
+            color: #fff;
+            font-size: .24rem;
+            i {
+              padding-right: .05rem;
+              font-size: .2rem;
+            }
+          }
+          .playtime {
+            @extend .duration;
+            left: .1rem;
+            .icon-gedanbofangliang_ {
+              padding-right: 0;
+            }
+          }
+        }
+        // 分享条
+        .cover {
+          position: relative;
+          display: flex;
+          align-items: center;
+          height: .8rem;
+          padding: .1rem;
+          border-radius: .1rem;
+          img {
+            width: .8rem;
+            height: .8rem;
+            margin-right: .2rem;
+            border-radius: .1rem;
+          }
+          // 歌单icon
+          .newsong-icon {
+            position: absolute;
+            left: .35rem;
+            top: .35rem;
+            z-index: 3;
+            width: .3rem;
+            height: .3rem;
+            border-radius: 50%;
+            background-color: rgb(255, 255, 255, .8);
+            overflow: hidden;
+            .icon-bofang {
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              color: #dd001b;
+              font-size: .16rem;
+              transform: translate(-50%, -50%);
+            }
+          }
+          // 右边内容
+          .right-info {
+            width: 78%;
+            .tag {
+              display: inline-block;
+              margin-right: .08rem;
+              padding: .03rem .08rem .01rem;
+              color: #dd001b;
+              font-size: .17rem;
+              border: .01rem solid #dd001b;
+              border-radius: .05rem;
+            }
+            .info-name {
+              width: 100%;
+              padding-top: .04rem;
+              color: black;
+              font-size: .26rem;
+            }
+            .byname {
+              width: 100%;
+              padding-top: .15rem;
+              color: rgb(102, 100, 100);
+              font-size: .2rem;
+            }
+          }
+        }
+      }
+      // 底部内容
       .actions {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        height: 1.1rem;
         .icon {
           display: flex;
+          flex: 1;
           height: .5rem;
           line-height: .5rem;
-          margin-right: .6rem;
           font-size: .26rem;
           color: #7b7c7d;
           i {
@@ -223,9 +464,9 @@ export default {
           }
         }
         .icon-sandian {
-          width: .5rem;
-          height: .5rem;
-          line-height: .5rem;
+          flex: .6;
+          height: 1.1rem;
+          line-height: 1.1rem;
           text-align: center;
           font-size: .34rem;
           color: #7b7c7d;
@@ -233,14 +474,5 @@ export default {
       }
     }
   }
-}
-.none {
-  display: none;
-}
-.videotag {
-  box-sizing: border-box;
-  font-size: 0.2rem;
-  color: #ccc;
-  padding: 0.04rem 0.13rem;
 }
 </style>

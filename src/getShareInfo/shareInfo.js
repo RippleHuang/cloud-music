@@ -16,16 +16,14 @@ const types = {
   a17: {
     type: '分享电台:',
     data: 'djRadio',
-    dj: 'dj',
-    img: 'avatarUrl',
+    img: 'picUrl',
     name: 'name',
     creatorName: ['dj', 'nickname']
   },
   a28: {
     type: '分享电台:',
     data: 'djRadio',
-    dj: 'dj',
-    img: 'avatarUrl',
+    img: 'picUrl',
     name: 'name',
     creatorName: ['dj', 'nickname']
   },
@@ -36,9 +34,9 @@ const types = {
   },
   a39: {
     type: '发布视频:',
-    data: 'playlist',
-    img: 'playlist',
-    name: 'playlist.name',
+    data: 'video',
+    img: 'coverUrl',
+    name: 'title',
     creatorName: ['creator', 'nickname']
   },
   a35: {
@@ -70,10 +68,10 @@ const types = {
     creatorName: ['creator', 'nickname']
   },
   a24: {
-    type: '分享文章:',
-    data: 'playlist',
-    img: 'playlist',
-    name: 'playlist.name',
+    type: '分享专栏文章:',
+    data: 'topic',
+    img: 'coverUrl',
+    name: 'title',
     creatorName: ['creator', 'nickname']
   }
 }

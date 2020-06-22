@@ -5,8 +5,7 @@
       v-for="(item, index) in FindIcons"
       :icons="item"
       :key="index"
-    >
-    </icon>
+    />
   </div>
 </div>
 </template>

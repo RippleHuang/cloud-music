@@ -84,6 +84,9 @@ export default {
           }
         } else { // 无则直接api验证并保存记录
           signIn()
+            .then(() => {
+              return false
+            })
             .catch(err => {
               if (err.response.status === 400) {
                 this.signIn = true

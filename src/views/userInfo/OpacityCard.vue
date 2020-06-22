@@ -6,11 +6,10 @@
       :isFixed="isFixed"
       :height="'1.6rem'"
       share
-    >
-    </default-nav>
-    <div class="body" :style="{ opacity }">
+    />
+    <div class="body" :style="{ opacity }" @click="bgcPreview">
       <div class="left-con">
-        <img class="account-bgi" :src="avatarUrl" />
+        <img class="account-bgi" :src="avatarUrl" @click.stop="avaPreview" />
         <div class="information">
           <span class="account-nickname">{{nickName}}</span>
           <div class="relation">
@@ -32,8 +31,8 @@
         </div>
       </div>
       <div class="right-btn">
-        <button class="compile" @click="noAchieve">编辑</button>
-        <button class="changebgc" @click="noAchieve">更换背景</button>
+        <button class="compile" @click.stop="noAchieve">编辑</button>
+        <button class="changebgc" @click.stop="noAchieve">更换背景</button>
       </div>
     </div>
   </div>
@@ -42,6 +41,7 @@
 import { mapGetters } from 'vuex'
 import { filterAge } from 'utils/filters'
 import DefaultNav from 'components/DefaultNav'
+import { ImagePreview } from 'vant'
 export default {
   name: 'OpacityCard',
   props: {
@@ -76,6 +76,14 @@ export default {
     },
     noAchieve () {
       this.$toast('此功能尚未开通, 敬请期待')
+    },
+    // 预览背景
+    bgcPreview () {
+      ImagePreview({ images: [this.coverImgUrl], closeable: true })
+    },
+    // 预览头像
+    avaPreview () {
+      ImagePreview({ images: [this.avatarUrl], closeable: true })
     }
   },
   filters: {

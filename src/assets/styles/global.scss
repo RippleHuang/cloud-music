@@ -113,7 +113,7 @@ html {
   .van-tabs__wrap {
     // 粘性布局
     position: sticky;
-    top: 1.23rem;
+    top: 1.2rem;
     z-index: 6;
     height: .8rem;
     margin-bottom: -0.02rem;
@@ -397,4 +397,10 @@ html {
       }
     }
   }
+}
+// 修改vant动作面板
+.van-overflow-hidden {
+  // 禁止body滚动
+  overflow: hidden;
+  height: 100vh;
 }

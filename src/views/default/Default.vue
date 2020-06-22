@@ -15,7 +15,7 @@
     </div>
   </nav>
   <van-popup v-model="visible" position="left" close-on-popstate :style="{ width: '82%' }">
-    <left-popup></left-popup>
+    <left-popup />
   </van-popup>
   <div class="view-content">
     <keep-alive>
