@@ -1,6 +1,6 @@
 <template>
   <div class="nav-con">
-    <div class="mask" v-show="isFixedSong"></div>
+    <div class="mask" v-show="isFixedSong" :style="{ height }"></div>
     <div class="mask1" v-if="imgUrl" :style="{ background: `url(${imgUrl}) center` }"></div>
     <div class="default-nav" :style="{ background, height }">
       <div class="left">

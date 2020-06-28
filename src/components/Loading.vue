@@ -1,5 +1,5 @@
 <template>
-  <div class="loading-svg" :style="{ 'height':`${height}rem`, 'padding-bottom': `${height -2}rem`}">
+  <div class="loading-svg" :style="{ 'height':`${height}rem`, 'position': `${isabsolute ? 'absolute': 'relative'}`, 'padding-bottom': `${height -2}rem`}">
     <div class="bar">
       <span></span>
       <span></span>
@@ -12,7 +12,14 @@
 <script>
 export default {
   name: 'Loading',
-  props: ['height']
+  props: {
+    height: {
+      type: Number
+    },
+    isabsolute: {
+      type: Boolean
+    }
+  }
 }
 </script>
 <style lang='scss' scoped>
@@ -22,6 +29,8 @@ export default {
   align-items: center;
   box-sizing: border-box;
   background-color: #fff;
+  width: 100%;
+  border-radius: .4rem .4rem 0 0;
   .bar {
     display: flex;
     justify-content: center;

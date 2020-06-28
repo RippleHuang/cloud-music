@@ -95,16 +95,6 @@ export default {
           this.AVATAR_URL(accountInfo.avatarUrl)
           this.NICK_NAME(accountInfo.nickname)
           this.ACCOUNT_UID(accountInfo.userId)
-          // 用户标识
-          if (localStorage.getItem('tag')) {
-            // 上次登录uid
-            const tag = JSON.parse(localStorage.getItem('tag'))
-            // 保存这次登录的uid
-            localStorage.setItem('tag', JSON.stringify([tag[1], accountInfo.userId]))
-          } else {
-            // 保持长度
-            localStorage.setItem('tag', JSON.stringify([accountInfo.userId, accountInfo.userId]))
-          }
           this.skipFind(accountInfo.userId)
         })
         .catch(() => {
@@ -117,8 +107,6 @@ export default {
         .then(data => {
           // 存储lv信息
           this.SET_LEVEL(data.level)
-          // // 清除加密密码
-          // sessionStorage.clear()
           // 跳转到主页
           this.$router.push('/find')
         })

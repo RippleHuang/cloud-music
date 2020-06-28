@@ -85,38 +85,49 @@
         </div>
         <!-- 列表 -->
         <ul class="list">
-          <li
-            class="list-item on-touch"
-            v-for="(item, index) in audioList"
-            :key="index"
-            @click="audioThis(item, index)"
-            :class="{active: item.id === audioIngSong.id}"
+          <!-- 瀑布流加载 -->
+          <van-list
+            v-model="reload"
+            :finished="finished"
+            finished-text="没有更多了"
+            :offset="50"
+            @load="onLoad"
           >
-            <div class="info van-ellipsis">
-              <i class="iconfont icon-yinliang" v-show="item.id === audioIngSong.id"></i>
-              <span class="name">{{item.name}}</span>
-              <span
-                class="artist"
-                :style="{color: item.id === audioIngSong.id ? '#dd001b' : '#999'}"
-                v-for="(artist, index) in artists(item)" :key="index"
-              >
-              {{ artist.name }}
-              </span>
-            </div>
-            <!-- 删除此项歌曲 -->
-            <i class="iconfont icon-chahao" @click.stop="deleteSong(item)"></i>
-          </li>
+            <li
+              class="list-item on-touch"
+              v-for="(item, index) in songList"
+              :key="index"
+              @click="audioThis(item, index)"
+              :class="{active: item.id === audioIngSong.id}"
+            >
+              <div class="info van-ellipsis">
+                <i class="iconfont icon-yinliang" v-show="item.id === audioIngSong.id"></i>
+                <span class="name">{{item.name}}</span>
+                <span
+                  class="artist"
+                  :style="{color: item.id === audioIngSong.id ? '#dd001b' : '#999'}"
+                  v-for="(artist, index) in artists(item)" :key="index"
+                >
+                {{ artist.name }}
+                </span>
+              </div>
+              <!-- 删除此项歌曲 -->
+              <i class="iconfont icon-chahao" @click.stop="deleteSong(item)"></i>
+            </li>
+          </van-list>
         </ul>
       </div>
     </van-action-sheet>
-    <!-- 音频播放 -->
+    <!-- 音频播放,谷歌浏览器会阻止自动播放 -->
+    <!-- 解决方法, 添加预加载属性preload:auto,添加静音属性muted -->
     <audio
       :src="url"
       ref="audio"
-      autoplay
+      autoplay="autoplay"
       @canplay="ready"
       @error="error"
       preload="auto"
+      muted="muted"
       @ended="end"
     >
     </audio>
@@ -162,16 +173,16 @@ export default {
       translate: false,
       // 是否为喜欢音乐
       isLike: false,
+      // 瀑布流加载
+      sum: 0,
+      reload: false,
+      finished: false,
+      songList: [],
       // 其他
       imgCoverShow: true,
       isShowAudioList: false,
       timer: ''
     }
-  },
-  created () {
-    // 每次进入界面时，先清除之前的所有定时器
-    clearInterval(this.timer)
-    this.timer = null
   },
   computed: {
     ...mapGetters(['playState',
@@ -195,8 +206,7 @@ export default {
     }
   },
   watch: {
-    // 当前歌曲变化，首先查看能不能播放
-    // 将一些歌曲信息设置
+    // 当前歌曲变化，获取歌曲信息
     audioIngSong: function (val, oldVal) {
       if (this.playList.length) {
         // 查看当前播放歌曲是否已喜欢
@@ -217,7 +227,9 @@ export default {
           this.name = val.name
           // 延迟加载图片 防止闪屏
           const bgc = document.querySelector('#mask')
-          clearInterval(this.timer)
+          // 需要加上window
+          window.clearTimeout(this.timer)
+          this.timer = null
           this.timer = setTimeout(() => {
             bgc.style.background = 'url(' + this.imgUrl + ') center'
           }, 800)
@@ -241,6 +253,15 @@ export default {
         } else {
           this.ruleLyric = this.createLrcArray(this.originalLyric)
         }
+      }
+    },
+    audioList: {
+      // 变化时将上一次列表清空
+      handler (val, oldV) {
+        this.sum = 0
+        this.finished = false
+        this.songList = []
+        this.division()
       }
     }
   },
@@ -277,13 +298,7 @@ export default {
     },
     // 判断当前歌曲是否在已喜欢数组中
     filterAudio (arr, id) {
-      if (arr.indexOf(id) > -1) {
-        console.log('已喜欢')
-        this.isLike = true
-      } else {
-        console.log('未喜欢')
-        this.isLike = false
-      }
+      this.isLike = arr.indexOf(id) > -1
     },
     // 查看歌曲是否可以播放
     checkSong (id) {
@@ -345,15 +360,13 @@ export default {
       // 计算到当前的播放时间
       const minutes = Math.floor(current / 60)
       const seconds = Math.floor(current - minutes * 60)
-      // 进行格式转换，当小于10的时候，在前面加0
+      // 进行格式转换
       const minuteValue = minutes < 10 ? '0' + minutes : minutes
       const secondValue = seconds < 10 ? '0' + seconds : seconds
-      // 进行时间值拼接，展示到页面
       this.playTime = minuteValue + ':' + secondValue
     },
     // 播放中
     playing () {
-      // 计算到当前的播放时间
       const audio = this.$refs.audio
       // 是否拖拽中
       if (!this.drag) {
@@ -367,7 +380,7 @@ export default {
       this.nowLyricIndex = index
       // 设置歌词显示
       this.showLyric(index, this.ruleLyric)
-      // 设置歌词页面的显示规则,传入当前歌词索引信息
+      // 传入当前歌词索引信息
       this.$refs.lyric.setCurrent(this.nowLyricIndex)
     },
     // 设置进度条长度
@@ -408,7 +421,6 @@ export default {
         })
     },
     // 创建歌词数组
-    // 通过换行符分割字符串，形成数组
     createLrcArray (lrc) {
       const parts = lrc.split('\n')
       for (let index = 0; index < parts.length; index++) {
@@ -515,8 +527,14 @@ export default {
     },
     // 播放歌曲
     toPlay () {
-      this.$refs.audio.play()
-      this.SET_PLAY_SATE(true)
+      const promise = this.$refs.audio.play()
+      if (promise !== undefined) {
+        promise.then(_ => {
+          this.SET_PLAY_SATE(true)
+        }).catch(_ => {
+          this.SET_PLAY_SATE(true)
+        })
+      }
     },
     // 暂停歌曲
     toPause () {
@@ -531,8 +549,7 @@ export default {
         this.toPlay()
       }
     },
-    // 当歌曲播放完成之后
-    // 根据不同的播放模式进行不同的事件
+    // 当歌曲播放完成之后 根据播放模式播放
     end () {
       switch (this.mode) {
         case 0:
@@ -582,12 +599,25 @@ export default {
         .catch(() => {
           this.$toast('已取消')
         })
+    },
+    // 瀑布流滚动加载,数据太多容易卡顿,30个为一组
+    division () {
+      const result = []
+      for (var i = 0; i < this.audioList.length; i += 30) {
+        result.push(this.audioList.slice(i, i + 30))
+      }
+      this.songList.push(...result[this.sum])
+      // 加载状态结束
+      this.reload = false
+      // 数据全部加载完成
+      if (this.songList.length >= this.audioList.length) {
+        this.finished = true
+      }
+    },
+    onLoad () {
+      this.sum++
+      this.division()
     }
-  },
-  destroyed () {
-    // 每次离开当前界面时，清除定时器
-    clearInterval(this.timer)
-    this.timer = null
   },
   filters: {
     filterSetTime

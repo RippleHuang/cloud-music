@@ -19,7 +19,10 @@ import {
   ShareSheet,
   ImagePreview,
   Slider,
-  ActionSheet
+  ActionSheet,
+  Field,
+  List,
+  Pagination
 } from 'vant'
 
 Vue.use(Button)
@@ -49,3 +52,6 @@ Vue.use(ShareSheet)
 Vue.use(ImagePreview)
 Vue.use(Slider)
 Vue.use(ActionSheet)
+Vue.use(Field)
+Vue.use(List)
+Vue.use(Pagination)

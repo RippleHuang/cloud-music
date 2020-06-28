@@ -12,7 +12,7 @@
         :imgUrl="item.coverImgUrl"
         :dec="item.name"
         :playCount="item.playCount"
-        :albumId="item.id"
+        @click.native="$router.push(`/showsong?albumId=${item.id}`)"
         @loadingImg="loadingImg"
       />
     </div>

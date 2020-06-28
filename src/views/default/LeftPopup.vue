@@ -84,24 +84,21 @@ export default {
     }
   },
   mounted () {
-    this.initData()
+    this.PopupTopIcons = PopupTopIcons()
+    this.PopupShopIcons = PopupShopIcons()
+    this.PopupAppIcons = PopupAppIcons()
+    this.PopupBottomIcons = PopupBottomIcons()
   },
   computed: {
     ...mapGetters(['nickName'])
   },
   methods: {
-    initData () {
-      this.PopupTopIcons = PopupTopIcons()
-      this.PopupShopIcons = PopupShopIcons()
-      this.PopupAppIcons = PopupAppIcons()
-      this.PopupBottomIcons = PopupBottomIcons()
-    },
     forEvent (event) {
       this[event]()
     },
     // 循环出来的事件
     no () {
-      this.$toast('登录,退出,签到可用,其他功能尚未实装,请尽请期待!')
+      this.$toast('登录,退出,签到,个人信息可用,其他功能尚未实装')
     },
     // 循环出来的事件
     loginout () {
@@ -116,14 +113,12 @@ export default {
                   // 保存手机号,签到信息,用户标识 其他清空
                   const phone = localStorage.getItem('phoneNumber')
                   const signIn = localStorage.getItem('signIn')
-                  const tag = localStorage.getItem('tag')
                   this.$store.commit('LOGIN_OUT')
                   // 跳转到登录页,并显示体验按
                   localStorage.setItem('login', 'login')
                   this.$router.push('/login')
                   localStorage.setItem('phoneNumber', phone)
                   localStorage.setItem('signIn', signIn)
-                  localStorage.setItem('tag', tag)
                 }
               })
               .catch(() => {

@@ -1,7 +1,7 @@
 <template>
   <div class="list-all">
     <default-nav
-      :title="$store.state.nickName + '的歌单'"
+      :title="nickname + '的歌单'"
       :background="'#dd001b'"
       defaultShow
     />
@@ -11,35 +11,24 @@
       title-active-color="#dd001b"
       line-width="1.4rem"
     >
-      <van-tab :title="`创建的歌单${createNum - 1}`">
-        <!-- 创建的歌单 -->
+      <van-tab
+        v-for="index in 2" :key="index"
+        :title="index === 1 ? `创建的歌单${createNum - 1}` : `收藏的歌单${favoritesNum}`"
+      >
         <ul class="song-group">
           <song-list-li
-            v-for="(item, index) in createListAll" :key="index"
+            v-for="(item, index) in index === 1 ? createListAll : favoritesListAll" :key="index"
             :coverImgUrl="item.coverImgUrl"
             :name="item.name"
             :trackCount="item.trackCount"
             :privacy="item.privacy"
             :playCount="item.playCount"
             :bottom="0.17"
+            @click.native="$router.push(`/showsong?albumId=${item.id}`)"
           />
         </ul>
       </van-tab>
-      <van-tab :title="`收藏的歌单${favoritesNum}`">
-        <!-- 收藏的歌单 -->
-        <ul class="song-group">
-          <song-list-li
-            v-for="(item, index) in favoritesListAll" :key="index"
-            :coverImgUrl="item.coverImgUrl"
-            :name="item.name"
-            :trackCount="item.trackCount"
-            :creatorNickname="item.creator.nickname"
-            :privacy="item.privacy"
-            :playCount="item.playCount"
-          />
-        </ul>
-      </van-tab>
-  </van-tabs>
+    </van-tabs>
   </div>
 </template>
 <script>
@@ -60,7 +49,7 @@ export default {
       favoritesNum: 0,
       createListAll: [],
       favoritesListAll: [],
-      dataAll: []
+      nickname: ''
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -72,6 +61,7 @@ export default {
       vm.$data.favoritesNum = dataParse[1]
       vm.$data.createListAll = dataParse[2]
       vm.$data.favoritesListAll = dataParse[3]
+      vm.$data.nickname = dataParse[4]
     })
   },
   created () {

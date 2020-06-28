@@ -1,7 +1,7 @@
 <template>
   <div class="opacity-card">
     <default-nav
-      :title="`${nickName}`"
+      :title="nickName"
       :background="isFixed ? `url(${coverImgUrl})`: 'transparent'"
       :isFixed="isFixed"
       :height="'1.6rem'"
@@ -9,7 +9,7 @@
     />
     <div class="body" :style="{ opacity }" @click="bgcPreview">
       <div class="left-con">
-        <img class="account-bgi" :src="avatarUrl" @click.stop="avaPreview" />
+        <img class="account-bgi" v-show="loading" :src="avatarUrl" @click.stop="avaPreview" />
         <div class="information">
           <span class="account-nickname">{{nickName}}</span>
           <div class="relation">
@@ -30,15 +30,22 @@
           </div>
         </div>
       </div>
-      <div class="right-btn">
+      <div class="right-btn" v-if="$store.state.nickName === nickName">
         <button class="compile" @click.stop="noAchieve">编辑</button>
         <button class="changebgc" @click.stop="noAchieve">更换背景</button>
+      </div>
+      <div class="right-btn" v-else>
+        <button class="compile" style="background: #dd001b;" @click.stop="noAchieve">
+          <i class="iconfont icon-jia"></i> 关注
+        </button>
+        <button class="changebgc" @click.stop="noAchieve">
+          <i class="iconfont icon-email"></i> 发私信
+        </button>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import { filterAge } from 'utils/filters'
 import DefaultNav from 'components/DefaultNav'
 import { ImagePreview } from 'vant'
@@ -50,6 +57,9 @@ export default {
     },
     opacity: {
       type: Number
+    },
+    loading: {
+      type: Boolean
     },
     followeds: {
       type: Number
@@ -65,10 +75,16 @@ export default {
     },
     coverImgUrl: {
       type: String
+    },
+    avatarUrl: {
+      type: String
+    },
+    level: {
+      type: Number
+    },
+    nickName: {
+      type: String
     }
-  },
-  computed: {
-    ...mapGetters(['avatarUrl', 'level', 'nickName'])
   },
   methods: {
     rollback () {
@@ -187,6 +203,9 @@ export default {
         border: none;
         &:active {
            background-color: rgba(233, 227, 227, 0.8);
+        }
+        i {
+          font-size: .2rem;
         }
       }
     }

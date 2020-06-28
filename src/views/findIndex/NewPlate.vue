@@ -16,6 +16,7 @@
           :key="index"
           :imgUrl="item.picUrl"
           :dec="item.name"
+          @click.native="$router.push(`/showsong?dishId=${item.id}`)"
         />
       </div>
       <div class="images-con" v-show="type==='newSong'">
@@ -25,6 +26,8 @@
           :imgUrl="item.album.blurPicUrl"
           :dec="item.name"
           :newPlatetype="type"
+          @click.native="playMusic(item)"
+          @loadingImg="loadingImg"
         />
       </div>
     </div>
@@ -55,10 +58,6 @@ export default {
       newDish()
         .then(data => {
           this.dishList = getRandomNumberArray(data.albums, 3)
-          // 写在ajax请求中
-          this.$nextTick(() => {
-            this.loading = true
-          })
         })
         .catch(() => {
           Toast('加载失败,请稍后尝试')
@@ -68,14 +67,18 @@ export default {
       newSongs()
         .then(data => {
           this.newSongsList = getRandomNumberArray(data.data, 3)
-          // 写在ajax请求中
-          this.$nextTick(() => {
-            this.loading = true
-          })
         })
         .catch(() => {
           Toast('加载失败,请稍后尝试')
         })
+    },
+    playMusic (data) {
+      this.$store.dispatch('addToAudioList', data)
+    },
+    loadingImg (data) {
+      this.$nextTick(() => {
+        this.loading = data
+      })
     }
   },
   components: {

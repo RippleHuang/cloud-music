@@ -15,10 +15,10 @@ const types = {
   },
   a17: {
     type: '分享电台:',
-    data: 'djRadio',
-    img: 'picUrl',
+    data: 'program',
+    img: 'img80x80',
     name: 'name',
-    creatorName: ['dj', 'nickname']
+    creatorName: ['description', 'description']
   },
   a28: {
     type: '分享电台:',
@@ -62,10 +62,10 @@ const types = {
   },
   a21: {
     type: '分享视频:',
-    data: 'video',
-    img: 'coverUrl',
-    name: 'title',
-    creatorName: ['creator', 'nickname']
+    data: 'mv',
+    img: 'imgurl',
+    name: 'name',
+    creatorName: ['artistName', 'artistName']
   },
   a24: {
     type: '分享专栏文章:',
@@ -73,6 +73,27 @@ const types = {
     img: 'coverUrl',
     name: 'title',
     creatorName: ['creator', 'nickname']
+  },
+  a56: {
+    type: '分享文章:',
+    data: 'resource',
+    img: 'coverImgUrl',
+    name: 'title',
+    creatorName: ['subTitle', 'subTitle']
+  },
+  a31: {
+    type: '分享文章:',
+    data: 'resource',
+    img: 'coverImgUrl',
+    name: 'content',
+    creatorName: ['resourceName', 'resourceName']
+  },
+  a36: {
+    type: '分享文章:',
+    data: 'resource',
+    img: 'picUrl',
+    name: 'name',
+    creatorName: ['name', 'name']
   }
 }
 export default types

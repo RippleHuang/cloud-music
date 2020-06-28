@@ -44,8 +44,8 @@ export default {
     })
   },
   created () {
-    // 每次进入界面时，先清除之前的所有定时器
-    clearInterval(this.timer)
+    // 进入界面时，先清除之前的所有定时器
+    window.clearTimeout(this.timer)
     this.timer = null
   },
   mounted () {
@@ -60,6 +60,7 @@ export default {
       // 抖动
       const text = document.querySelector('.text')
       text.classList.add('shake')
+      window.clearTimeout(this.timer)
       this.timer = setTimeout(() => { text.classList.remove('shake') }, 500)
     },
     goBack () {
@@ -96,7 +97,7 @@ export default {
   },
   destroyed () {
     // 每次离开当前界面时，清除定时器
-    clearInterval(this.timer)
+    window.clearTimeout(this.timer)
     this.timer = null
   }
 }

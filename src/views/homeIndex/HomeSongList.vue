@@ -16,8 +16,8 @@
         <template #right-icon>
           <!-- 阻止冒泡 -->
           <div class="right-icons" @click.stop>
-            <i class="iconfont icon-jia1 on-touch"></i>
-            <i class="iconfont icon-sandian on-touch"></i>
+            <i class="iconfont icon-jia1 on-touch" @click="createSongList"></i>
+            <i class="iconfont icon-sandian on-touch" @click="activeButton(1)"></i>
           </div>
         </template>
         <!-- 歌单列表 -->
@@ -52,8 +52,8 @@
               :name="item.name"
               :trackCount="item.trackCount"
               :privacy="item.privacy"
-              :myLove="true"
-              :home="true"
+              myLove
+              home
               :id="item.id"
               @getHeartMode="getHeartMode"
               @click.native="$router.push(`/showsong?albumId=${item.id}`)"
@@ -65,7 +65,11 @@
               :name="item.name"
               :trackCount="item.trackCount"
               :privacy="item.privacy"
-              :home="true"
+              :description="item.description"
+              :id="item.id"
+              home
+              showActionSheet
+              @showAction="showAction"
               @click.native="$router.push(`/showsong?albumId=${item.id}`)"
             />
           </ul>
@@ -93,7 +97,7 @@
         <template #right-icon>
           <!-- 阻止冒泡 -->
           <div class="right-icon" @click.stop>
-            <i class="iconfont icon-sandian on-touch"></i>
+            <i class="iconfont icon-sandian on-touch" @click="activeButton(2)"></i>
           </div>
         </template>
         <!-- 歌单列表 -->
@@ -106,20 +110,66 @@
               :trackCount="item.trackCount"
               :creatorNickname="item.creator.nickname"
               :privacy="item.privacy"
-              :home="true"
+              :description="item.description"
+              :id="item.id"
+              home
+              noCompile
+              showActionSheet
+              @showAction="showAction"
               @click.native="$router.push(`/showsong?albumId=${item.id}`)"
             />
           </ul>
         </template>
       </van-collapse-item>
     </van-collapse>
+    <!-- 动作面板 -->
+    <van-action-sheet v-model="show" close-on-popstate :lock-scroll="false">
+      <div v-show="active === 1">
+        <div class="top on-touch">创建的歌单</div>
+        <home-for :icons="createAction" @createSongList="createSongList" :height="0.8" />
+      </div>
+      <div v-show="active === 2">
+        <div class="top on-touch">收藏的歌单</div>
+        <home-for :icons="favoriteAction" :height="0.8" />
+      </div>
+      <div v-show="active === 3">
+        <div class="top on-touch van-ellipsis">歌单: {{title}}</div>
+        <home-for
+          :icons="compile ? songListTwo : songListAction"
+          :height="0.8"
+          :id="id"
+          :title="title"
+          :description="description"
+          @deleteSongList="deleteSongList"
+        />
+      </div>
+    </van-action-sheet>
+    <!-- 弹出框 -->
+    <van-dialog
+      v-model="showDialog"
+      title="新建歌单"
+      show-confirm-button
+      show-cancel-button
+      @confirm="addSongList"
+    >
+      <van-field
+        v-model="name"
+        maxlength="40"
+        label="名称"
+        placeholder="请输入歌单标题"
+        show-word-limit
+        clearable
+      />
+      <van-checkbox v-model="checked" shape="square" checked-color="#dd001b">设置为隐私歌单</van-checkbox>
+    </van-dialog>
   </div>
 </template>
 <script>
-import { playlist } from 'api/apis'
+import { playlist, playlistAdd, playlistDelete } from 'api/apis'
 import SongListLi from 'components/SongListLi'
+import HomeFor from 'components/HomeFor'
 import { mapGetters } from 'vuex'
-import 'utils/imgLazy'
+import { CreateAction, SongListAction } from 'getIcons/icons'
 export default {
   name: 'HomeSongList',
   inject: ['reload'],
@@ -144,11 +194,36 @@ export default {
       songList: {
         id: 0,
         pid: 0
-      }
+      },
+      // 动作面板
+      show: false,
+      createAction: [],
+      favoriteAction: [{
+        text: '歌单管理',
+        icon: 'iconfont icon-liebiaoguanli',
+        event: 'no'
+      }],
+      songListAction: [],
+      songListTwo: [],
+      compile: false,
+      active: 0,
+      id: 0,
+      title: '',
+      description: '',
+      // 弹出框
+      showDialog: false,
+      name: '',
+      checked: false
     }
   },
+  mounted () {
+    this.initData()
+    const songListTwo = SongListAction().map(item => item)
+    songListTwo.splice(2, 1)
+    this.songListTwo = songListTwo
+  },
   computed: {
-    ...mapGetters(['accountUid'])
+    ...mapGetters(['accountUid', 'loginState'])
   },
   watch: {
     // 当值第一次绑定的时候，不会执行监听函数，只有值发生改变才会执行
@@ -171,11 +246,43 @@ export default {
     songList: {
       deep: true,
       handler (val, oldVal) {
+        // 继续传递给父组件
         this.$emit('songList', val)
+      }
+    },
+    $route (to, from) {
+      // 从歌单信息更新页过来更新
+      const exp = /compilesonglist/g
+      if (exp.test(from.path)) {
+        // 重新获取
+        this.getPlaylist(this.accountUid)
       }
     }
   },
   methods: {
+    // 初始化图标
+    initData () {
+      this.createAction = CreateAction()
+      this.songListAction = SongListAction()
+    },
+    // 激活相应动作面板
+    activeButton (data) {
+      if (this.loginState) {
+        this.show = true
+        this.active = data
+      } else {
+        this.$router.push('/login')
+      }
+    },
+    // 激活歌单列表动作面板
+    showAction (data) {
+      this.show = true
+      this.active = 3
+      this.id = data.id
+      this.title = data.name
+      this.description = data.description
+      this.compile = data.noCompile
+    },
     getPlaylist (id) {
       playlist(id)
         .then(data => {
@@ -187,6 +294,7 @@ export default {
           this.$toast('请求失败,请稍后尝试')
         })
     },
+    // 分割歌单
     sliceInfo (arr) {
       const from = this.createIndex
       const len = this.createIndex + this.favoritesIndex
@@ -195,16 +303,62 @@ export default {
       this.createList = SongListCreate.slice(1)
       this.favoritesList = arr.slice(from, len)
     },
+    // 子组件传来的值
     getHeartMode (id, pid) {
       this.songList.id = id
       this.songList.pid = pid
     },
-    showSong () {
-      this.$router.push('/showsong')
+    // 激活模态框
+    createSongList () {
+      if (!this.loginState) {
+        this.$router.push('/login')
+      } else {
+        this.showDialog = true
+        this.show = false
+      }
+    },
+    // 删除歌单
+    deleteSongList () {
+      this.show = false
+      this.$dialog.confirm({
+        message: '确认删除当前歌单？'
+      })
+        .then(() => {
+          playlistDelete(this.id)
+            .then(() => {
+              this.$toast('删除成功')
+              // 重新获取
+              this.$emit('reload')
+            })
+            .catch(() => {
+              this.$toast('删除失败')
+            })
+        })
+        .catch(() => {
+          this.$toast('已取消')
+        })
+    },
+    // 添加歌单
+    addSongList () {
+      if (this.name === '') {
+        this.$toast('歌单名不能为空')
+        return
+      }
+      const privacy = this.checked ? 10 : 0
+      playlistAdd(this.name, privacy)
+        .then(() => {
+          this.$toast('添加成功')
+          // 重新获取
+          this.$emit('reload')
+        })
+        .catch(() => {
+          this.$toast('添加歌单失败')
+        })
     }
   },
   components: {
-    SongListLi
+    SongListLi,
+    HomeFor
   }
 }
 </script>
@@ -264,6 +418,13 @@ export default {
         flex: .111;
       }
     }
+  }
+  .top {
+    height: .8rem;
+    padding-left: .2rem;
+    line-height: .8rem;
+    border-bottom: .01rem solid #eee;
+    color: rgb(99, 96, 96);
   }
 }
 </style>

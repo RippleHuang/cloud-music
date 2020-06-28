@@ -1,123 +1,154 @@
 <template>
   <div class="dynamic">
     <loading :height="7.58" v-show="!loading" />
-    <div class="dynamic-card van-hairline--bottom" v-for="(item, index) in dataMsg" :key="index">
-      <div class="top">
-        <div class="img-info">
-          <img :src="avatarUrl" alt />
-        </div>
-        <div class="author">
-          <h1 class="nickname">
-            {{nickName}}
-            <span class="category">{{item.type.type}}</span>
-          </h1>
-          <span class="time">{{item.time | filterSetDate}}</span>
-        </div>
-      </div>
-      <div class="content">
-        <h1 class="msg" v-if="item.msg">{{item.msg}}</h1>
-        <!-- 用户发的图片,需要循环得到,没有不显示此节点 -->
-        <div class="image" v-for="(img, index1) in item.pics" :key="index1">
-          <img :src="img.originUrl" alt="">
-        </div>
-        <!-- 转发样式需修改 -->
-        <div class="container-share" :style="{padding: item.msgs ? '.2rem .1rem .1rem': '0'}">
-          <p class="share-msg" v-if="item.msgs">
-            <span class="share-name">@{{item.event.user.nickname}}</span>
-            :{{item.msgs}}
-          </p>
-          <!-- 视频 -->
-          <div class="viedo-img"
-            v-if="item.type.type === '分享视频:' ||
-                  item.type.type === '发布视频:' ||
-                  item.typeNum === 21 ||
-                  item.typeNum === 41 ||
-                  item.typeNum === 39"
-          >
-            <img :src="item.img" alt="">
-            <div class="mask"></div>
-            <span class="playtime">
-              <i class="iconfont icon-gedanbofangliang_"></i>
-              {{item.playTime | filterPlayCountInfo}}
-            </span>
-            <span class="duration">
-              <i class="iconfont icon-paihangbang"></i>
-              {{item.duration * 1000 | filterSetTime}}
-            </span>
-            <i class="iconfont icon-bofang"></i>
+    <div class="content-box" v-show="loading">
+      <div class="dynamic-card van-hairline--bottom" v-for="(item, index) in dataMsg" :key="index">
+        <div class="top">
+          <div class="img-info">
+            <img :src="avatarUrl" alt />
           </div>
-          <!-- 其他 -->
-          <div class="cover"
-            v-else
-            :style="{backgroundColor: item.msgs ? 'white': 'rgb(241, 238, 238)'}"
-          >
-            <img :src="item.img" alt="">
-            <!-- 单曲图片图标 -->
-            <span class="newsong-icon" v-if="item.song || item.typeNum === 18">
-              <i class="iconfont icon-bofang"></i>
-            </span>
-            <div class="right-info">
-              <p class="info-name van-ellipsis">
-                <!-- 专栏,电台与歌单tag -->
-                <span class="tag" v-if="item.playlist">歌单</span>
-                <span class="tag" v-if="item.djRadio">{{item.djRadio.category}}</span>
-                <span class="tag" v-if="item.topic">专栏</span>
-                {{item.name}}
-                {{item.program}}
-              </p>
-              <p class="byname van-ellipsis"
-                v-if="item.playlist || item.djRadio || item.topic"
-              >
-              by {{item.byNickname}}
-              </p>
-              <p class="byname van-ellipsis" v-else>
-                <span class="tag" v-if="item.channels">{{item.channels}}</span>
-                {{item.byNickname}}
-              </p>
+          <div class="author">
+            <h1 class="nickname">
+              {{nickName}}
+              <span class="category">{{item.type.type}}</span>
+            </h1>
+            <span class="time">{{item.time | filterSetDate}}</span>
+          </div>
+        </div>
+        <div class="content">
+          <h1 class="msg" v-if="item.msg">{{item.msg}}</h1>
+          <!-- 用户发的图片,需要循环得到,没有不显示此节点 -->
+          <div class="image-box">
+            <div
+              class="image"
+              v-for="(img, index1) in item.pics"
+              :key="index1"
+              @click="imgPreview(item.pics)"
+            >
+              <img v-lazy="img.originUrl" :key="img.originUrl" alt="">
             </div>
           </div>
-        </div>
-        <div class="actions">
-          <div class="icon" @click="noAchieve">
-            <i class="iconfont icon-xunhuan1-copy"></i>
-            {{item.info.shareCount ? item.info.shareCount : '转发'}}
+          <!-- 转发样式需修改 -->
+          <div class="container-share" :style="{padding: item.msgs ? '.2rem .1rem .1rem': '0'}">
+            <p class="share-msg" v-if="item.msgs">
+              <span class="share-name">@{{item.event.user.nickname}}</span>
+              :{{item.msgs}}
+            </p>
+            <!-- 视频 -->
+            <div class="viedo-img"
+              v-if="item.type.type === '分享视频:' ||
+                    item.type.type === '发布视频:' ||
+                    item.typeNum === 21 ||
+                    item.typeNum === 41 ||
+                    item.typeNum === 39"
+            >
+              <img v-lazy="item.img" alt="">
+              <div class="mask"></div>
+              <span class="playtime">
+                <i class="iconfont icon-gedanbofangliang_"></i>
+                {{item.playTime | filterPlayCountInfo}}
+              </span>
+              <span class="duration">
+                <i class="iconfont icon-paihangbang"></i>
+                {{item.duration * 1000 | filterSetTime}}
+              </span>
+              <i class="iconfont icon-bofang"></i>
+            </div>
+            <!-- 其他 -->
+            <div class="cover"
+              v-else-if="!item.noData"
+              :style="{backgroundColor: item.msgs ? 'white': 'rgb(241, 238, 238)'}"
+              @click="goOrPlay(item)"
+            >
+              <img :src="item.img" alt="">
+              <!-- 单曲图片图标 -->
+              <span class="newsong-icon" v-if="item.song || item.typeNum === 18">
+                <i class="iconfont icon-bofang"></i>
+              </span>
+              <div class="right-info">
+                <p class="info-name van-ellipsis">
+                  <!-- 专栏,电台与歌单tag -->
+                  <span class="tag" v-if="item.playlist">歌单</span>
+                  <span class="tag" v-if="item.djRadio">{{item.djRadio.category}}</span>
+                  <span class="tag" v-if="item.topic">专栏</span>
+                  {{item.name}}
+                </p>
+                <p class="byname van-ellipsis"
+                  v-if="item.playlist || item.djRadio || item.topic"
+                >
+                by {{item.byNickname}}
+                </p>
+                <p class="byname van-ellipsis" v-else>
+                  <span class="tag" v-if="item.channels">{{item.channels}}</span>
+                  {{item.byNickname}}
+                </p>
+              </div>
+            </div>
           </div>
-          <div class="icon" @click="noAchieve">
-            <i class="iconfont icon-pinglun"></i>
-            {{item.info.commentCount ? item.info.commentCount : '评论'}}
+          <div class="actions">
+            <div class="icon" @click="noAchieve">
+              <i class="iconfont icon-xunhuan1-copy"></i>
+              {{item.info.shareCount ? item.info.shareCount : '转发'}}
+            </div>
+            <div class="icon" @click="noAchieve">
+              <i class="iconfont icon-pinglun"></i>
+              {{item.info.commentCount ? item.info.commentCount : '评论'}}
+            </div>
+            <div class="icon" @click="noAchieve">
+              <i class="iconfont icon-zanpress"></i>
+              {{item.info.likedCount ? item.info.likedCount : '赞'}}
+            </div>
+            <i class="iconfont icon-sandian on-touch" @click="showShareUser = true"></i>
           </div>
-          <div class="icon" @click="noAchieve">
-            <i class="iconfont icon-zanpress"></i>
-            {{item.info.likedCount ? item.info.likedCount : '赞'}}
-          </div>
-          <i class="iconfont icon-sandian on-touch" @click="showShareUser = true"></i>
         </div>
       </div>
     </div>
+    <van-pagination
+      v-show="loading"
+      v-model="currentPage"
+      :page-count="pageNum"
+      mode="simple"
+      @change="nextOrpre"
+    />
     <van-share-sheet
       v-model="showShareUser"
       title="分享"
       :options="optionsUser"
+      :lock-scroll="false"
     />
   </div>
 </template>
 <script>
-import { userEvent } from 'api/apis'
-import { mapGetters } from 'vuex'
+import { userEvent, songInfo } from 'api/apis'
 import { filterSetDate, filterPlayCountInfo, filterSetTime } from 'utils/filters'
 import types from '@/getShareInfo/shareInfo'
 import shareTypes from '@/getShareInfo/shareEvent'
 import Loading from 'components/Loading'
+import { ImagePreview } from 'vant'
 export default {
   name: 'UserDynamic',
   props: {
     refresh: {
       type: Number
+    },
+    avatarUrl: {
+      type: String
+    },
+    accountUid: {
+      type: Number
+    },
+    nickName: {
+      type: String
     }
   },
   data () {
     return {
       dataMsg: [],
+      lasttime: -1,
+      nexttime: 0,
+      currentPage: 1,
+      pageNum: 0,
+      next: false,
       loading: false,
       size: 0,
       showShareUser: false,
@@ -135,24 +166,33 @@ export default {
       ]
     }
   },
-  computed: {
-    ...mapGetters(['accountUid', 'nickName', 'avatarUrl'])
-  },
   watch: {
+    // 更新
     refresh: {
       handler (newV, old) {
         this.loading = false
         this.getUserEvent(this.accountUid)
       },
       immediate: true
+    },
+    // 下一页
+    lasttime: {
+      handler (newV, old) {
+        if (this.next) {
+          this.getUserEvent(this.accountUid, newV)
+          this.next = false
+        }
+      }
     }
   },
   methods: {
     // 获取用户动态
-    getUserEvent (id) {
-      userEvent(id)
+    getUserEvent (id, lasttime) {
+      userEvent(id, 30, lasttime)
         .then(data => {
           this.dataMsg = this.getData(data.events)
+          this.nexttime = data.lasttime
+          this.pageNum = Math.ceil(data.size / 30)
           this.$nextTick(() => {
             this.loading = true
           })
@@ -184,11 +224,16 @@ export default {
         res[index].pics = pics
         res[index].time = time
         // 是不是转发
-        if (dataJson) {
+        if (data === 'event' && json.event !== null) {
           // 转发数据
           const eventData = JSON.parse(json[data][dataJson])
           // 遍历key
-          const eventType = shareTypes[Object.keys(eventData)[1]]
+          const length = Object.keys(eventData).length
+          const eventType = shareTypes[Object.keys(eventData)[length - 1]]
+          if (!eventType) {
+            res[index].noData = true
+            return
+          }
           const mold = eventType.data
           const img = eventType.img
           const name = eventType.name
@@ -197,7 +242,9 @@ export default {
           res[index].msgs = eventData.msg
           res[index].typeNum = json.event.type
           res[index].img = mold === 'song' ? eventData.song.album.blurPicUrl : eventData[mold][img]
-          res[index].name = mold === 'song' ? eventData.song.name + `(${eventData.song.alias[0]})` : eventData[mold][name]
+          res[index].name = mold !== 'song'
+            ? eventData[mold][name] : eventData.song.alias.length === 0
+              ? eventData[mold][name] : eventData[mold][name] + `(${eventData.song.alias[0]})`
           // 视频
           if (eventData.video) {
             // 播放次数,时间
@@ -211,31 +258,83 @@ export default {
           // 转发电台判断
           if (creator === nickname) {
             res[index].byNickname = eventData[mold][creator]
-          } else {
+          }
+          if (creator !== nickname) {
             res[index].byNickname = mold === 'song' ? eventData.song.artists[0].name : eventData[mold][creator][nickname]
           }
         } else {
-          // 对应类型和数据
-          const mold = res[index].type
-          const jsonData = json[data]
-          // 获取对应字符
-          const img = mold.img
-          const name = mold.name
-          const creator = mold.creatorName[0]
-          const nickname = mold.creatorName[1]
-          const byName = data === 'song' ? jsonData.artists[0].name : jsonData[creator][nickname]
-          res[index].img = jsonData[img]
-          res[index].name = data === 'song' ? jsonData[name] + `(${jsonData.alias[0]})` : jsonData[name]
-          res[index].byNickname = byName
-          // 视频
-          if (json.video) {
-            // 播放次数,时间
-            res[index].playTime = json.video.playTime
-            res[index].duration = json.video.duration
+          // 是否有数据
+          if (data in json && json.data !== null && json.event !== null) {
+            // 对应类型和数据
+            const mold = res[index].type
+            const jsonData = json[data]
+            const img = mold.img
+            const name = mold.name
+            const creator = mold.creatorName[0]
+            const nickname = mold.creatorName[1]
+            const byName = data === 'song' ? jsonData.artists[0].name : jsonData[creator][nickname]
+            res[index].img = data === 'song' ? jsonData.album.picUrl
+              : val.type === 31 ? 'http://p3.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg' : jsonData[img]
+            res[index].name = data !== 'song'
+              ? jsonData[name] : jsonData.alias.length === 0
+                ? jsonData[name] : jsonData[name] + `(${jsonData.alias[0]})`
+            res[index].byNickname = creator !== nickname ? byName : jsonData.dj ? jsonData.dj.nickname : jsonData[creator]
+            // 播放id
+            if (jsonData.id) res[index].id = jsonData.id
+            // 视频
+            if (json.video) {
+              // 播放次数,时间
+              res[index].playTime = json.video.playTime
+              res[index].duration = json.video.duration
+            }
+          } else {
+            res[index].noData = true
           }
         }
       })
       return res
+    },
+    // 播放或去歌单页
+    goOrPlay (data) {
+      const _data = data.event ? data.eventData : data
+      if (_data.playlist) {
+        const playListId = _data.playlist.id
+        this.$router.push('/showsong?albumId=' + playListId)
+      } else if (_data.album) {
+        const albumId = _data.album.id
+        this.$router.push('/showsong?dishId=' + albumId)
+      } else if (_data.song) {
+        const songId = _data.song.id
+        this.getSongInfo(songId)
+      } else {
+        this.$toast('暂不支持')
+      }
+    },
+    // 播放
+    getSongInfo (ids) {
+      songInfo(ids)
+        .then(data => {
+          this.$store.dispatch('addToAudioList', data.songs[0])
+        })
+        .catch(() => {
+          this.$toast('获取歌曲失败')
+        })
+    },
+    // 下一页
+    nextOrpre () {
+      this.next = true
+      this.loading = false
+      this.lasttime = this.nexttime
+      // 到达顶部
+      window.scrollTo(0, 0)
+    },
+    // 预览图片
+    imgPreview (data) {
+      const imageArr = []
+      for (let i = 0; i <= data.length - 1; i++) {
+        imageArr[i] = data[i].originUrl
+      }
+      ImagePreview({ images: imageArr, closeable: true })
     },
     noAchieve () {
       this.$toast('此功能尚未开通, 敬请期待')
@@ -302,16 +401,23 @@ export default {
         color: black;
         font-size: .3rem;
         line-height: 1.4;
+        word-break: break-all;
       }
       // 用户发的图片
-      .image {
-        width: 75%;
-        padding-bottom: .1rem;
-        img {
-          display: block;
-          width: 75%;
-          height: auto;
-          border-radius: .1rem;
+      .image-box {
+        // 瀑布流
+        width: 96.5%;
+        column-count: 3;
+        .image {
+          padding-bottom: .1rem;
+          // 瀑布流
+          break-inside: avoid;
+          img {
+            display: block;
+            width: 112%;
+            height: auto;
+            border-radius: .1rem;
+          }
         }
       }
       // 分享内容
@@ -327,6 +433,7 @@ export default {
           font-size: .26rem;
           line-height: 1.4;
           color: rgb(78, 76, 76);
+          word-break: break-all;
           .share-name {
             font-size: .26rem;
             color: #55a1df;

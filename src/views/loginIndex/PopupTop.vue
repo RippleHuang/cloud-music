@@ -7,7 +7,7 @@
       <van-button class="title-btn" round type="info" @click="toPass">立即登录</van-button>
     </div>
     <!-- 已登录 -->
-    <div class="logining" v-if="loginState" @click="userInfo">
+    <div class="logining" v-if="loginState" @click="$router.push(`/userInfo?accountUid=${accountUid}`)">
       <div class="left-con">
         <img class="account-bgi" :src="avatarUrl" alt />
         <div class="information">

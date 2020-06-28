@@ -1,4 +1,5 @@
-// ======我的页面icon列表======
+// ======我的页面======
+// icon列表
 const homeIcons = [{
   text: '云村正能量',
   icon: 'iconfont icon-shumulu'
@@ -60,31 +61,78 @@ const homeIcons = [{
   icon: 'iconfont icon-bianji'
 }
 ]
-// ======我的页面功能icon列表======
+// ======我的页面======
+// 功能icon列表
 const homeAppIcons = [{
   text: '本地音乐',
   icon: 'iconfont icon-icon-',
-  num: 0
+  num: 0,
+  event: 'noAction'
 },
 {
   text: '最近播放',
   icon: 'iconfont icon-zuijinbofang',
-  num: 0
+  num: 0,
+  event: 'noAction'
 },
 {
   text: '下载管理',
   icon: 'iconfont icon-xiazai',
-  num: 0
+  num: 0,
+  event: 'noAction'
 },
 {
   text: '我的电台',
   icon: 'iconfont icon-diantai',
-  num: 0
+  num: 0,
+  event: 'goMyRadio'
 },
 {
   text: '我的收藏',
   icon: 'iconfont icon-wodeshoucang',
-  num: 0
+  num: 0,
+  event: 'goMyFavorite'
+}]
+// 动作面板icon
+const createAction = [{
+  text: '创建新歌单',
+  icon: 'iconfont icon-chuangjianxinjian',
+  event: 'createList'
+},
+{
+  text: '歌单管理',
+  icon: 'iconfont icon-liebiaoguanli',
+  event: 'no'
+},
+{
+  text: '截图导入歌单',
+  icon: 'iconfont icon-jietu',
+  event: 'no'
+},
+{
+  text: '恢复歌单',
+  icon: 'iconfont icon-fuyuan',
+  event: 'no'
+}]
+const songListAction = [{
+  text: '下载',
+  icon: 'iconfont icon-xiazai',
+  event: 'no'
+},
+{
+  text: '分享',
+  icon: 'iconfont icon-fenxiang',
+  event: 'no'
+},
+{
+  text: '编辑歌单信息',
+  icon: 'iconfont icon-bianji1',
+  event: 'compile'
+},
+{
+  text: '删除',
+  icon: 'iconfont icon-trash',
+  event: 'delete'
 }]
 // ======侧边弹出层icon列表======
 // 头部icon
@@ -226,7 +274,9 @@ export default {
   popupTopIcons,
   popupShopIcons,
   popupAppIcons,
-  popupBottomIcons
+  popupBottomIcons,
+  createAction,
+  songListAction
 }
 
 export const FindIcons = () => findIcons
@@ -236,3 +286,5 @@ export const PopupTopIcons = () => popupTopIcons
 export const PopupShopIcons = () => popupShopIcons
 export const PopupAppIcons = () => popupAppIcons
 export const PopupBottomIcons = () => popupBottomIcons
+export const CreateAction = () => createAction
+export const SongListAction = () => songListAction

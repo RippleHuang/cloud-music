@@ -66,7 +66,7 @@ export default {
     }
   },
   created () {
-    // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
+    // 进入界面时，先清除之前的所有定时器，然后启动新的定时器
     clearInterval(this.timer)
     this.timer = null
     // 跳转这个页面默认已经发送了验证码

@@ -8,7 +8,7 @@
           'hidden': $store.state.fullScreen
         }"
       >
-        <keep-alive>
+        <keep-alive :exclude="[{'ShowSong': exclude, 'UserIndex': exclude}]">
           <router-view v-if="isReload"></router-view>
         </keep-alive>
       </div>
@@ -29,7 +29,20 @@ export default {
   data () {
     return {
       isReload: true,
-      show: false
+      show: false,
+      exclude: false
+    }
+  },
+  watch: {
+    // 希望进入展示歌单时可以缓存,离开时销毁
+    $route (to, from) {
+      const exp = /showsong/g
+      const exp1 = /userInfo/g
+      if (exp.test(to.path) || exp1.test(to.path)) {
+        this.exclude = false
+      } else {
+        this.exclude = true
+      }
     }
   },
   methods: {

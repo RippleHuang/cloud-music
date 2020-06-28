@@ -3,14 +3,10 @@ const shareTypes = {
   song: types.a18,
   playlist: types.a35,
   album: types.a19,
-  program: {
-    type: '转发电台:',
-    data: 'program',
-    img: 'img80x80',
-    name: 'name',
-    creatorName: ['description', 'description']
-  },
-  video: types.a21,
+  program: types.a17,
+  djRadio: types.a28,
+  video: types.a41,
+  mv: types.a21,
   topic: types.a24
 }
 export default shareTypes

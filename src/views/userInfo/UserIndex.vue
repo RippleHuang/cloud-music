@@ -8,6 +8,10 @@
       :gender="gender"
       :birthday="birthday"
       :coverImgUrl="coverImgUrl"
+      :avatarUrl="avatarUrl"
+      :level="level"
+      :nickName="nickName"
+      :loading="loading"
     />
     <div class="user-tab">
       <van-tabs
@@ -21,7 +25,7 @@
           <div class="show" v-show="loading" @touchmove="scrollHandler">
             <ul class="song-group">
               <!-- 听歌排行 -->
-              <li class="song-list">
+              <li class="song-list" @click="goRecent">
                 <div class="left">
                   <div class="list-cover">
                     <div class="bgc">
@@ -41,8 +45,9 @@
                 :name="item.name"
                 :trackCount="item.trackCount"
                 :privacy="item.privacy"
-                :myLove="true"
+                myLove
                 :playCount="item.playCount"
+                @click.native="$router.push(`/showsong?albumId=${item.id}`)"
               />
             </ul>
             <!-- 创建的歌单 -->
@@ -55,6 +60,7 @@
                 :trackCount="item.trackCount"
                 :privacy="item.privacy"
                 :playCount="item.playCount"
+                @click.native="$router.push(`/showsong?albumId=${item.id}`)"
               />
               <div class="more on-touch" v-if="createNum > 10" @click="moreList">更多歌单&nbsp;&gt;</div>
             </ul>
@@ -69,12 +75,13 @@
                 :creatorNickname="item.creator.nickname"
                 :privacy="item.privacy"
                 :playCount="item.playCount"
+                @click.native="$router.push(`/showsong?albumId=${item.id}`)"
               />
               <div class="more on-touch" v-if="favoritesNum > 10" @click="moreList">更多歌单&nbsp;&gt;</div>
             </ul>
             <div class="basic-information">
               <h2>基本信息</h2>
-              <p class="list-info">
+              <p class="list-info" v-if="year">
                 <span class="list-name">村龄：</span>
                 <span class="list-con">{{age}}年 ( {{year}}年{{month}}月注册 )</span>
               </p>
@@ -98,7 +105,13 @@
         <van-tab>
           <template #title>动态<span class="size">{{size}}</span></template>
           <div class="data-info" v-if="size === 0">暂时还没有动态哦</div>
-          <user-dynamic v-else :refresh="refresh" />
+          <user-dynamic
+            v-else
+            :refresh="refresh"
+            :avatarUrl="avatarUrl"
+            :accountUid="accountUid"
+            :nickName="nickName"
+          />
         </van-tab>
       </van-tabs>
     </div>
@@ -110,7 +123,7 @@ import SongListLi from 'components/SongListLi'
 import Loading from 'components/Loading'
 import UserDynamic from './UserDynamic'
 import { mapGetters } from 'vuex'
-import { userDetail, userInfo, playlist, userEvent } from 'api/apis'
+import { userDetail, playlist, userEvent } from 'api/apis'
 import { filterAge } from 'utils/filters'
 import { getAstro } from 'utils/getAstro'
 export default {
@@ -122,6 +135,10 @@ export default {
       // 预览图片
       show: false,
       // 用户信息
+      accountUid: 0,
+      avatarUrl: '',
+      level: 0,
+      nickName: '',
       gender: 1,
       signature: '',
       age: 0,
@@ -132,7 +149,7 @@ export default {
       year: 0,
       astro: '',
       month: 0,
-      coverImgUrl: 'http://p1.music.126.net/2zSNIqTcpHL2jIvU6hG0EA==/109951162868128395.jpg',
+      coverImgUrl: '',
       // 歌单信息
       createNum: 0,
       favoritesNum: 0,
@@ -152,117 +169,113 @@ export default {
       size: 0
     }
   },
-  created () {
-    this.getSongList()
-    this.getUserEvent()
-    this.initData()
+  activated () {
+    this.accountUid = JSON.parse(this.$route.query.accountUid)
     window.addEventListener('scroll', this.scrollHandler, true)
   },
   computed: {
-    ...mapGetters(['loginState', 'accountUid'])
+    ...mapGetters(['loginState'])
   },
-  /* watch: {
-  *  $route (to, from) {
-  *    const tag = JSON.parse(localStorage.getItem('tag'))
-  *    // 通过此方法确定是否重新发送请求更新用户数据
-  *     if (tag[0] !== tag[1] && to.path === '/userInfo') {
-  *       this.loading = false
-  *       this.getSongList()
-  *       this.getUserEvent()
-  *       this.initData()
-  *       // 通知后代组件刷新
-  *       this.refresh = +new Date()
-  *       localStorage.setItem('tag', JSON.stringify([tag[1], this.accountUid]))
-  *     }
-  *   }
-  *},
-  */
-  /* 直接监听uid变化 */
+  /* 监听uid变化 */
   watch: {
-    '$store.state.accountUid' (val, oldVal) {
-      if (this.loginState) {
-        this.loading = false
-        this.getSongList()
-        this.getUserEvent()
-        this.initData()
-        // 通知后代组件刷新
-        this.refresh = +new Date()
+    accountUid: {
+      async handler (val, oldVal) {
+        if (this.loginState) {
+          this.loading = false
+          await this.initData(val)
+          this.getSongList(val)
+          this.getUserEvent(val)
+          // 通知后代组件刷新
+          this.refresh = +new Date()
+        } else {
+          // 跳转到登录页
+          this.$router.push('/login')
+        }
       }
     }
   },
   methods: {
     // 用户数据
-    initData (data) {
-      userDetail(this.accountUid)
+    initData (uid) {
+      userDetail(uid)
         .then(data => {
           this.listenSongs = data.listenSongs
-          const { backgroundUrl, gender, signature, birthday, newFollows, followeds } = data.profile
-          this.coverImgUrl = backgroundUrl
+          this.level = data.level
+          this.coverImgUrl = data.profile.backgroundUrl ? data.profile.backgroundUrl
+            : 'http://p1.music.126.net/2zSNIqTcpHL2jIvU6hG0EA==/109951162868128395.jpg'
+          const { gender, signature, birthday, newFollows, followeds, avatarUrl, nickname, playlistCount } = data.profile
           this.followeds = followeds
           this.newFollows = newFollows
+          this.avatarUrl = avatarUrl
+          this.nickName = nickname
+          // 创建的歌单数
+          this.createNum = playlistCount
           this.gender = gender
           this.signature = signature
           this.birthday = birthday
           const createTime = data.createTime
-          const createDate = new Date(createTime)
-          const setAstro = new Date(birthday)
-          this.year = createDate.getFullYear()
-          this.month = createDate.getMonth() + 1
-          this.age = parseInt(data.createDays / 365)
-          this.astro = getAstro(setAstro.getMonth() + 1, setAstro.getDate())
+          // 单独判断创建日
+          if (createTime > 0) {
+            const createDate = new Date(createTime)
+            this.year = createDate.getFullYear()
+            this.month = createDate.getMonth() + 1
+            this.age = parseInt(data.createDays / 365)
+          }
+          // 单独判断是否有生日
+          if (this.birthday > 0) {
+            const setAstro = new Date(birthday)
+            this.astro = getAstro(setAstro.getMonth() + 1, setAstro.getDate())
+          }
         })
         .catch(() => {
-          this.$toast('请求失败,请稍后尝试')
+          this.$toast('获取用户信息失败,请稍后尝试')
         })
     },
     // 获取歌单
-    getSongList () {
-      playlist(this.accountUid)
+    getSongList (uid) {
+      playlist(uid)
         .then(data => {
           this.getUserInfo(data.playlist)
         })
         .catch(() => {
-          this.$toast('请求失败,请稍后尝试')
+          this.$toast('获取歌单失败,请稍后尝试')
         })
     },
     // 获取歌单数
     getUserInfo (arr) {
-      userInfo()
-        .then(data => {
-          // 创建的歌单数
-          this.createNum = data.createdPlaylistCount
-          // 收藏的歌单数
-          this.favoritesNum = data.subPlaylistCount
-          // 分割
-          const SongListCreate = arr.slice(0, this.createNum)
-          // 我喜欢的音乐
-          this.myLoveList = SongListCreate.slice(0, 1)
-          // 全部
-          this.createListAll = SongListCreate.slice(1, this.createNum)
-          this.favoritesListAll = arr.slice(this.createNum, this.createNum + this.favoritesNum)
-          // 大于截取10,小于取自身,创建音乐需要加一
-          const createNumSlice = this.createNum > 11 ? 11 : this.createNum
-          const favoritesNumSlice = this.favoritesNum > 10 ? 10 : this.favoritesNum
-          // 创建的音乐
-          this.createList = SongListCreate.slice(1, createNumSlice)
-          // 收藏的音乐
-          this.favoritesList = arr.slice(this.createNum, this.createNum + favoritesNumSlice)
-          this.$nextTick(() => {
-            this.loading = true
-          })
-        })
-        .catch(() => {
-          this.$toast('请求失败,请稍后尝试')
-        })
+      // 分割
+      const SongListCreate = arr.slice(0, this.createNum)
+      // 我喜欢的音乐
+      this.myLoveList = SongListCreate.slice(0, 1)
+      // 创建的音乐
+      this.createListAll = SongListCreate.slice(1, this.createNum)
+      // 大于截取10,小于取自身,创建音乐需要加一
+      const createNumSlice = this.createNum > 11 ? 11 : this.createNum
+      this.createList = SongListCreate.slice(1, createNumSlice)
+      // 收藏的音乐
+      if (arr.length - this.createNum > 0) {
+        // 收藏的歌单数
+        this.favoritesNum = arr.length - this.createNum
+        const favoritesNumSlice = this.favoritesNum > 10 ? 10 : this.favoritesNum
+        this.favoritesListAll = arr.slice(this.createNum, this.createNum + this.favoritesNum)
+        this.favoritesList = arr.slice(this.createNum, this.createNum + favoritesNumSlice)
+      } else {
+        this.favoritesNum = 0
+        this.favoritesListAll = []
+        this.favoritesList = []
+      }
+      this.$nextTick(() => {
+        this.loading = true
+      })
     },
     // 获取用户动态数
-    getUserEvent () {
-      userEvent(this.accountUid)
+    getUserEvent (uid) {
+      userEvent(uid)
         .then(data => {
           this.size = data.size
         })
         .catch(() => {
-          this.$toast('请求失败,请稍后尝试')
+          this.$toast('获取动态失败,请稍后尝试')
         })
     },
     rollback () {
@@ -272,10 +285,10 @@ export default {
     scrollHandler () {
       var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
       var clientHeight = document.documentElement.clientHeight
-      if (scrollTop / clientHeight >= 0.35) {
+      if (scrollTop / clientHeight >= 0.3) {
         this.isFixed = true
       } else {
-        var opa = 1 - (3 * scrollTop / clientHeight).toFixed(2)
+        var opa = 1 - (3.3 * scrollTop / clientHeight).toFixed(1)
         this.opacity = opa >= 0 ? opa : 0
         this.isFixed = false
       }
@@ -283,13 +296,23 @@ export default {
     // 跳转到展示页
     moreList () {
       // 传递数组
-      var data = [this.createNum, this.favoritesNum, this.createListAll, this.favoritesListAll]
+      var data = [this.createNum, this.favoritesNum, this.createListAll, this.favoritesListAll, this.nickName]
       // 没有冒号占位符,隐藏参数
       // encodeURIComponent 加密处理
       this.$router.push({
         name: 'listAll',
         params: {
           data: encodeURIComponent(JSON.stringify(data))
+        }
+      })
+    },
+    // 听歌排行
+    goRecent () {
+      this.$router.push({
+        path: '/recentplay',
+        query: {
+          uid: this.accountUid,
+          name: this.nickName
         }
       })
     },
@@ -300,7 +323,7 @@ export default {
   filters: {
     filterAge
   },
-  destroyed () {
+  deactivated () {
     window.removeEventListener('scroll', this.scrollHandler, true)
   },
   components: {
@@ -347,6 +370,9 @@ export default {
         padding: .1rem .3rem;
         color: #7b7c7e;
         font-size: .25rem;
+        .list-con {
+          line-height: 1.3;
+        }
       }
     }
     .size {

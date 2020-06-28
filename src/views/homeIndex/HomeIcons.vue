@@ -9,6 +9,7 @@
         compile
         is="icon"
         class="home-icon-list"
+        @click="noAction"
       >
       </li>
     </ul>
@@ -30,6 +31,9 @@ export default {
   methods: {
     initData () {
       this.HomeIcons = HomeIcons()
+    },
+    noAction () {
+      this.$toast('该功能尚未实装,敬请期待')
     }
   },
   components: {

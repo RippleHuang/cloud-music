@@ -1,13 +1,18 @@
-export const throttle = (fn, timehold) => {
-  let startTime = new Date().getTime()
-  const context = this
-
-  return function () {
-    const currentTime = new Date().getTime()
-    if (currentTime - startTime >= timehold) {
-      fn.apply(context, [...arguments])
-
-      startTime = currentTime
+export const throttle = (fun, delay) => {
+  let last, deferTimer
+  return function (args) {
+    const that = this
+    const _args = arguments
+    const now = +new Date()
+    if (last && now < last + delay) {
+      clearTimeout(deferTimer)
+      deferTimer = setTimeout(function () {
+        last = now
+        fun.apply(that, _args)
+      }, delay)
+    } else {
+      last = now
+      fun.apply(that, _args)
     }
   }
 }

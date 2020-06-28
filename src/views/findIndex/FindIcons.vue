@@ -20,12 +20,7 @@ export default {
     }
   },
   mounted () {
-    this.initData()
-  },
-  methods: {
-    initData () {
-      this.FindIcons = FindIcons()
-    }
+    this.FindIcons = FindIcons()
   },
   components: {
     Icon

@@ -17,6 +17,8 @@
         <!-- 默认会显示用户姓名,需要替换 我喜欢的音乐样式调整 -->
         <p class="list-title van-ellipsis" :class="{ first:myLove }">{{myLove?'我喜欢的音乐':name}}</p>
         <p class="list-num van-ellipsis">
+          <!-- 专辑 -->
+          <span class="artist" v-for="(item, index) in artists" :key="index">{{item.name}}</span>
           {{trackCount}}首
           <span v-if="creatorNickname">，by {{creatorNickname}}</span>
           <span v-if="playCount === 0">，播放0次</span>
@@ -24,20 +26,29 @@
         </p>
       </div>
       <!-- 歌曲 -->
-      <div class="list-info" style="width: 75vw;" @click="playSong" v-if="songShow">
+      <div class="list-info" @click="playSong" v-if="songShow">
         <!-- 不添加 v-if 会影响其他 -->
-        <p class="list-title van-ellipsis" style="padding-top: 0.2rem; width: 75vw;" v-if="songShow">{{name}}</p>
-        <p class="list-num van-ellipsis" style="width: 75vw;" v-if="songShow">
+        <p class="list-title van-ellipsis"
+          :style="{padding: '0.2rem 0 0.03rem', width: songplayCount ? '65vw' : '75vw'}"
+          v-if="songShow"
+        >
+        {{name}}
+        </p>
+        <p class="list-num van-ellipsis" :style="{width: songplayCount ? '65vw' : '75vw'}" v-if="songShow">
           <span class="artist" v-for="(item, index) in artists" :key="index">{{ item.name }}</span>
           <span class="album-name">{{ albumName }}</span>
         </p>
       </div>
     </div>
-    <div class="compile" v-if="home">
+    <div class="compile" v-if="home" :style="{flex: songplayCount ? 0.8 : 0.32 }">
       <van-button v-if="myLove" class="title-btn" round type="info" @click.stop="heartMode">
         <i class="iconfont icon-xindong"></i>心动模式
       </van-button>
-      <i v-else class="iconfont icon-sandian on-touch"></i>
+      <span v-else-if="songplayCount">
+        <i class="iconfont icon-bofang1"></i>{{songplayCount}}次
+      </span>
+      <i v-else-if="showActionSheet" class="iconfont icon-sandian on-touch" @click.stop="showAction"></i>
+      <i v-else class="iconfont icon-sandian on-touch"  @click.stop="no"></i>
     </div>
   </li>
 </template>
@@ -58,6 +69,16 @@ export default {
     },
     creatorNickname: {
       type: String
+    },
+    showActionSheet: {
+      type: Boolean
+    },
+    description: {
+      type: String
+    },
+    noCompile: {
+      type: Boolean,
+      default: false
     },
     // 隐秘歌单
     privacy: {
@@ -84,6 +105,9 @@ export default {
       type: Boolean
     },
     number: {
+      type: Number
+    },
+    songplayCount: {
       type: Number
     },
     active: {
@@ -115,6 +139,17 @@ export default {
     },
     playSong () {
       this.$emit('playSong')
+    },
+    showAction () {
+      this.$emit('showAction', {
+        id: this.id,
+        name: this.name,
+        description: this.description,
+        noCompile: this.noCompile
+      })
+    },
+    no () {
+      this.$toast('该功能尚未实装,敬请期待')
     }
   },
   filters: {
@@ -200,11 +235,6 @@ export default {
 }
 // 心动按钮
 .compile {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  height: 1.2rem;
-  padding-right: .225rem;
   font-size: .24rem;
   .title-btn {
     width: 1.75rem;
@@ -225,6 +255,13 @@ export default {
   }
   .icon-sandian {
     color: #a19d9d;
+  }
+  span {
+    color: rgb(141, 138, 138);
+    i {
+      margin-right: .1rem;
+      font-size: .24rem;
+    }
   }
 }
 </style>
