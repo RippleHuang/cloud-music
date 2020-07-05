@@ -120,4 +120,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.home-container {
+  // 滚动条问题
+  height: 90vh;
+}
 </style>

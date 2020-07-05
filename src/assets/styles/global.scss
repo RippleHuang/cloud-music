@@ -1,6 +1,5 @@
 // 隐藏滚动条
 html {
-  overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -37,7 +36,6 @@ html {
 // 修改vant popup
 .van-popup {
   // 隐藏滚动条
-  overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -81,7 +79,7 @@ html {
     .van-tabs__wrap {
       position: fixed;
       top: 1.18rem;
-      z-index: 2;
+      z-index: 4;
       width: 100%;
       height: .75rem;
     }
@@ -142,7 +140,7 @@ html {
     font-weight: bold;
   }
 }
-// 听歌排行, 我的收藏vant选项卡
+// 听歌排行, 我的收藏, 歌单广场, 新歌, 云村, 搜索 vant选项卡
 .recent-play {
   @extend .video-index;
   .van-tabs__content {
@@ -159,6 +157,22 @@ html {
       overflow: visible;
     }
   }
+}
+.song-square {
+  @extend .video-index;
+}
+.new-songs {
+  @extend .video-index;
+}
+.village {
+  @extend .video-index;
+  // 滚动条问题
+  .van-tab__pane {
+    height: 100vh;
+  }
+}
+.search-result {
+  @extend .video-index;
 }
 // 修改用户歌单下vant tabs
 .list-all {
@@ -466,4 +480,18 @@ html {
   .van-image-preview__cover {
     top: 60%;
   }
+}
+// 下拉刷新
+.van-pull-refresh {
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 100vh;
+}
+.van-pull-refresh__head {
+  display: flex;
+  align-items: end;
+}
+.refresh-toast {
+  top: 1.8rem;
 }

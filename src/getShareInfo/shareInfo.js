@@ -75,21 +75,25 @@ const types = {
     creatorName: ['creator', 'nickname']
   },
   a56: {
-    type: '分享文章:',
+    type: '分享:',
     data: 'resource',
     img: 'coverImgUrl',
     name: 'title',
     creatorName: ['subTitle', 'subTitle']
   },
   a31: {
-    type: '分享文章:',
+    type: '分享:',
     data: 'resource',
     img: 'coverImgUrl',
     name: 'content',
     creatorName: ['resourceName', 'resourceName']
   },
+  a33: {
+    type: '分享:',
+    data: 'no'
+  },
   a36: {
-    type: '分享文章:',
+    type: '分享:',
     data: 'resource',
     img: 'picUrl',
     name: 'name',

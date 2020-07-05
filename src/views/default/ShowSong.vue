@@ -3,13 +3,13 @@
     <DefaultNav
       :title="opacity < 0.5 ? data.name : title"
       :background="'transparent'"
-      :imgUrl="imgUrl"
+      :imgUrl="imgUrl + '?param=300y300'"
       :isFixedTitle="opacity < 0.5"
-      :height="'1.2rem'"
+      :height="opacity < 0.05 ? '1.6rem' : '1.2rem'"
       isFixedSong
       songList
     />
-    <div class="mask" :style="{ background: `url(${imgUrl}) center` }"></div>
+    <div class="mask" :style="{ background: `url(${imgUrl}?param=300y300) center` }"></div>
     <div class="body" :style="{opacity}">
       <div class="container" @click="showPreview = true">
         <div class="left">
@@ -24,7 +24,7 @@
           <span class="song-list-title van-multi-ellipsis--l2" v-show="!loading">{{data.name}}</span>
           <!-- 去用户信息页 -->
           <div class="info van-ellipsis" v-show="!loading" @click.stop="goUserInfo">
-            <img :src="avatarUrl" alt="">
+            <img :src="avatarUrl + '?param=50y50'" alt="">
             <span>{{nickname}} <i class="iconfont icon-arrow-right"></i></span>
           </div>
           <p class="song-list-info" v-show="!loading">
@@ -60,48 +60,16 @@
         </div>
       </div>
     </div>
-    <!-- 歌单列表 -->
-    <div class="sticky-box" v-if="show">
-      <loading :height="4.35" isabsolute v-show="loading" />
-      <div class="content-sticky" v-show="!loading">
-        <!-- 顶部粘性布局 -->
-        <div class="sticky-top" @click="startPlay">
-          <span><i class="iconfont icon-bofang1"></i>播放全部</span>
-          <span class="trackCount">(共{{trackCount}}首)</span>
-        </div>
-        <!-- 为迷你播放器留空 -->
-        <ul
-          class="song-group"
-          :style="{'padding-bottom': $store.state.audioList.length ? '1rem' : 0 }"
-        >
-          <!-- 瀑布流加载 -->
-          <van-list
-            v-model="reload"
-            :finished="finished"
-            :finished-text="trackCount >= 800 ? '上限为800' : '没有更多了'"
-            :offset="10"
-            @load="onLoad"
-          >
-            <song-list-li
-              v-for="(item, index) in songList" :key="index"
-              songShow
-              :number="index+1"
-              :active="item.id === audioIngSong.id"
-              :artists="item.ar"
-              :albumName="item.al.name"
-              :name="item.name"
-              :privacy="0"
-              home
-              @playSong="setAudioList(index)"
-            />
-          </van-list>
-        </ul>
-      </div>
-    </div>
-    <!-- 歌曲为空 -->
-    <div class="empty" v-if="!show">
-      <button class="add-button">添加歌曲</button>
-    </div>
+    <pubcli-sticky
+      :show="show"
+      :loading="loading"
+      :trackCount="trackCount"
+      :songList="songList"
+      :songListAll="songListAll"
+      :load="load"
+      :finish="finish"
+      @reLoad="onLoad"
+    />
     <!-- 预览图片 -->
     <van-image-preview v-model="showPreview" :images="[imgUrl]" closeable class-name="show-preview">
       <template #cover>
@@ -121,19 +89,17 @@
 <script>
 import DefaultNav from 'components/DefaultNav'
 import ImgCard from 'components/ImgCard'
-import Loading from 'components/Loading'
-import SongListLi from 'components/SongListLi'
+import PubcliSticky from 'components/PubcliSticky'
 import { albumDetail, getDishInfo, songInfo } from 'api/apis'
-import { mapGetters, mapActions } from 'vuex'
-import { throttle } from 'utils/throttle'
+import { mapGetters } from 'vuex'
+import { listRefresh, scroll } from '@/mixins/mixins'
 export default {
   name: 'ShowSong',
+  mixins: [listRefresh, scroll],
   data () {
     return {
       // 歌单相关
       albumInfo: [],
-      songList: [],
-      songListAll: [],
       data: {
         name: '',
         description: ''
@@ -145,20 +111,11 @@ export default {
       shareCount: 0,
       trackCount: 0,
       title: '',
-      // 累加
-      sum: 0,
-      reload: false,
-      finished: false,
       // 歌单专辑id
       albumId: 0,
       dishId: 0,
       // 歌单用户id
       uid: 0,
-      // 粘性布局
-      isFixed: false,
-      opacity: 1,
-      // 加载
-      loading: true,
       show: true,
       // 图片预览
       showPreview: false
@@ -166,11 +123,7 @@ export default {
   },
   activated () {
     this.show = true
-    this.sum = 0
-    this.finished = false
-    this.songList = []
     const albumId = this.$route.query.albumId
-    window.addEventListener('scroll', this.scrollHandler, true)
     if (albumId) {
       this.albumId = JSON.parse(albumId)
       this.title = '歌单'
@@ -181,23 +134,12 @@ export default {
       this.getDishInfo(this.dishId)
     }
     this.loading = true
+    this.opacity = 1
   },
   computed: {
-    ...mapGetters(['audioIngSong', 'accountUid'])
+    ...mapGetters(['accountUid'])
   },
   methods: {
-    ...mapActions(['selectPlay', 'startPlayAll']),
-    setAudioList (index) {
-      this.selectPlay({
-        list: this.songListAll,
-        index
-      })
-    },
-    startPlay () {
-      this.startPlayAll({
-        list: this.songListAll
-      })
-    },
     // 歌单
     getSongListInfo (id) {
       albumDetail(id)
@@ -271,42 +213,6 @@ export default {
           this.$toast('获取歌曲失败')
         })
     },
-    // 瀑布流滚动加载,数据太多容易卡顿,30个为一组
-    division () {
-      const result = []
-      for (var i = 0; i < this.songListAll.length; i += 30) {
-        result.push(this.songListAll.slice(i, i + 30))
-      }
-      this.songList.push(...result[this.sum])
-      this.$nextTick(() => {
-        this.loading = false
-      })
-      // 加载状态结束
-      this.reload = false
-      // 数据全部加载完成
-      if (this.songList.length >= this.songListAll.length) {
-        this.finished = true
-      }
-    },
-    onLoad () {
-      this.sum++
-      this.division()
-    },
-    // 粘性时变化样式
-    scrollHandler () {
-      throttle(this.scroll(), 0.08)
-    },
-    scroll () {
-      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-      const clientHeight = document.documentElement.clientHeight
-      if (scrollTop / clientHeight >= 0.3) {
-        this.isFixed = true
-      } else {
-        const opa = 1 - (3.3 * scrollTop / clientHeight).toFixed(2)
-        this.opacity = opa >= 0 ? opa : 0
-        this.isFixed = false
-      }
-    },
     goUserInfo () {
       if (this.albumInfo.creator) {
         this.$router.push('/userInfo?accountUid=' + this.uid)
@@ -333,14 +239,10 @@ export default {
       this.$toast('该功能尚未实装,预览,用户信息页,修改歌单可用')
     }
   },
-  deactivated () {
-    window.removeEventListener('scroll', this.scrollHandler, true)
-  },
   components: {
     DefaultNav,
     ImgCard,
-    Loading,
-    SongListLi
+    PubcliSticky
   }
 }
 </script>
@@ -429,58 +331,6 @@ export default {
           font-size: .26rem;
           color: #ddd;
         }
-      }
-    }
-  }
-  .sticky-box {
-    position: absolute;
-    top: 5.9rem;
-    width: 100%;
-    border-radius: .4rem .4rem 0 0;
-    background-color: #fff;
-    .sticky-top {
-      position: sticky;
-      top: 1.2rem;
-      z-index: 6;
-      height: 1rem;
-      line-height: 1rem;
-      border-radius: .4rem .4rem 0 0;
-      background-color: #fff;
-      &:active {
-        background-color: rgb(233, 230, 230);
-      }
-      .icon-bofang1 {
-        padding: 0 .3rem 0 .4rem;
-        font-size: .32rem;
-      }
-      .trackCount {
-        font-size: .26rem;
-        color: rgb(151, 149, 149);
-      }
-    }
-    .song-group {
-      background-color: #fff;
-    }
-  }
-  .empty {
-    position: absolute;
-    top: 5.9rem;
-    width: 100%;
-    padding-top: 2rem;
-    text-align: center;
-    border-radius: 0.4rem 0.4rem 0 0;
-    background-color: #fff;
-    .add-button {
-      width: 50vw;
-      height: .8rem;
-      color: #dd001b;
-      background-color: transparent;
-      border: 0.01rem solid #dd001b;
-      border-radius: 0.4rem;
-      &:active {
-        color: #fff;
-        background-color: #dd001b;
-        border: none;
       }
     }
   }

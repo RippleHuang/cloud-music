@@ -30,7 +30,8 @@ export default {
     return {
       isReload: true,
       show: false,
-      exclude: false
+      exclude: false,
+      transition: ''
     }
   },
   watch: {

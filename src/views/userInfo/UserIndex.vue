@@ -21,7 +21,7 @@
         line-width="0.6rem"
       >
         <van-tab title="主页">
-          <loading :height="7.58" v-show="!loading" />
+          <loading :height="4.58" v-show="!loading" />
           <div class="show" v-show="loading" @touchmove="scrollHandler">
             <ul class="song-group">
               <!-- 听歌排行 -->
@@ -126,8 +126,10 @@ import { mapGetters } from 'vuex'
 import { userDetail, playlist, userEvent } from 'api/apis'
 import { filterAge } from 'utils/filters'
 import { getAstro } from 'utils/getAstro'
+import { scroll } from '@/mixins/mixins'
 export default {
   name: 'UserInfo',
+  mixins: [scroll],
   data () {
     return {
       // tab激活
@@ -160,9 +162,6 @@ export default {
       favoritesListAll: [],
       // 加载
       loading: false,
-      // 吸顶以及透明度
-      isFixed: false,
-      opacity: 1,
       // 后代组件是否刷新
       refresh: 0,
       // 动态数量
@@ -171,7 +170,6 @@ export default {
   },
   activated () {
     this.accountUid = JSON.parse(this.$route.query.accountUid)
-    window.addEventListener('scroll', this.scrollHandler, true)
   },
   computed: {
     ...mapGetters(['loginState'])
@@ -281,18 +279,6 @@ export default {
     rollback () {
       this.$router.go(-1)
     },
-    // 粘性时变化样式
-    scrollHandler () {
-      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-      var clientHeight = document.documentElement.clientHeight
-      if (scrollTop / clientHeight >= 0.3) {
-        this.isFixed = true
-      } else {
-        var opa = 1 - (3.3 * scrollTop / clientHeight).toFixed(1)
-        this.opacity = opa >= 0 ? opa : 0
-        this.isFixed = false
-      }
-    },
     // 跳转到展示页
     moreList () {
       // 传递数组
@@ -322,9 +308,6 @@ export default {
   },
   filters: {
     filterAge
-  },
-  deactivated () {
-    window.removeEventListener('scroll', this.scrollHandler, true)
   },
   components: {
     OpacityCard,

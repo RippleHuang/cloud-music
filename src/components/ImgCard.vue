@@ -1,5 +1,5 @@
 <template>
-  <div class="img-card" :style="{width}">
+  <div class="img-card" :style="{width}" v-show="!reload">
     <!-- 发现页面歌单显示播放数 -->
     <span class="tag" v-if="playCount">
       <i class="iconfont icon-gedanbofangliang_"></i>
@@ -12,8 +12,10 @@
       </span>
       <!-- 蒙版 -->
       <div class="mask on-touch"></div>
-      <!-- load图片加载完成事件 -->
-      <img class="image-con" v-lazy="imgUrl" :key="imgUrl" alt="" @load="imgLoad" />
+      <!-- 排行榜time更新 -->
+      <span class="time" v-if="updateTime">{{ updateTime }}</span>
+      <!-- 图片地址加上 ?param=数字y数字 可以控制尺寸 -->
+      <img class="image-con" v-lazy="imgUrl + '?param=150y150'" alt="" @load="imgLoad" />
     </div>
     <div v-if="dec" class="dec van-multi-ellipsis--l2" >{{ dec }}</div>
   </div>
@@ -40,13 +42,22 @@ export default {
     },
     width: {
       type: String
+    },
+    updateTime: {
+      type: String
     }
   },
   filters: {
     filterPlayCount
   },
+  data () {
+    return {
+      reload: true
+    }
+  },
   methods: {
     imgLoad () {
+      this.reload = false
       this.$emit('loadingImg', true)
     }
   }
@@ -69,6 +80,13 @@ export default {
       color: #fff;
       font-size: .21rem;
     }
+  }
+  .time {
+    position: absolute;
+    left: .2rem;
+    bottom: .2rem;
+    font-size: .22rem;
+    color: #fff;
   }
   .img-con {
     position: relative;

@@ -21,7 +21,6 @@ export default {
     }
     commit(SET_AUDIO_INDEX, index)
     commit(SET_PLAY_SATE, true)
-    commit(SET_FULL_SCREEN, true)
   },
   // 播放全部 传入播放列表
   startPlayAll ({ commit }, { list }) {

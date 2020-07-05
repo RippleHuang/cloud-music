@@ -71,7 +71,7 @@ export default {
     padding-top: 2rem;
     list-style: none;
     text-align: center;
-    transition: margin-top .6s ease-out;
+    transition: margin-top .35s ease-out;
     // 解决过渡效果带来的抖动
     transform: translateZ(0);
     li {

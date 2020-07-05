@@ -25,7 +25,7 @@
         <span v-show="isFixed">{{title}}</span>
       </div>
       <!-- 歌单 -->
-      <span class="icons" v-if="songList">
+      <span class="icons" v-if="songList" @click="no">
         <i class="iconfont icon-sousuo"></i>
         <i class="iconfont icon-sandian"></i>
       </span>
@@ -104,6 +104,9 @@ export default {
       } else {
         this.$router.go(-1)
       }
+    },
+    no () {
+      this.$toast('该功能尚未实装,敬请期待')
     }
   }
 }
@@ -121,6 +124,10 @@ export default {
     width: 100%;
     height: 1.6rem;
     background-color: rgb(148, 142, 142);
+    &::after {
+      content: '.';
+      opacity: 0;
+    }
   }
   .mask1 {
     position: fixed;
@@ -131,6 +138,10 @@ export default {
     height: 1.6rem;
     -webkit-filter: blur(15px);
     filter: blur(15px);
+    &::after {
+      content: '.';
+      opacity: 0;
+    }
   }
   .default-nav {
     position: fixed;

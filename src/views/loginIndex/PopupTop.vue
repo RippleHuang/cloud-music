@@ -150,12 +150,10 @@ export default {
           }
           this.reload()
         })
-        .catch(err => {
-          if (err.response.status === 400) {
-            this.setSignIn()
-            this.signIn = true
-            this.$toast('今天已签到')
-          }
+        .catch(() => {
+          this.setSignIn()
+          this.signIn = true
+          this.$toast('今天已签到')
         })
     }
   }

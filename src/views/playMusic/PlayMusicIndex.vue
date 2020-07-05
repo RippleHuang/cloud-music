@@ -14,7 +14,7 @@
       <img-cover
         class="img-bgc"
         v-show="imgCoverShow"
-        :imgUrl="imgUrl"
+        :imgUrl="imgUrl + '?param=300y300'"
         @click.native="imgCoverShow = !imgCoverShow"
       />
       <!-- 歌词 -->
@@ -58,7 +58,7 @@
     <!-- 迷你播放器 -->
     <small-play
       v-show="!fullScreen"
-      :imgUrl="imgUrl"
+      :imgUrl="imgUrl + '?param=80y80'"
       @play="toggle"
       @showAudioList="showAudioList"
       :name="name"
@@ -106,7 +106,7 @@
                 <span
                   class="artist"
                   :style="{color: item.id === audioIngSong.id ? '#dd001b' : '#999'}"
-                  v-for="(artist, index) in artists(item)" :key="index"
+                  v-for="(artist, index) in item.artists || item.ar" :key="index"
                 >
                 {{ artist.name }}
                 </span>
@@ -118,16 +118,16 @@
         </ul>
       </div>
     </van-action-sheet>
-    <!-- 音频播放,谷歌浏览器会阻止自动播放 -->
-    <!-- 解决方法, 添加预加载属性preload:auto,添加静音属性muted -->
+    <!-- 音频播放,谷歌浏览器自动播放会报错-->
+    <!-- 解决方法, 添加预加载属性preload:auto,定义promise捕获错误 -->
     <audio
       :src="url"
       ref="audio"
       autoplay="autoplay"
       @canplay="ready"
+      @timeupdate="playing"
       @error="error"
       preload="auto"
-      muted="muted"
       @ended="end"
     >
     </audio>
@@ -152,7 +152,6 @@ export default {
       url: '',
       imgUrl: '',
       readySong: false,
-      canSong: true,
       name: '',
       artist: [],
       // 播放条相关
@@ -207,40 +206,43 @@ export default {
   },
   watch: {
     // 当前歌曲变化，获取歌曲信息
-    audioIngSong: function (val, oldVal) {
-      if (this.playList.length) {
-        // 查看当前播放歌曲是否已喜欢
-        this.getLikeMusicList(val.id)
-        if (val.id === oldVal.id) {
-          return
-        }
-        this.$nextTick(() => {
+    audioIngSong: {
+      handler (val, oldV) {
+        if (this.playList.length) {
+          // 查看当前播放歌曲是否已喜欢
+          this.getLikeMusicList(val.id)
+          // 播放
           if (val.dj) {
             this.checkSong(val.mainTrackId)
           } else {
             this.checkSong(val.id)
           }
-          this.allTime = val.duration ? val.duration : val.dt ? val.dt : ''
-          this.artist = val.album ? val.album.artists : val.ar ? val.ar : ''
-          this.imgUrl = val.album ? val.album.picUrl : val.al ? val.al.picUrl
-            : val.album ? val.album.artist.img1v1Url : val.coverUrl ? val.coverUrl : ''
+          this.allTime = val.duration ? val.duration : val.dt ? val.dt : 0
+          this.artist = val.album ? (val.album.artists || val.artists) : val.ar ? val.ar : ''
+          this.imgUrl = val.album ? (val.album.picUrl || val.album.artist.img1v1Url) : val.al ? val.al.picUrl
+            : val.coverUrl ? val.coverUrl : ''
           this.name = val.name
           // 延迟加载图片 防止闪屏
           const bgc = document.querySelector('#mask')
-          // 需要加上window
-          window.clearTimeout(this.timer)
-          this.timer = null
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
           this.timer = setTimeout(() => {
             bgc.style.background = 'url(' + this.imgUrl + ') center'
           }, 800)
-        })
-      }
+        } else {
+          // 暂停歌曲, 清空时长
+          this.toPause()
+          this.$refs.audio.currentTime = 0
+        }
+      },
+      deep: true
     },
-    offsetLyric: {
-      handler (val, oldVal) {
-        this.offsetLyric = val
-      }
+    // 歌词偏移量
+    offsetLyric (val, oldVal) {
+      this.offsetLyric = val
     },
+    // 歌词翻译
     translate: {
       handler (val, oldVal) {
         // 是否显示中文歌词
@@ -255,13 +257,15 @@ export default {
         }
       }
     },
+    // 瀑布流加载
     audioList: {
       // 变化时将上一次列表清空
       handler (val, oldV) {
         this.sum = 0
         this.finished = false
         this.songList = []
-        this.division()
+        // 如果不为空
+        if (val.length) this.division()
       }
     }
   },
@@ -278,8 +282,15 @@ export default {
       songUrl(id)
         .then(data => {
           this.url = data.data[0].url
-          this.audioTimeUpdate()
-          this.toPlay()
+          // 确认可以播放, 但是无版权的url为空,跳过
+          if (this.url) {
+            this.getSongLyric(id)
+            this.toPlay()
+          } else {
+            this.$toast('暂无版权,播放下一首')
+            this.readySong = true
+            this.nextSong()
+          }
         })
         .catch(() => {
           this.$toast('获取url失败')
@@ -306,18 +317,15 @@ export default {
         .then(data => {
           // 当可以播放的时候请求歌曲url
           if (data.success) {
-            this.canSong = true
             this.getSongUrl(id)
-            this.getSongLyric(id)
           }
         })
         .catch(err => {
           if (err) {
+            this.$toast('暂无版权,播放下一首')
             // 不能播放的时候选择下一首进行播放
-            this.canSong = false
             this.readySong = true
-            this.nextSong()
-            this.readySong = true
+            if (this.readySong) this.nextSong()
           }
         })
     },
@@ -327,7 +335,7 @@ export default {
     },
     // 当在资源加载期间发生错误时
     error () {
-      this.readySong = true
+      this.readySong = false
     },
     // 当改变进度条时改变歌曲播放时间,value为vant回调参数
     changeTime (value) {
@@ -352,10 +360,6 @@ export default {
         this.setTime(current)
       }
     },
-    // 歌曲时间更新事件
-    audioTimeUpdate () {
-      this.$refs.audio.addEventListener('timeupdate', this.playing)
-    },
     setTime (current) {
       // 计算到当前的播放时间
       const minutes = Math.floor(current / 60)
@@ -370,8 +374,9 @@ export default {
       const audio = this.$refs.audio
       // 是否拖拽中
       if (!this.drag) {
+        // 第一次播放时 duration 为 0, barLength 为 NaN
         const barLength = audio.currentTime / audio.duration * 100
-        this.setProgress(barLength)
+        this.setProgress(isNaN(barLength) ? 0 : barLength)
         this.setTime(audio.currentTime)
       }
       // 设置歌词偏移
@@ -385,35 +390,32 @@ export default {
     },
     // 设置进度条长度
     setProgress (val) {
-      if (val < 0 || val > 100) {
-        return
-      }
       this.progressWidth = val
     },
     // 获取歌曲歌词
     getSongLyric (id) {
       songLyric(id)
         .then(data => {
-          if (data.nolyric) {
+          if (data.nolyric || data.sgc) {
             // 当前歌曲没有歌词
             this.ruleLyric = []
             this.nowLyric = ''
             this.noLyric = true
             this.noLyricText = '纯音乐，请欣赏'
           } else {
-            if (!data.lrc.lyric.trim()) {
+            if (data.lrc) {
+              this.noLyric = false
+              // 中文歌词原本歌词
+              this.chineseLyric = data.tlyric.lyric
+              this.originalLyric = data.lrc.lyric
+              this.ruleLyric = this.createLrcArray(this.originalLyric)
+            } else {
               // 歌词为空
               this.noLyricText = '暂时没有歌词'
               this.ruleLyric = []
               this.nowLyric = ''
               this.noLyric = true
-              return
             }
-            this.noLyric = false
-            // 中文歌词原本歌词
-            this.chineseLyric = data.tlyric.lyric
-            this.originalLyric = data.lrc.lyric
-            this.ruleLyric = this.createLrcArray(this.originalLyric)
           }
         })
         .catch(() => {
@@ -494,7 +496,6 @@ export default {
       this.SET_PLAY_LIST(shufflePlayList)
     },
     // 设置当前播放索引
-    // 当在切换随机播放时，通过寻找原来的歌曲id来实现不会切换歌曲index
     resetCurrentIndex (list) {
       const index = list.findIndex(item => {
         return item.id === this.audioIngSong.id
@@ -504,6 +505,12 @@ export default {
     // 上一首歌曲切换
     prevSong () {
       if (!this.readySong) {
+        this.$toast('正在加载中')
+        return
+      }
+      // 只有一首歌时
+      if (this.audioList.length === 1) {
+        this.loop()
         return
       }
       let nowIndex = this.audioIngIndex - 1
@@ -516,6 +523,12 @@ export default {
     // 下一首歌曲切换
     nextSong () {
       if (!this.readySong) {
+        this.$toast('正在加载中')
+        return
+      }
+      // 只有一首歌时
+      if (this.audioList.length === 1) {
+        this.loop()
         return
       }
       let nowIndex = this.audioIngIndex + 1
@@ -578,13 +591,6 @@ export default {
       }
       this.SET_AUDIO_INDEX(index)
     },
-    artists (artist) {
-      if (artist.artists) {
-        return artist.artists
-      } else {
-        return artist.ar
-      }
-    },
     // 清空播放列表
     clearAll () {
       this.$dialog.confirm({
@@ -592,8 +598,6 @@ export default {
       })
         .then(() => {
           this.showAudioList()
-          this.toPause()
-          this.$refs.audio.currentTime = 0
           this.clearPlayAll()
         })
         .catch(() => {

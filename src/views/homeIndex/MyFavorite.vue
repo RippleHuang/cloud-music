@@ -19,7 +19,7 @@
         :key="index"
       >
         <template #title>{{item.title}}<span class="size">{{item.count}}</span></template>
-        <loading :height="4.35" v-show="loading" />
+        <loading :height="2.35" v-show="loading" />
         <public-page :data="item.data" :active="active" v-show="!loading" />
       </van-tab>
     </van-tabs>
@@ -57,7 +57,7 @@ export default {
       }]
     }
   },
-  mounted () {
+  created () {
     this.getAlbums()
     this.getArtists()
     this.getVideos()
@@ -105,12 +105,15 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-.nav-tabs {
-  .size {
-    position: absolute;
-    left: 110%;
-    font-size: .22rem;
-    color: rgb(238, 236, 236);
+.my-favorite {
+  padding-top: 1.2rem;
+  .nav-tabs {
+    .size {
+      position: absolute;
+      left: 110%;
+      font-size: .22rem;
+      color: rgb(238, 236, 236);
+    }
   }
 }
 </style>

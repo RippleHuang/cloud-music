@@ -244,27 +244,27 @@ const popupBottomIcons = [{
 const findIcons = [{
   text: '每日推荐',
   icon: 'iconfont icon-meirituijian',
-  linkTo: 'dateRecommend'
+  event: 'goRecommend'
 },
 {
   text: '歌单',
   icon: 'iconfont icon-gedan1',
-  linkTo: 'recommend'
+  event: 'moreSonglist'
 },
 {
   text: '排行榜',
   icon: 'iconfont icon-paihangbang',
-  linkTo: 'idx'
+  event: 'goRankingList'
 },
 {
   text: '电台',
   icon: 'iconfont icon-diantai',
-  linkTo: 'dj'
+  event: 'no'
 },
 {
   text: '私人FM',
   icon: 'iconfont icon-FM',
-  linkTo: 'personalFm'
+  event: 'goPersonalFm'
 }]
 
 export default {

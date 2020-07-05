@@ -9,7 +9,7 @@
     />
     <div class="body" :style="{ opacity }" @click="bgcPreview">
       <div class="left-con">
-        <img class="account-bgi" v-show="loading" :src="avatarUrl" @click.stop="avaPreview" />
+        <img class="account-bgi" v-show="loading" :src="avatarUrl + '?param=80y80'" @click.stop="avaPreview" />
         <div class="information">
           <span class="account-nickname">{{nickName}}</span>
           <div class="relation">

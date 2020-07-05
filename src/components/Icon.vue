@@ -34,6 +34,8 @@ export default {
   align-items: center;
   white-space: nowrap;
   .icon-con {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,5 +1,5 @@
 <template>
-  <div class="loading-svg" :style="{ 'height':`${height}rem`, 'position': `${isabsolute ? 'absolute': 'relative'}`, 'padding-bottom': `${height -2}rem`}">
+  <div class="loading-svg" :style="{ 'height':`${height}rem`, position}">
     <div class="bar">
       <span></span>
       <span></span>
@@ -16,14 +16,15 @@ export default {
     height: {
       type: Number
     },
-    isabsolute: {
-      type: Boolean
+    position: {
+      type: String
     }
   }
 }
 </script>
 <style lang='scss' scoped>
 .loading-svg {
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,7 +40,7 @@ export default {
     height: .5rem;
     margin-top: .16rem;
     span {
-      width: 0.08rem;
+      width: .08rem;
       height: .5rem;
       margin-left: .075rem;
       background-color: #dd001b;

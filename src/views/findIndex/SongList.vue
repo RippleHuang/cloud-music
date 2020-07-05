@@ -2,59 +2,36 @@
   <div class="song-list van-hairline--top">
     <div class="song-list-header">
       <h3 class="title">推荐歌单</h3>
-      <van-button class="title-btn" round type="info">歌单广场</van-button>
+      <van-button class="title-btn" round type="info" @click="$router.push('/songlistsquare')">歌单广场</van-button>
     </div>
-    <loading :height="4.58" v-show="!loading"/>
-    <div v-show="loading" class="song-list-con">
+    <div class="song-list-con">
       <img-card
         v-for="(item, index) in songList"
         :key="index"
-        :imgUrl="item.coverImgUrl"
+        :imgUrl="item.picUrl || item.coverImgUrl"
         :dec="item.name"
         :playCount="item.playCount"
         @click.native="$router.push(`/showsong?albumId=${item.id}`)"
-        @loadingImg="loadingImg"
       />
     </div>
   </div>
 </template>
 <script>
 import ImgCard from 'components/ImgCard'
-import Loading from 'components/Loading'
-import { recSongList } from 'api/apis'
-import { getRandomNumberArray } from 'utils/randomNumberArray'
-import { Toast } from 'vant'
 export default {
   name: 'SongList',
-  inject: ['reload'],
+  props: {
+    songList: {
+      type: Array
+    }
+  },
   data () {
     return {
-      songList: [],
-      loading: false
+      opacity: 0
     }
-  },
-  methods: {
-    getSongList () {
-      recSongList()
-        .then(data => {
-          this.songList = getRandomNumberArray(data.playlists, 6)
-        })
-        .catch(() => {
-          Toast('加载失败,请稍后尝试')
-        })
-    },
-    loadingImg (data) {
-      this.$nextTick(() => {
-        this.loading = data
-      })
-    }
-  },
-  mounted () {
-    this.getSongList()
   },
   components: {
-    ImgCard,
-    Loading
+    ImgCard
   }
 }
 </script>
@@ -75,6 +52,8 @@ export default {
       font-weight: 900;
     }
     .title-btn {
+      position: relative;
+      z-index: 2;
       width: 1.65rem;
       height: .5rem;
       padding: 0 .15rem;
@@ -92,6 +71,7 @@ export default {
     justify-content: space-between;
     flex-wrap: wrap;
     width: 92.8%;
+    height: 6.3rem;
   }
 }
 </style>

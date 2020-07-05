@@ -2,9 +2,9 @@
 <div class="find-icon-content">
   <div class="find-icon-list">
     <icon
-      v-for="(item, index) in FindIcons"
+      v-for="(item, index) in findIcons" :key="index"
       :icons="item"
-      :key="index"
+      @click.native="forEvent(item.event)"
     />
   </div>
 </div>
@@ -12,15 +12,43 @@
 <script>
 import Icon from 'components/Icon'
 import { FindIcons } from 'getIcons/icons'
+import { personalFm } from 'api/apis'
 export default {
   name: 'FindIcons',
   data () {
     return {
-      FindIcons
+      findIcons: []
     }
   },
   mounted () {
-    this.FindIcons = FindIcons()
+    this.findIcons = FindIcons()
+  },
+  methods: {
+    forEvent (event) {
+      this[event]()
+    },
+    no () {
+      this.$toast('该功能尚未完成,敬请期待')
+    },
+    goRecommend () {
+      this.$router.push('/recommend')
+    },
+    moreSonglist () {
+      this.$router.push('/songlistsquare')
+    },
+    goRankingList () {
+      this.$router.push('/rankinglist')
+    },
+    goPersonalFm () {
+      personalFm()
+        .then(data => {
+          const list = data.data
+          this.$store.dispatch('startPlayAll', { list })
+        })
+        .catch(() => {
+          this.$toast('获取私人fm失败')
+        })
+    }
   },
   components: {
     Icon

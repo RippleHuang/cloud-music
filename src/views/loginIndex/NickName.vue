@@ -6,11 +6,11 @@
     </div>
     <div class="phone-con">
       <input
-      class="phone-num"
-      type="text"
-      placeholder="请输入昵称"
-      v-model="nickName"
-      required="required"
+        class="phone-num"
+        type="text"
+        placeholder="请输入昵称"
+        v-model="nickName"
+        required="required"
       >
       <i @click="clear" class="iconfont icon-chahao"></i>
     </div>

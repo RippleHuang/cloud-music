@@ -22,7 +22,8 @@ import {
   ActionSheet,
   Field,
   List,
-  Pagination
+  Pagination,
+  PullRefresh
 } from 'vant'
 
 Vue.use(Button)
@@ -33,7 +34,6 @@ Vue.use(SwipeItem)
 Vue.use(Lazyload, {
   lazyComponent: true,
   preLoad: 1.3,
-  error: require('assets/img/timg.jpg'),
   loading: require('assets/img/loading.jpg'),
   attempt: 3,
   listenEvents: ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']
@@ -55,3 +55,4 @@ Vue.use(ActionSheet)
 Vue.use(Field)
 Vue.use(List)
 Vue.use(Pagination)
+Vue.use(PullRefresh)

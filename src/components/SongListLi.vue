@@ -3,13 +3,15 @@
     <div class="left">
       <!-- 歌单 -->
       <div class="list-cover" v-if="!songShow">
-        <img v-lazy="coverImgUrl" alt="" />
+        <!-- 图片地址加上 ?param=数字y数字 可以控制尺寸 -->
+        <img v-lazy="coverImgUrl + '?param=80y80'" alt="" />
         <div v-if="privacy !== 0" class="mask"></div>
         <i :style="{ bottom: `${bottom}rem` }" class="iconfont icon-icon-system-fn-lock" v-if="privacy !== 0"></i>
       </div>
       <!-- 歌曲 -->
-      <div class="list-cover" style="width: 0.5rem; text-align: center;" v-if="songShow">
-        <span v-if="!active" class="number">{{number}}</span>
+      <div class="list-cover" :class="{'number-show': number, imge: coverImgUrl}" v-if="songShow">
+        <span v-if="!active && number" class="number">{{number}}</span>
+        <img style="width: 0.8rem; height: 0.8rem" v-else-if="!active && coverImgUrl" v-lazy="coverImgUrl + '?param=50y50'" alt="" />
         <i v-else class="iconfont icon-yinliang"></i>
       </div>
       <!-- 歌单 -->
@@ -29,12 +31,15 @@
       <div class="list-info" @click="playSong" v-if="songShow">
         <!-- 不添加 v-if 会影响其他 -->
         <p class="list-title van-ellipsis"
-          :style="{padding: '0.2rem 0 0.03rem', width: songplayCount ? '65vw' : '75vw'}"
+          :style="{padding: '0.2rem 0 0.03rem', width: songplayCount ? '65vw' : number ? '75vw' : '67vw'}"
           v-if="songShow"
         >
         {{name}}
         </p>
-        <p class="list-num van-ellipsis" :style="{width: songplayCount ? '65vw' : '75vw'}" v-if="songShow">
+        <p class="list-num van-ellipsis"
+          :style="{width: songplayCount ? '65vw' : number ? '75vw' : '67vw'}"
+          v-if="songShow"
+        >
           <span class="artist" v-for="(item, index) in artists" :key="index">{{ item.name }}</span>
           <span class="album-name">{{ albumName }}</span>
         </p>
@@ -263,5 +268,15 @@ export default {
       font-size: .24rem;
     }
   }
+}
+.number-show {
+  width: .5rem;
+  text-align: center;
+}
+.imge {
+  width: .8rem;
+  height: .8rem;
+  text-align: center;
+  line-height: .8rem;
 }
 </style>

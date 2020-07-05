@@ -5,11 +5,26 @@
         <span :class="{ active: type === 'plate'}" @click="type='plate'" class="title">新碟</span>
         <span :class="{ active: type === 'newSong'}" @click="type='newSong'" class="title2">新歌</span>
       </div>
-      <van-button v-show="type === 'plate'" class="title-btn" round type="info">更多新碟</van-button>
-      <van-button v-show="type === 'newSong'" class="title-btn" round type="info">新歌推荐</van-button>
+      <van-button
+        v-show="type === 'plate'"
+        class="title-btn"
+        round
+        type="info"
+        @click="$router.push(`/newplates?total=${total}`)"
+      >
+        更多新碟
+      </van-button>
+      <van-button
+        v-show="type === 'newSong'"
+        class="title-btn"
+        round
+        type="info"
+        @click="$router.push('/newsongs')"
+      >
+        新歌推荐
+      </van-button>
     </div>
-    <loading :height="3.58" v-show="!loading" />
-    <div class="plate-list-con" v-show="loading">
+    <div class="plate-list-con" :style="{opacity}">
       <div class="images-con" v-show="type==='plate'">
         <img-card
           v-for="(item, index) in dishList"
@@ -35,10 +50,8 @@
 </template>
 <script>
 import ImgCard from 'components/ImgCard'
-import Loading from 'components/Loading'
 import { newDish, newSongs } from 'api/apis'
 import { getRandomNumberArray } from 'utils/randomNumberArray'
-import { Toast } from 'vant'
 export default {
   name: 'NewPlate',
   data () {
@@ -46,7 +59,8 @@ export default {
       dishList: [],
       newSongsList: [],
       type: 'plate',
-      loading: false
+      opacity: 0,
+      total: 0 // 新碟总数
     }
   },
   async created () {
@@ -58,9 +72,10 @@ export default {
       newDish()
         .then(data => {
           this.dishList = getRandomNumberArray(data.albums, 3)
+          this.total = data.total
         })
         .catch(() => {
-          Toast('加载失败,请稍后尝试')
+          this.$toast('加载新碟,请稍后尝试')
         })
     },
     getNewSongs () {
@@ -69,7 +84,7 @@ export default {
           this.newSongsList = getRandomNumberArray(data.data, 3)
         })
         .catch(() => {
-          Toast('加载失败,请稍后尝试')
+          this.$toast('加载新歌,请稍后尝试')
         })
     },
     playMusic (data) {
@@ -77,13 +92,12 @@ export default {
     },
     loadingImg (data) {
       this.$nextTick(() => {
-        this.loading = data
+        this.opacity = data ? 1 : 0
       })
     }
   },
   components: {
-    ImgCard,
-    Loading
+    ImgCard
   }
 }
 </script>

@@ -19,22 +19,27 @@
         :key="index"
         :title="index === 1 ? '最近一周' : '所有时间'"
       >
-        <loading :height="4.35" isabsolute v-show="loading" />
-        <ul class="song-group" v-show="!loading">
-          <song-list-li
-            v-for="(item, index) in index === 1 ? weekData : allData" :key="index"
-            songShow
-            :number="index+1"
-            :active="item.song.id === audioIngSong.id"
-            :artists="item.song.ar"
-            :albumName="item.song.al.name"
-            :name="item.song.name"
-            home
-            :songplayCount="item.playCount || item.score"
-            :privacy="0"
-            @playSong="setAudioList(index, index === 1 ? weekDataSong : allDataSong)"
-          />
-        </ul>
+        <div class="content-recent" v-if="show">
+          <loading :height="4.35" isabsolute v-show="loading" />
+          <ul class="song-group" v-show="!loading">
+            <song-list-li
+              v-for="(item, index) in index === 1 ? weekData : allData" :key="index"
+              songShow
+              :number="index+1"
+              :active="item.song.id === audioIngSong.id"
+              :artists="item.song.ar"
+              :albumName="item.song.al.name"
+              :name="item.song.name"
+              :songplayCount="item.playCount"
+              :home="item.playCount ? true : false"
+              :privacy="0"
+              @playSong="setAudioList(index, index === 1 ? weekDataSong : allDataSong)"
+            />
+          </ul>
+        </div>
+        <div class="empty" v-if="!show">
+          <p>由于对方设置你无法查看TA的听歌排行</p>
+        </div>
       </van-tab>
     </van-tabs>
   </div>
@@ -55,7 +60,8 @@ export default {
       weekData: [],
       allDataSong: [],
       weekDataSong: [],
-      loading: true
+      loading: true,
+      show: true
     }
   },
   computed: {
@@ -70,6 +76,7 @@ export default {
     }
   },
   activated () {
+    this.show = true
     this.uid = JSON.parse(this.$route.query.uid)
   },
   methods: {
@@ -102,8 +109,7 @@ export default {
         })
         .catch(err => {
           if (err.response.status === 400) {
-            this.$toast('对方设置了访问权限')
-            this.$router.go(-1)
+            this.show = false
           } else {
             this.$toast('获取最近播放失败')
           }
@@ -118,5 +124,12 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  font-size: .32rem;
+  color: rgb(116, 113, 113);
+}
 </style>
