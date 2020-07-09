@@ -17,11 +17,17 @@
       <!-- 歌单 -->
       <div class="list-info" v-if="!songShow">
         <!-- 默认会显示用户姓名,需要替换 我喜欢的音乐样式调整 -->
-        <p class="list-title van-ellipsis" :class="{ first:myLove }">{{myLove?'我喜欢的音乐':name}}</p>
+        <p
+          class="list-title van-ellipsis"
+          :style="{width: userInfo ? '75vw' : myLove ? '3rem' : '4.8rem'}"
+        >
+          {{myLove ? '我喜欢的音乐': name}}
+        </p>
         <p class="list-num van-ellipsis">
-          <!-- 专辑 -->
+          <!-- 专辑,歌单 -->
           <span class="artist" v-for="(item, index) in artists" :key="index">{{item.name}}</span>
           {{trackCount}}首
+          <span v-if="publishTime">{{publishTime | format}}</span>
           <span v-if="creatorNickname">，by {{creatorNickname}}</span>
           <span v-if="playCount === 0">，播放0次</span>
           <span v-if="playCount">，播放{{playCount | filterPlayCountInfo }}次</span>
@@ -53,12 +59,14 @@
         <i class="iconfont icon-bofang1"></i>{{songplayCount}}次
       </span>
       <i v-else-if="showActionSheet" class="iconfont icon-sandian on-touch" @click.stop="showAction"></i>
+      <i v-else-if="add" class="iconfont icon-sandian on-touch"  @click.stop="addSong"></i>
       <i v-else class="iconfont icon-sandian on-touch"  @click.stop="no"></i>
     </div>
   </li>
 </template>
 <script>
-import { filterPlayCountInfo } from 'utils/filters'
+import { filterPlayCountInfo, filterSetDate } from 'utils/filters'
+import { format } from 'utils/date'
 import { albumDetail } from 'api/apis'
 export default {
   name: 'SongListLi',
@@ -70,6 +78,9 @@ export default {
       type: String
     },
     trackCount: {
+      type: Number
+    },
+    publishTime: {
       type: Number
     },
     creatorNickname: {
@@ -98,6 +109,9 @@ export default {
     playCount: {
       type: Number
     },
+    userInfo: {
+      type: Boolean
+    },
     bottom: {
       type: Number
     },
@@ -108,6 +122,9 @@ export default {
     // 歌曲
     songShow: {
       type: Boolean
+    },
+    songid: {
+      type: Number
     },
     number: {
       type: Number
@@ -123,6 +140,10 @@ export default {
     },
     albumName: {
       type: String
+    },
+    // 添加歌曲
+    add: {
+      type: Boolean
     }
   },
   methods: {
@@ -153,12 +174,17 @@ export default {
         noCompile: this.noCompile
       })
     },
+    addSong () {
+      this.$emit('addSong', { songid: this.songid, name: this.name })
+    },
     no () {
       this.$toast('该功能尚未实装,敬请期待')
     }
   },
   filters: {
-    filterPlayCountInfo
+    filterPlayCountInfo,
+    filterSetDate,
+    format
   }
 }
 </script>

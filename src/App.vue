@@ -71,9 +71,6 @@ export default {
   .container {
     position: relative;
   }
-  .small-height {
-    padding-bottom: 1rem;
-  }
 }
 // 一开始是不让 #app 滚动
 // .no-scroll {

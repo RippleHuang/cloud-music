@@ -114,7 +114,7 @@ export default {
     align-items: center;
     width: .8rem;
     height: .8rem;
-    margin: 0 auto;
+    margin: .1rem auto;
     border-radius: 50%;
     background-color: #fff;
     .icon-jiazai {

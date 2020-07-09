@@ -10,6 +10,7 @@ import user from './user'
 Vue.use(VueRouter)
 
 const ShowSong = () => import(/* webpackChunkName: "showsong" */ 'views/default/ShowSong')
+const Landscape = () => import(/* webpackChunkName: "landscape" */ 'views/videoIndex/Landscape')
 const routes = [
   ...common,
   ...home,
@@ -20,6 +21,10 @@ const routes = [
   {
     path: '/showsong',
     component: ShowSong
+  },
+  {
+    path: '/landscape',
+    component: Landscape
   }
 ]
 

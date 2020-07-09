@@ -11,7 +11,10 @@ import {
   SET_AUDIO_INDEX,
   SET_AUDIO_MODE,
   SET_PLAY_LIST,
-  SET_FULL_SCREEN
+  SET_FULL_SCREEN,
+  SET_HISTORY,
+  CLEAR_HISTORY,
+  REFRESH
 } from './mutations-types'
 export default {
   // 用户状态
@@ -71,5 +74,30 @@ export default {
   // 全屏播放器或迷你播放器
   [SET_FULL_SCREEN] (state, boole) {
     state.fullScreen = boole
+  },
+  // 搜索历史
+  [SET_HISTORY] (state, keyword) {
+    // 判断是否有
+    if (localStorage.getItem('keywords')) {
+      // 得到存储值并向前添加新值
+      const oldA = JSON.parse(localStorage.getItem('keywords'))
+      oldA.unshift(keyword)
+      // 去重
+      const newA = [...new Set(oldA)]
+      state.searchHistory = newA
+      localStorage.setItem('keywords', JSON.stringify(newA))
+    } else {
+      state.searchHistory = [keyword]
+      localStorage.setItem('keywords', JSON.stringify([keyword]))
+    }
+  },
+  // 清除搜索历史
+  [CLEAR_HISTORY] (state) {
+    state.searchHistory = []
+    localStorage.removeItem('keywords')
+  },
+  // 页面刷新
+  [REFRESH] (state) {
+    state.refreshState = +new Date()
   }
 }

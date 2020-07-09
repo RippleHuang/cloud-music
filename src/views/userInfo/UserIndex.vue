@@ -60,6 +60,7 @@
                 :trackCount="item.trackCount"
                 :privacy="item.privacy"
                 :playCount="item.playCount"
+                userInfo
                 @click.native="$router.push(`/showsong?albumId=${item.id}`)"
               />
               <div class="more on-touch" v-if="createNum > 10" @click="moreList">更多歌单&nbsp;&gt;</div>
@@ -73,7 +74,8 @@
                 :name="item.name"
                 :trackCount="item.trackCount"
                 :creatorNickname="item.creator.nickname"
-                :privacy="item.privacy"
+                :privacy="0"
+                userInfo
                 :playCount="item.playCount"
                 @click.native="$router.push(`/showsong?albumId=${item.id}`)"
               />

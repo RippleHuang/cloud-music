@@ -24,7 +24,7 @@
         <template #default>
           <!-- 没登录的情况下列表项显示 -->
           <ul class="song-group" v-if="!$store.state.loginState">
-            <li class="song-list">
+            <li class="song-list" @click="$toast('需要登录')">
               <div class="left">
                 <div class="list-cover">
                   <div class="bgc">
@@ -37,7 +37,7 @@
                 </div>
               </div>
               <div class="heart-module">
-                <van-button class="title-btn" round type="info" @click.stop>
+                <van-button class="title-btn" round type="info" @click.stop="$toast('需要登录')">
                   <i class="iconfont icon-xindong"></i>心动模式
                 </van-button>
               </div>
@@ -238,11 +238,6 @@ export default {
       },
       immediate: true
     },
-    refresh: {
-      handler (newV, old) {
-        this.getPlaylist(this.accountUid)
-      }
-    },
     songList: {
       deep: true,
       handler (val, oldVal) {
@@ -271,7 +266,7 @@ export default {
         this.show = true
         this.active = data
       } else {
-        this.$router.push('/login')
+        this.$toast('需要登录')
       }
     },
     // 激活歌单列表动作面板
@@ -302,6 +297,15 @@ export default {
       this.myLoveList = SongListCreate.slice(0, 1)
       this.createList = SongListCreate.slice(1)
       this.favoritesList = arr.slice(from, len)
+      // 保存收藏歌单的id
+      // 有本地数据先清空
+      if (localStorage.getItem('favoriteId')) localStorage.removeItem('favoriteId')
+      const favoritesPid = []
+      this.favoritesList.forEach(element => {
+        favoritesPid.push(element.id)
+      })
+      // 保存
+      localStorage.setItem('favoriteId', JSON.stringify(favoritesPid))
     },
     // 子组件传来的值
     getHeartMode (id, pid) {
@@ -311,7 +315,7 @@ export default {
     // 激活模态框
     createSongList () {
       if (!this.loginState) {
-        this.$router.push('/login')
+        this.$toast('需要登录')
       } else {
         this.showDialog = true
         this.show = false

@@ -42,7 +42,8 @@
                   item.typeNum === 39"
           >
             <video-card
-              :data="item.video ? item.video : item.mv || item.eventData.video"
+              :data="item.video ? item.video : item.mv ? item.mv : (item.eventData.video || item.eventData.mv)"
+              :type="(item.video || item.eventData.video ) ? 1 : 0"
               dynamic
             />
           </div>

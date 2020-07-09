@@ -110,15 +110,17 @@ export default {
             logout()
               .then(data => {
                 if (data.code === 200) {
-                  // 保存手机号,签到信息,用户标识 其他清空
+                  // 保存手机号,签到信息,搜索历史 其他清空
                   const phone = localStorage.getItem('phoneNumber')
                   const signIn = localStorage.getItem('signIn')
+                  const keywords = localStorage.getItem('keywords')
                   this.$store.commit('LOGIN_OUT')
                   // 跳转到登录页,并显示体验按
                   localStorage.setItem('login', 'login')
                   this.$router.push('/login')
                   localStorage.setItem('phoneNumber', phone)
                   localStorage.setItem('signIn', signIn)
+                  localStorage.setItem('keywords', keywords)
                 }
               })
               .catch(() => {

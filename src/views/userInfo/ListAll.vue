@@ -12,18 +12,20 @@
       line-width="1.4rem"
     >
       <van-tab
-        v-for="index in 2" :key="index"
-        :title="index === 1 ? `创建的歌单${createNum - 1}` : `收藏的歌单${favoritesNum}`"
+        v-for="inx in 2" :key="inx"
+        :title="inx === 1 ? `创建的歌单${createNum - 1}` : `收藏的歌单${favoritesNum}`"
       >
         <ul class="song-group">
           <song-list-li
-            v-for="(item, index) in index === 1 ? createListAll : favoritesListAll" :key="index"
+            v-for="(item, index) in inx === 1 ? createListAll : favoritesListAll" :key="index"
             :coverImgUrl="item.coverImgUrl"
             :name="item.name"
             :trackCount="item.trackCount"
+            :creatorNickname="inx === 2 ? item.creator.nickname : ''"
             :privacy="item.privacy"
             :playCount="item.playCount"
             :bottom="0.17"
+            userInfo
             @click.native="$router.push(`/showsong?albumId=${item.id}`)"
           />
         </ul>

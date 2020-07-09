@@ -58,9 +58,16 @@ export default {
     }
   },
   created () {
-    this.getAlbums()
     this.getArtists()
     this.getVideos()
+    this.getAlbums()
+  },
+  watch: {
+    '$store.state.refreshState': {
+      handler (val, oldVal) {
+        this.getAlbums()
+      }
+    }
   },
   methods: {
     getAlbums () {
@@ -68,6 +75,15 @@ export default {
         .then(data => {
           this.getData[0].data = data.data
           this.getData[0].count = data.count
+          // 保存专辑 id
+          // 有本地数据先清空
+          if (localStorage.getItem('albumsId')) localStorage.removeItem('albumsId')
+          const albumsId = [];
+          (data.data).forEach(element => {
+            albumsId.push(element.id)
+          })
+          // 保存
+          localStorage.setItem('albumsId', JSON.stringify(albumsId))
           this.$nextTick(() => {
             this.loading = false
           })

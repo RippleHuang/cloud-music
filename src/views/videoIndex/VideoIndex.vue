@@ -20,6 +20,7 @@
         <!-- 瀑布流加载 -->
         <van-list
           v-model="reload"
+          v-if="isLogin"
           :finished="finished"
           :finished-text="'没有更多了'"
           :offset="100"
@@ -31,6 +32,7 @@
               v-for="(item, index) in data.data" :key="index"
               :data="item.data"
               :active="active"
+              :type="item.type"
             />
           </div>
           <!-- vant list插槽 -->
@@ -38,6 +40,10 @@
             <loading :height="1.5" v-show="reload"/>
           </template>
         </van-list>
+        <div class="empty" v-else>
+          <i class="iconfont icon-kong"></i>
+          <p>需要登录</p>
+        </div>
       </van-tab>
     </van-tabs>
   </div>
@@ -52,6 +58,7 @@ export default {
   data () {
     return {
       active: 0,
+      isLogin: false,
       // 加载相关
       loading: true,
       reload: false,
@@ -59,6 +66,14 @@ export default {
       // 数据
       listTag: [],
       data: []
+    }
+  },
+  activated () {
+    if (!this.$store.state.loginState) {
+      this.isLogin = false
+      this.$toast('需要登录')
+    } else {
+      this.isLogin = true
     }
   },
   created () {
@@ -81,8 +96,8 @@ export default {
     getVideoTag () {
       videoTag()
         .then(data => {
-          // 随机16个tag
-          this.listTag = getRandomNumberArray(data.data, 16)
+          // 随机20个tag
+          this.listTag = getRandomNumberArray(data.data, 20)
           // 添加新属性data, 新属性sum, showVideo
           for (let index = 0; index <= this.listTag.length - 1; index++) {
             // 两种方法
@@ -118,9 +133,11 @@ export default {
       }
     },
     onLoad () {
-      this.listTag[this.active].sum++
-      // 获取对应视频分类的数据
-      this.getVideoGroup(this.listTag[this.active].id, this.listTag[this.active].sum)
+      if (this.$store.state.loginState) {
+        this.listTag[this.active].sum++
+        // 获取对应视频分类的数据
+        this.getVideoGroup(this.listTag[this.active].id, this.listTag[this.active].sum)
+      }
     }
   },
   components: {
@@ -133,5 +150,21 @@ export default {
 .video-index {
   // 固定高度,否则list无限load
   height: 100vh;
+}
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 70%;
+  text-align: center;
+  font-size: .32rem;
+  .icon-kong {
+    margin-bottom: .4rem;
+    color: #dd001b;
+    font-size: 3rem;
+    -webkit-text-stroke: 4px #fff;
+  }
 }
 </style>

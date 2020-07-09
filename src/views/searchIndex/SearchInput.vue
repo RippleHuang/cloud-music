@@ -14,19 +14,19 @@
         v-model="search"
         required="required"
         @input="getResult"
-        @blur="show = false"
-        @focus="show = search ? true : false"
+        @focus="getResult"
         ref="searchInput"
       >
       <i @click="clear" class="iconfont icon-chahao"></i>
     </div>
+    <div class="mask" @click="show = false" v-show="show"></div>
     <!-- 搜索建议列表信息 -->
     <ul class="search-list" v-show="show">
-      <li class="van-ellipsis"><span class="text">搜索 "{{ search }}"</span></li>
+      <li class="van-ellipsis on-touch" @click="searchShow(search)"><span class="text">搜索 "{{ search }}"</span></li>
       <li
         class="van-ellipsis on-touch"
         v-for="(item, index) in searchList" :key="index"
-        @click="$router.push(`/searchresult?text=${item.keyword}`)"
+        @click="searchShow(item.keyword)"
       >
         <i class="iconfont icon-sousuo"></i>
         {{ item.keyword }}
@@ -38,6 +38,11 @@
 import { defaultSearch, suggestSearch } from 'api/apis'
 export default {
   name: 'SearchInput',
+  props: {
+    text: {
+      type: String
+    }
+  },
   data () {
     return {
       search: '',
@@ -52,16 +57,24 @@ export default {
       handler (to, from) {
         if (to.path === '/search') {
           this.$nextTick(() => {
+            // 进入页面获得焦点
             this.$refs.searchInput.focus()
-            // 为空才请求
-            if (this.search === '') this.getDefaultSearch()
           })
+        } else if (to.path === '/searchresult') {
+          this.search = this.text
         }
       },
       immediate: true
     },
-    search (val, oldV) {
-      this.$refs.searchInput.style.borderColor = val ? '#fff' : '#ddd'
+    search: {
+      handler (val, oldV) {
+        this.$nextTick(() => {
+          this.$refs.searchInput.style.borderColor = val ? '#fff' : '#ddd'
+        })
+        // 为空请求
+        if (val === '') this.getDefaultSearch()
+      },
+      immediate: true
     }
   },
   methods: {
@@ -79,8 +92,8 @@ export default {
         })
     },
     // 获取搜索提示列表
-    getSuggestSearch () {
-      suggestSearch(this.search)
+    getSuggestSearch (keyword) {
+      suggestSearch(keyword)
         .then(data => {
           this.searchList = data.result.allMatch
         })
@@ -91,7 +104,9 @@ export default {
     getResult () {
       // 不为空搜索
       if (this.search) {
-        this.debounce(this.getSuggestSearch(), 100)
+        // 去除前后空格
+        this.search = this.search.replace(/^[\s*]|[\s*]$/g, '')
+        this.debounce(this.getSuggestSearch(this.search), 100)
         // 显示列表
         this.show = true
       } else {
@@ -108,6 +123,18 @@ export default {
         }
         timer = setTimeout(fn, delay)
       }
+    },
+    // 去搜索页或搜索
+    searchShow (keyword) {
+      this.$store.commit('SET_HISTORY', keyword) // 保存历史
+      this.search = keyword
+      if (!this.text) {
+        this.$router.push(`/searchresult?text=${keyword}`)
+      } else {
+        this.$emit('searchResult', keyword)
+      }
+      // 隐藏列表
+      this.show = false
     }
   }
 }
@@ -116,7 +143,7 @@ export default {
 .search-input {
   position: fixed;
   display: flex;
-  z-index: 3;
+  z-index: 5;
   width: 100%;
   height: 1.2rem;
   background-color: #dd001b;
@@ -150,7 +177,7 @@ export default {
       border-bottom: .01rem solid #ddd;
       // placeholder颜色,谷歌,火狐,ie
       @mixin public {
-        color:rgba(255, 255, 255, .6);
+        color:rgba(255, 255, 255, .9);
         font-size: .27rem;
         font-weight: bold;
       }
@@ -181,11 +208,22 @@ export default {
       display: block;
     }
   }
+  // 蒙版, 点击隐藏
+  .mask {
+    position: absolute;
+    left: 0;
+    top: 1.2rem;
+    z-index: 5;
+    width: 100%;
+    height: 100vh;
+    background-color: transparent;
+  }
+  // 列表
   .search-list {
     position: absolute;
-    left: 0.4rem;
+    left: .4rem;
     top: 1.2rem;
-    z-index: 2;
+    z-index: 6;
     width: 90%;
     box-shadow: 0 4px 16px #aaa;
     background-color: #fff;

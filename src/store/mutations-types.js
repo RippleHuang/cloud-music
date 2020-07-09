@@ -11,3 +11,6 @@ export const SET_PLAY_LIST = 'SET_PLAY_LIST' // 播放列表
 export const SET_AUDIO_INDEX = 'SET_AUDIO_INDEX' // 播放歌曲索引值
 export const SET_AUDIO_MODE = 'SET_AUDIO_MODE' // 播放模式
 export const SET_FULL_SCREEN = 'SET_FULL_SCREEN' // 全屏播放器或迷你播放器
+export const SET_HISTORY = 'SET_HISTORY' // 搜索历史
+export const CLEAR_HISTORY = 'CLEAR_HISTORY' // 清除历史
+export const REFRESH = 'REFRESH' // 刷新

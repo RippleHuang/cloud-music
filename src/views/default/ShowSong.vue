@@ -68,6 +68,10 @@
       :songListAll="songListAll"
       :load="load"
       :finish="finish"
+      :albumId="albumId"
+      :dishId="dishId"
+      :subNumber="subNumber"
+      :uid="uid"
       @reLoad="onLoad"
     />
     <!-- 预览图片 -->
@@ -90,7 +94,7 @@
 import DefaultNav from 'components/DefaultNav'
 import ImgCard from 'components/ImgCard'
 import PubcliSticky from 'components/PubcliSticky'
-import { albumDetail, getDishInfo, songInfo } from 'api/apis'
+import { albumDetail, playlistDetail, songInfo } from 'api/apis'
 import { mapGetters } from 'vuex'
 import { listRefresh, scroll } from '@/mixins/mixins'
 export default {
@@ -114,6 +118,8 @@ export default {
       // 歌单专辑id
       albumId: 0,
       dishId: 0,
+      // 收藏数
+      subNumber: 0,
       // 歌单用户id
       uid: 0,
       show: true,
@@ -122,6 +128,9 @@ export default {
     }
   },
   activated () {
+    // 进来前清空
+    this.albumId = 0
+    this.dishId = 0
     this.show = true
     const albumId = this.$route.query.albumId
     if (albumId) {
@@ -142,9 +151,10 @@ export default {
   methods: {
     // 歌单
     getSongListInfo (id) {
-      albumDetail(id)
+      playlistDetail(id)
         .then(data => {
           this.albumInfo = data.playlist
+          this.subNumber = data.playlist.subscribedCount
           const length = data.playlist.trackIds.length
           this.initData(data.playlist, length)
           if (length) {
@@ -170,7 +180,7 @@ export default {
     },
     // 获取专辑内容
     getDishInfo (id) {
-      getDishInfo(id)
+      albumDetail(id)
         .then(data => {
           this.albumInfo = data
           this.songListAll = data.songs
@@ -214,15 +224,20 @@ export default {
         })
     },
     goUserInfo () {
-      if (this.albumInfo.creator) {
+      if (this.albumInfo.creator && this.$store.state.loginState) {
         this.$router.push('/userInfo?accountUid=' + this.uid)
+      } else if (!this.$store.state.loginState) {
+        this.$toast('需要登录')
       } else {
         this.$toast('暂不支持歌手信息页')
       }
     },
     // 编辑或预览
     goCompile () {
-      if (this.uid === this.accountUid) {
+      // 为空编辑
+      if (this.data.description) {
+        this.showPreview = true
+      } else {
         this.$router.push({
           name: 'compilesonglist',
           params: {
@@ -231,8 +246,6 @@ export default {
             description: this.data.description ? this.data.description : ''
           }
         })
-      } else {
-        this.showPreview = true
       }
     },
     no () {
@@ -336,7 +349,12 @@ export default {
   }
   .show-preview {
     .preview-con {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
       padding: 0 .5rem;
+      box-sizing: border-box;
       .preview-title {
         color: #fff;
         font-size: .36rem;

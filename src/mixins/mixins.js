@@ -1,4 +1,5 @@
 import { throttle } from 'utils/throttle'
+// list列表
 export const listRefresh = {
   data () {
     return {
@@ -39,6 +40,7 @@ export const listRefresh = {
     }
   }
 }
+// 滚动
 export const scroll = {
   data () {
     return {

@@ -3,20 +3,22 @@
     <loading :height="4.58" v-show="loading" />
     <div class="search-container" v-show="!loading">
       <!-- 历史记录 -->
-      <div class="history">
+      <div class="history" v-if="$store.getters.searchHistory.length">
         <div class="top">
           <p class="title">历史记录</p>
-          <i class="iconfont icon-trash"></i>
+          <i class="iconfont icon-trash" @click="$store.commit('CLEAR_HISTORY')"></i>
         </div>
-        <ul class="tag-group">
-          <li
-            class="tags-item"
-            v-for="(item, index) in  history" :key="index"
-            @click="$router.push(`/searchresult?text=${item}`)"
-          >
-            {{item}}
-          </li>
-        </ul>
+        <div class="history-box">
+          <ul class="tag-group">
+            <li
+              class="tags-item"
+              v-for="(item, index) in $store.getters.searchHistory" :key="index"
+              @click="goSearch(item)"
+            >
+              {{item}}
+            </li>
+          </ul>
+        </div>
       </div>
       <!-- 热搜榜 -->
       <div class="hot-search">
@@ -25,7 +27,7 @@
           <li
             class="hot-item on-touch"
             v-for="(item, index) in hotList" :key="index"
-            @click="$router.push(`/searchresult?text=${item.searchWord}`)"
+            @click="goSearch(item.searchWord)"
           >
             <span class="num">{{ index + 1 }}</span>
             <div class="song-center">
@@ -55,7 +57,6 @@ export default {
   data () {
     return {
       loading: true,
-      history: ['李荣浩'],
       hotList: []
     }
   },
@@ -74,6 +75,11 @@ export default {
         .catch(() => {
           this.$toast('获取热搜失败')
         })
+    },
+    // 去搜索页并保存历史记录
+    goSearch (keyword) {
+      this.$store.commit('SET_HISTORY', keyword)
+      this.$router.push(`/searchresult?text=${keyword}`)
     }
   },
   components: {
@@ -101,9 +107,7 @@ export default {
         font-size: .32rem;
       }
     }
-    .tag-group {
-      display: flex;
-      align-items: center;
+    .history-box {
       overflow-x: auto;
       // 隐藏滚动条 火狐 IE 谷歌
       scrollbar-width: none;
@@ -111,15 +115,23 @@ export default {
       &::-webkit-scrollbar {
         display: none;
       }
-      .tags-item {
-        height: .6rem;
-        padding: 0 .2rem;
-        margin-right: .3rem;
-        line-height: .6rem;
-        text-align: center;
-        color: black;
-        background-color: rgb(236, 231, 231);
-        border-radius: .3rem;
+      .tag-group {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: fit-content;
+        .tags-item {
+          display: flex;
+          width: max-content;
+          height: .6rem;
+          padding: 0 .2rem;
+          margin-right: .3rem;
+          line-height: .6rem;
+          text-align: center;
+          color: black;
+          background-color: rgb(236, 231, 231);
+          border-radius: .3rem;
+        }
       }
     }
   }

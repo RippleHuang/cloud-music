@@ -51,6 +51,13 @@ export default {
       this.$nextTick(function () {
         this.isReload = true
       })
+    },
+    goVideo () {
+      if (this.$store.state.loginState) {
+        this.$router.replace('/video')
+      } else {
+        this.$toast('需要登录')
+      }
     }
   },
   // 导航离开前关闭侧边栏

@@ -37,6 +37,10 @@ export default {
       type: Number
     }
   },
+  mounted () {
+    // 到达顶部
+    window.scrollTo(0, 0)
+  },
   filters: {
     filterPlayCount
   }
@@ -44,8 +48,8 @@ export default {
 </script>
 <style lang='scss' scoped>
 .village-box {
-  width: 100%;
-  margin: .2rem 0;
+  width: 48.5%;
+  margin: .1rem 0;
   break-inside: avoid;
   border-radius: .2rem;
   overflow: hidden;

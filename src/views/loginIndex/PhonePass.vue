@@ -57,7 +57,8 @@ export default {
       'SET_LEVEL',
       'ACCOUNT_UID',
       'NICK_NAME',
-      'AVATAR_URL'
+      'AVATAR_URL',
+      'REFRESH'
     ]),
     // 密码验证
     passVerity (phone, pass) {
@@ -107,6 +108,8 @@ export default {
         .then(data => {
           // 存储lv信息
           this.SET_LEVEL(data.level)
+          // 刷新
+          this.REFRESH()
           // 跳转到主页
           this.$router.push('/find')
         })

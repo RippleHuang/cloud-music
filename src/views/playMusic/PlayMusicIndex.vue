@@ -36,6 +36,7 @@
           <van-slider
             v-model="progressWidth"
             active-color="#dd001b"
+            bar-height="4px"
             :button-size="buttonSize"
             @change="changeTime"
             @drag-start="dragStart"
@@ -72,7 +73,15 @@
         <!-- 头部 -->
         <div class="top van-hairline--bottom">
           <div class="left on-touch" @click="changeMode">
-            <i class="iconfont" :class="[modeClass]"></i>
+            <i
+            class="iconfont"
+            :class="[{
+                'icon--lbxh' : mode === 0,
+                'icon-loop': mode === 1,
+                'icon-suijibofang-wangyiicon': mode === 2
+              }]"
+            >
+            </i>
             <span>
               {{ mode === 0 ? '列表循环' : mode === 1 ? '单曲循环' : '随机播放' }}
               ({{ playList.length }})
@@ -112,7 +121,7 @@
                 </span>
               </div>
               <!-- 删除此项歌曲 -->
-              <i class="iconfont icon-chahao" @click.stop="deleteSong(item)"></i>
+              <i class="iconfont icon-chahao" @click.stop="deleteOneSong(item)"></i>
             </li>
           </van-list>
         </ul>
@@ -192,17 +201,7 @@ export default {
       'audioIngSong',
       'fullScreen',
       'accountUid'
-    ]),
-    modeClass: function () {
-      if (this.mode === 0) {
-        return 'icon--lbxh'
-      }
-      if (this.mode === 1) {
-        return 'icon-loop'
-      } else {
-        return 'icon-suijibofang-wangyiicon'
-      }
-    }
+    ])
   },
   watch: {
     // 当前歌曲变化，获取歌曲信息
@@ -287,9 +286,15 @@ export default {
             this.getSongLyric(id)
             this.toPlay()
           } else {
-            this.$toast('暂无版权,播放下一首')
-            this.readySong = true
-            this.nextSong()
+            // 移出播放列表
+            this.deleteSong(this.audioIngSong)
+            if (this.playList.length === 0) {
+              this.$toast('暂无版权')
+            } else {
+              this.$toast('暂无版权,播放下一首')
+              this.readySong = true
+              this.nextSong()
+            }
           }
         })
         .catch(() => {
@@ -322,10 +327,15 @@ export default {
         })
         .catch(err => {
           if (err) {
-            this.$toast('暂无版权,播放下一首')
-            // 不能播放的时候选择下一首进行播放
-            this.readySong = true
-            if (this.readySong) this.nextSong()
+            // 移出播放列表
+            this.deleteSong(this.audioIngSong)
+            if (this.playList.length === 0) {
+              this.$toast('暂无版权')
+            } else {
+              this.$toast('暂无版权,播放下一首')
+              this.readySong = true
+              this.nextSong()
+            }
           }
         })
     },
@@ -396,26 +406,24 @@ export default {
     getSongLyric (id) {
       songLyric(id)
         .then(data => {
-          if (data.nolyric || data.sgc) {
+          if (data.lrc) {
+            this.noLyric = false
+            // 翻译歌词原本歌词
+            this.chineseLyric = data.tlyric.lyric
+            this.originalLyric = data.lrc.lyric
+            this.ruleLyric = this.createLrcArray(this.originalLyric)
+          } else if (data.nolyric || data.sgc) {
             // 当前歌曲没有歌词
             this.ruleLyric = []
             this.nowLyric = ''
             this.noLyric = true
             this.noLyricText = '纯音乐，请欣赏'
           } else {
-            if (data.lrc) {
-              this.noLyric = false
-              // 中文歌词原本歌词
-              this.chineseLyric = data.tlyric.lyric
-              this.originalLyric = data.lrc.lyric
-              this.ruleLyric = this.createLrcArray(this.originalLyric)
-            } else {
-              // 歌词为空
-              this.noLyricText = '暂时没有歌词'
-              this.ruleLyric = []
-              this.nowLyric = ''
-              this.noLyric = true
-            }
+            // 没有歌词
+            this.noLyricText = '暂时没有歌词'
+            this.ruleLyric = []
+            this.nowLyric = ''
+            this.noLyric = true
           }
         })
         .catch(() => {
@@ -462,7 +470,7 @@ export default {
           return -1
         }
       }
-      return -1
+      return -1 // 防止没数据时报错
     },
     // 设置当前歌词显示信息
     showLyric (index, array) {
@@ -590,6 +598,15 @@ export default {
         })
       }
       this.SET_AUDIO_INDEX(index)
+    },
+    // 删除,只有一项时关闭展示列表
+    deleteOneSong (song) {
+      if (this.playList.length === 1) {
+        this.showAudioList()
+        this.deleteSong(song)
+      } else {
+        this.deleteSong(song)
+      }
     },
     // 清空播放列表
     clearAll () {

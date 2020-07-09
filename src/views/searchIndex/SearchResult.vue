@@ -1,24 +1,42 @@
 <template>
   <div class="search-result">
-    <search-input />
+    <search-input
+      :text="keyword ? keyword : $route.query.text"
+      @searchResult="searchResult"
+    />
     <!-- 选项卡 -->
     <van-tabs
       v-model="active"
       swipeable
       class="nav-tabs"
+      :class="{'small-height': $store.state.audioList.length}"
       line-width="0.6rem"
       color="#fff"
       background="#dd001b"
     >
-      <!-- 选项item -->
+      <!-- 综合 -->
       <van-tab
         class= "nav-tab"
-        v-for="(data, index) in searchData"
+        :title="searchData[0].title"
+      >
+        <loading :height="4.58" v-show="loading"/>
+        <result-all-type
+          v-show="!loading"
+          :data="searchData[0].data"
+          :active.sync="active"
+          @searchSim="searchResult"
+        />
+      </van-tab>
+      <!-- 其他分类 -->
+      <van-tab
+        class= "nav-tab"
+        v-for="(data, index) in searchData.slice(1)"
         :key="index"
         :title="data.title"
       >
         <!-- 瀑布流加载 -->
         <van-list
+          :class="{'small-height': $store.state.audioList.length}"
           v-model="reload"
           :finished="finished"
           :finished-text="'没有更多了'"
@@ -26,10 +44,12 @@
           @load="onLoad"
         >
           <!-- 搜索结果列表 -->
+          <loading :height="4.58" v-show="loading"/>
           <div class="result-list-con" v-show="!loading">
             <result-public
               :active="active"
               :data="data.data"
+              :keywords="$route.query.text"
             />
           </div>
           <!-- vant list插槽 -->
@@ -44,21 +64,23 @@
 <script>
 import SearchInput from './SearchInput'
 import ResultPublic from './ResultPublic'
+import ResultAllType from './ResultAllType'
 import Loading from 'components/Loading'
 import { search } from 'api/apis'
 export default {
   name: 'SearchResult',
   data () {
     return {
-      active: 1,
+      active: 0,
       // 加载相关
       loading: true,
       reload: false,
       finished: false,
       list: [],
+      keyword: '',
       searchData: [{
         title: '综合',
-        type: 1080
+        type: 1018
       }, {
         title: '单曲',
         type: 1
@@ -81,30 +103,58 @@ export default {
     }
   },
   created () {
-    // 添加新属性data, sum, moreText
+    // 添加新属性data, sum
     for (let index = 0; index <= 6; index++) {
       this.$set(this.searchData[index], 'data', [])
       this.$set(this.searchData[index], 'sum', -1)
-      this.$set(this.searchData[index], 'moreText', '')
-      this.$set(this.searchData[index], 'allNumber', 0)
     }
+    this.getSearch(this.$route.query.text, 0, 1018)
   },
   watch: {
     // active 变化清空数据
     active: {
-      handler () {
+      handler (val, oldV) {
+        // 到达顶部
+        window.scrollTo(0, 0)
+        // 需要清空数据
         this.finished = false
         this.list = []
-        // 首次需要加载
-        if (this.searchData[this.active].data.length === 0) {
-          this.loading = true
+        // 请求综合
+        if (this.searchData[0].data.length === 0) {
+          if (val === 0) this.getSearch(this.keyword, 0, 1018)
+        }
+      }
+    },
+    keyword (val, oldV) {
+      // 搜索词变化需要清空上一次结果
+      for (let index = 0; index <= 6; index++) {
+        this.searchData[index].data = []
+        this.searchData[index].sum = -1
+      }
+      // 搜索综合
+      this.active = 0
+    },
+    '$route.query.text': {
+      handler (val, oldV) {
+        if (val) {
+          this.searchResult(val)
         }
       }
     }
   },
   methods: {
-    getSearch (offset, type) {
-      search(this.$route.query.text, 30, offset, type)
+    searchResult (keyword) {
+      this.keyword = keyword
+      // 需要清空数据
+      this.finished = false
+      this.list = []
+      this.searchData[this.active].data = []
+      this.searchData[this.active].sum = 0
+      this.loading = true
+      this.getSearch(keyword, 0, this.searchData[this.active].type)
+    },
+    getSearch (keyword, offset, type) {
+      search(keyword, 30, offset, type)
         .then(data => {
           this.list = data.result
           this.division()
@@ -114,48 +164,39 @@ export default {
         })
     },
     // 30个为一组
-    division () {
+    async division () {
+      const dataName = ['', 'songs', 'videos', 'artists', 'albums', 'playlists', 'userprofiles']
       if (this.active === 0) {
-        // 获取对应的 moreText
-        const arr = ['song', 'video', 'artist', 'album', 'playlist', 'user']
-        arr.forEach((val, index) => {
-          this.searchData[index + 1].moreText = this.list[val].moreText
-          // 提取字符串中的数字
-          this.searchData[index + 1].allNumber = this.list[val].moreText.replace(/[^0-9]/g, '')
-        })
+        this.searchData[0].data = this.list
+        // 直接结束
+        this.finished = true
       } else {
-        const dataName = ['', 'songs', 'videos', 'artists', 'albums', 'playlists', 'userprofiles']
-        this.searchData[this.active].data.push(...this.list[dataName[this.active]])
+        // 数据全部加载完成, (data || [])防止报错
+        if ((this.list[dataName[this.active]] || []).length === 0) {
+          this.finished = true
+        } else {
+          await this.searchData[this.active].data.push(...(this.list[dataName[this.active]]))
+        }
       }
       // 加载状态结束
       this.$nextTick(() => {
         this.loading = false
         this.reload = false
       })
-      // 综合直接结束
-      if (this.active) {
-        // 数据全部加载完成
-        if (this.searchData[this.active].data.length >= this.searchData[this.active].allNumber) {
-          this.finished = true
-        }
-      } else {
-        this.finished = true
-      }
     },
     onLoad () {
       if (this.active !== 0) {
         this.searchData[this.active].sum++
         // 推荐歌单以及其他分类
-        this.getSearch(this.searchData[this.active].sum, this.searchData[this.active].type)
-      } else {
-        /// 当为综合时
-        this.getSearch(30, 1080)
+        const keyword = this.keyword ? this.keyword : this.$route.query.text
+        this.getSearch(keyword, this.searchData[this.active].sum * 30, this.searchData[this.active].type)
       }
     }
   },
   components: {
     SearchInput,
     ResultPublic,
+    ResultAllType,
     Loading
   }
 }

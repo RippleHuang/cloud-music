@@ -41,7 +41,7 @@
           :imgUrl="item.album.blurPicUrl"
           :dec="item.name"
           :newPlatetype="type"
-          @click.native="playMusic(item)"
+          @click.native="$store.dispatch('addToAudioList', item)"
           @loadingImg="loadingImg"
         />
       </div>
@@ -86,9 +86,6 @@ export default {
         .catch(() => {
           this.$toast('加载新歌,请稍后尝试')
         })
-    },
-    playMusic (data) {
-      this.$store.dispatch('addToAudioList', data)
     },
     loadingImg (data) {
       this.$nextTick(() => {

@@ -1,5 +1,6 @@
 <template>
-  <div class="song-square">
+  <!-- 迷你播放器留空 -->
+  <div class="song-square" :class="{'small-height': $store.state.audioList.length}">
     <default-nav
       :title="'歌单广场'"
       :background="'#dd001b'"
@@ -43,7 +44,7 @@
           </div>
           <!-- vant list插槽 -->
           <template #loading>
-            <loading :height="0.5" v-show="reload"/>
+            <loading :height="1.5" v-show="reload"/>
           </template>
         </van-list>
       </van-tab>
@@ -108,11 +109,11 @@ export default {
   watch: {
     // active 变化清空数据
     active: {
-      handler () {
+      handler (val, oldV) {
         this.finished = false
         this.songList = []
         // 首次需要加载
-        if (this.getData[this.active].data.length === 0) {
+        if (this.getData[val].data.length === 0) {
           this.loading = true
         }
       }

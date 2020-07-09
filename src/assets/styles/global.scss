@@ -6,6 +6,10 @@ html {
     display: none;
   }
 }
+// 迷你播放器留空
+.small-height {
+  padding-bottom: 1rem;
+}
 // 点击效果
 .on-touch {
   &:active {
@@ -251,6 +255,9 @@ html {
     color: black;
   }
 }
+.songedit-toast {
+  @extend .phone-toast;
+}
 // 加载 toast样式
 .van-toast--loading {
   background-color: transparent !important;
@@ -366,9 +373,6 @@ html {
           font-size: .29rem;
           color: black;
         }
-        .first {
-          width: 3rem;
-        }
         .list-num {
           width: 95%;
           padding-top: .04rem;
@@ -467,12 +471,15 @@ html {
 }
 // 展示歌曲列表 vant图片预览
 .show-preview {
+  .van-image-preview__image {
+    height: 100vh;
+  }
   .van-image__img {
     position: absolute;
     left: 50%;
     top: 15%;
     display: block;
-    width: 75%;
+    width: 60%;
     height: auto;
     border-radius: 0.2rem;
     transform: translateX(-50%);
@@ -486,11 +493,7 @@ html {
   position: absolute;
   z-index: 2;
   width: 100%;
-  height: 100vh;
-}
-.van-pull-refresh__head {
-  display: flex;
-  align-items: end;
+  height: 50vh;
 }
 .refresh-toast {
   top: 1.8rem;

@@ -17,26 +17,21 @@
       </div>
       <div class="right-btn">
         <!-- 防止冒泡 -->
-        <van-button
-          type="danger"
-          size="small"
-          round
+        <span
           class="sign"
           @click.stop="signInClick"
           v-show="!signIn"
         >
           <i class="iconfont icon-tubiaozhizuo-"></i>签到
-        </van-button>
-        <van-button
-          size="small"
-          class="signed"
-          round
+        </span>
+        <span
+          class="signin"
           v-show="signIn"
           @click.stop="signInClick"
         >
           已签到
           <i class="iconfont icon-arrow-right"></i>
-        </van-button>
+        </span>
       </div>
     </div>
   </div>
@@ -60,11 +55,9 @@ export default {
     signIn: {
       handler (val, oldVal) {
         const date = new Date()
-        const nowTime = format(date, '/').slice(0, 10) // 截取当前日期 yyyy/mm/dd
-        // 把日期转化为数值
-        const signInNum = nowTime.split('/').join('')
-        // 当前时间,转化为数字
-        const nowSign = JSON.parse(signInNum)
+        const nowTime = format(date).slice(0, 10) // 截取当前日期 yyyy.mm.dd
+        // 把日期转化为数值 转化为数字
+        const nowSign = +nowTime.split('.').join('')
         // 有本地记录
         if (localStorage.getItem('signIn')) {
           const local = JSON.parse(localStorage.getItem('signIn'))
@@ -110,9 +103,9 @@ export default {
     // 保存最后签到时间
     setSignIn () {
       const date = new Date()
-      const nowTime = format(date, '/').slice(0, 11) // 截取当前日期
+      const nowTime = format(date).slice(0, 10) // 截取当前日期
       // 把日期转化为数值,uid 保存到localStorage
-      const signInNum = JSON.parse(nowTime.split('/').join(''))
+      const signInNum = +nowTime.split('.').join('')
       var newO = { signInNum, accountUid: this.accountUid }
       if (localStorage.getItem('signIn')) {
         var arr = []
@@ -245,22 +238,30 @@ export default {
       .sign {
         width: 1rem;
         height: .45rem;
+        line-height: .45rem;
+        text-align: center;
         font-size: .21rem;
+        color: #fff;
+        border-radius: .4rem;
+        background-color: #dd001b;
         i {
           font-size: .2rem;
         }
       }
       // 已签到按钮
-      .signed {
+      .signin {
         width: 1.3rem;
         height: .48rem;
-        padding: 0 0 0 .12rem;
+        line-height: .48rem;
+        text-align: center;
         font-size: .2rem;
         color: rgb(99, 97, 97);
         border: .01rem solid rgba(0, 0, 0, .1);
+        border-radius: .5rem;
         &:active {
           border: none;
-          color: black;
+          color: #fff;
+          background-color: rgba(0, 0, 0, .1);
         }
         i {
           font-size: .2rem;

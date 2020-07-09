@@ -88,6 +88,8 @@ export default {
     // active 变化清空数据
     active: {
       handler (val, oldV) {
+        // 到达顶部
+        window.scrollTo(0, 0)
         this.sum = 0
         this.finish = false
         this.songList = []
@@ -132,7 +134,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 45vh;
+  height: 6rem;
   padding-top: .4rem;
   .mask {
     position: fixed;

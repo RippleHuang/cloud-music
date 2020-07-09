@@ -7,7 +7,6 @@
   />
   <home-song-list
     :songListNum="songListNum"
-    :refresh="refresh"
     @songList="heartMode"
     @reload="getUserInfo"
   />
@@ -29,7 +28,6 @@ export default {
         // 收藏的歌单
         favoritesNum: 0
       },
-      refresh: 0,
       heartModeList: [],
       favoritArtis: 0,
       dj: 0,
@@ -37,17 +35,21 @@ export default {
       videosCount: 0
     }
   },
-  /* 直接监听uid变化 */
+  /* 监听refreshState变化 */
   watch: {
-    '$store.state.accountUid': {
+    '$store.state.refreshState': {
       handler (val, oldVal) {
         if (this.loginState) {
           this.getUserInfo()
           this.getAlbums()
-          this.getVideos()
-          // 通知后代组件刷新
-          this.refresh = +new Date()
         }
+      },
+      immediate: true
+    },
+    // 暂时没有对视频进行操作,只监听用户id就行
+    '$store.state.accountUid': {
+      handler () {
+        this.getVideos()
       },
       immediate: true
     }

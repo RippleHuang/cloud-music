@@ -10,7 +10,7 @@
     <!-- 新碟列表 -->
     <div class="new-plate-box" v-show="!loading">
       <div class="new-plate-item" v-for="(plate, index) in filterAlbums" :key="index">
-        <p class="plate-title">
+        <p class="plate-title" v-if="plate.data.length">
           <span v-show="index === 0">本周新碟</span>
           <span class="month" v-show="index !== 0">
             {{new Date().getMonth() + 2 - index}}月
@@ -40,21 +40,18 @@ export default {
   name: 'MoreNewPlate',
   data () {
     return {
-      filterAlbums: [{
-        data: [],
-        title: '本周新碟'
-      }, {
-        data: []
-      }, {
-        data: []
-      }],
+      filterAlbums: [],
       loading: true
     }
   },
   created () {
-    // 获取要请求的个数
+    // 添加data
+    for (let index = 0; index <= 2; index++) {
+      this.filterAlbums[index] = { data: [] }
+    }
+    // 获取要请求的个数, 这里设置120个
     // const limit = this.$route.query.total
-    this.getNewDish('240')
+    this.getNewDish('120')
   },
   methods: {
     getNewDish (limit) {
@@ -85,8 +82,6 @@ export default {
       for (let i = 0; i <= 1; i++) {
         this.filterAlbums[i + 1].data = arr.filter(val => new Date(val.publishTime).getMonth() + 1 === month - i)
       }
-    },
-    onLoad () {
     }
   },
   components: {

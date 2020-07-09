@@ -5,18 +5,29 @@
       <loading :height="4.35" isabsolute v-show="loading" />
       <div class="content-sticky" v-show="!loading">
         <!-- 顶部粘性布局 -->
-        <div class="sticky-top" :style="{top:stickyTop}" @click="startPlay">
-          <span>
-            <!-- 新音乐与每日推荐 -->
+        <div class="sticky-top" :style="{top:stickyTop}">
+          <span class="on-touch" @click="startPlay">
+            <!-- 新音乐与每日推荐样式 -->
             <i class="iconfont icon-bofang1" :style="{padding:newAndrecommed}"></i>
             播放全部
+            <span v-if="trackCount" class="trackCount">(共{{trackCount}}首)</span>
           </span>
-          <span v-if="trackCount" class="trackCount">(共{{trackCount}}首)</span>
+          <!-- 收藏 -->
+          <div class="favorite-btn on-touch" v-if="uid && accountUid !== uid">
+            <span class="add" v-show="!add" @click="addOrDel(true)">
+              <i class="iconfont icon-jia1"></i>
+              收藏({{subNum | filterPlayCountInfo}})
+            </span>
+            <span class="del" v-show="add" @click="addOrDel(false)">
+              <i class="iconfont icon-chuangjianwenjianjia"></i>
+              {{subNum | filterPlayCountInfo}}
+            </span>
+          </div>
         </div>
         <!-- 为迷你播放器留空 -->
         <ul
           class="song-group"
-          :style="{'padding-bottom': $store.state.audioList.length ? '1rem' : 0 }"
+          :style="{'padding-bottom': audioList.length ? '1rem' : 0 }"
         >
           <!-- 瀑布流加载 -->
           <van-list
@@ -33,11 +44,14 @@
                 :number="recommend ? 0 : index+1"
                 :coverImgUrl="recommend ? item.al.picUrl : ''"
                 :active="item.id === audioIngSong.id"
+                :songid="item.id"
                 :artists="item.ar"
                 :albumName="item.al.name"
                 :name="item.name"
                 :privacy="0"
+                add
                 home
+                @addSong="addSong"
                 @playSong="setAudioList(index)"
               />
             </div>
@@ -53,6 +67,9 @@
                 :name="item.name"
                 :privacy="0"
                 home
+                add
+                :songid="item.id"
+                @addSong="addSong"
                 @playSong="setAudioList(index)"
               />
             </div>
@@ -64,12 +81,26 @@
     <div class="empty" v-if="!show">
       <button class="add-button">添加歌曲</button>
     </div>
+    <!-- 动作面板 -->
+    <van-action-sheet v-model="showActionSheet" close-on-popstate>
+      <add-song
+        :name="name"
+        :uid="uid"
+        :createList="createList"
+        :albumId="albumId"
+        :songid="songid"
+        :showActionSheet.sync="showActionSheet"
+      />
+    </van-action-sheet>
   </div>
 </template>
 <script>
 import Loading from 'components/Loading'
 import SongListLi from 'components/SongListLi'
+import AddSong from 'components/AddSong'
 import { mapGetters, mapActions } from 'vuex'
+import { editFavoritePlayList, editFavoriteAlbum, albumDetailDynamic, playlist } from 'api/apis'
+import { filterPlayCountInfo } from 'utils/filters'
 export default {
   name: 'PubcliSticky',
   props: {
@@ -82,11 +113,26 @@ export default {
     trackCount: {
       type: Number
     },
+    // 瀑布流加载
+    load: {
+      type: Boolean
+    },
+    finish: {
+      type: Boolean
+    },
     songList: {
       type: Array
     },
     songListAll: {
       type: Array
+    },
+    // 顶部距离
+    stickyTop: {
+      type: String
+    },
+    // 新歌或每日推荐
+    newAndrecommed: {
+      type: String
     },
     recommend: {
       type: Boolean
@@ -98,26 +144,54 @@ export default {
     newSong: {
       type: Boolean
     },
-    load: {
-      type: Boolean
+    // 收藏相关
+    albumId: {
+      type: Number
     },
-    finish: {
-      type: Boolean
+    dishId: {
+      type: Number
     },
-    stickyTop: {
-      type: String
+    uid: {
+      type: Number
     },
-    newAndrecommed: {
-      type: String
+    subNumber: {
+      type: Number
     }
   },
   data () {
     return {
-      reload: false
+      reload: false,
+      add: false,
+      subNum: 0,
+      showActionSheet: false,
+      createList: [],
+      songid: 0,
+      name: ''
+    }
+  },
+  created () {
+    this.getPlaylist()
+  },
+  watch: {
+    uid: {
+      handler (val, oldV) {
+        // 获取存储的pid
+        const pid = JSON.parse(localStorage.getItem('favoriteId'))
+        const id = JSON.parse(localStorage.getItem('albumsId'))
+        // 获取收藏数
+        if (this.dishId !== 0 && this.accountUid !== val) {
+          this.add = id.includes(this.dishId)
+          this.getSub()
+        } else {
+          // 是否有这个歌单id 来确定 add
+          this.add = pid.includes(this.albumId)
+          this.subNum = this.subNumber
+        }
+      }
     }
   },
   computed: {
-    ...mapGetters(['audioIngSong'])
+    ...mapGetters(['audioIngSong', 'audioList', 'accountUid'])
   },
   methods: {
     ...mapActions(['selectPlay', 'startPlayAll']),
@@ -132,11 +206,88 @@ export default {
         this.reload = this.load
       })
       this.$emit('reLoad')
+    },
+    // 收藏或取消收藏
+    addOrDel (boolean) {
+      const t = boolean ? 1 : 2
+      var messageEdit = ''
+      // 判定歌单和专辑收藏
+      if (this.albumId) {
+        editFavoritePlayList(t, this.albumId)
+          .then(() => {
+            if (t === 1) {
+              this.subNum += 1
+              this.add = true
+              messageEdit = '收藏成功'
+            } else {
+              this.subNum -= 1
+              this.add = false
+              messageEdit = '已取消收藏'
+            }
+            // 刷新
+            this.$store.commit('REFRESH')
+            this.$toast(messageEdit)
+          })
+          .catch(() => {
+            this.$toast('歌单收藏操作失败')
+          })
+      } else {
+        editFavoriteAlbum(t, this.dishId)
+          .then(() => {
+            if (t === 1) {
+              this.subNum += 1
+              this.add = true
+              messageEdit = '收藏成功'
+            } else {
+              this.subNum -= 1
+              this.add = false
+              messageEdit = '已取消收藏'
+            }
+            // 刷新
+            this.$store.commit('REFRESH')
+            this.$toast(messageEdit)
+          })
+          .catch(() => {
+            this.$toast('歌单收藏操作失败')
+          })
+      }
+    },
+    // 得到专辑收藏数
+    getSub () {
+      albumDetailDynamic(this.dishId)
+        .then(data => {
+          this.subNum = data.subCount
+        })
+        .catch(() => {
+          this.$toast('获取专辑收藏数')
+        })
+    },
+    // 获取创建列表
+    getPlaylist () {
+      playlist(this.accountUid)
+        .then(data => {
+          const favoriteNum = JSON.parse(localStorage.getItem('favoriteId')).length
+          const createNum = data.playlist.length - favoriteNum
+          this.createList = data.playlist.slice(0, createNum)
+        })
+        .catch(() => {
+          this.$toast('请求失败,请稍后尝试')
+        })
+    },
+    // 显示动作面板
+    addSong (data) {
+      this.showActionSheet = true
+      this.songid = data.songid
+      this.name = data.name
     }
+  },
+  filters: {
+    filterPlayCountInfo
   },
   components: {
     Loading,
-    SongListLi
+    SongListLi,
+    AddSong
   }
 }
 </script>
@@ -151,13 +302,13 @@ export default {
     position: sticky;
     top: 1.2rem;
     z-index: 6;
+    display: flex;
+    justify-content: space-between;
     height: 1rem;
     line-height: 1rem;
     border-radius: .4rem .4rem 0 0;
     background-color: #fff;
-    &:active {
-      background-color: rgb(233, 230, 230);
-    }
+    overflow: hidden;
     .icon-bofang1 {
       padding: 0 .3rem 0 .4rem;
       font-size: .32rem;
@@ -165,6 +316,25 @@ export default {
     .trackCount {
       font-size: .26rem;
       color: rgb(151, 149, 149);
+    }
+    .favorite-btn {
+      padding-right: .3rem;
+      .add {
+        color: #fff;
+        background-color: #dd001b;
+        padding: .2rem;
+        border-radius: .4rem;
+        font-size: .24rem;
+        i {
+          font-size: .2rem;
+        }
+      }
+      .del {
+        color: rgb(172, 172, 172);
+        i {
+          font-size: .26rem;
+        }
+      }
     }
   }
   .song-group {

@@ -5,13 +5,17 @@
     class="viedo-img"
     :style="{
       display: videoCanPlay ? 'none': 'block',
-      height: dynamic ? '3.1rem': '3.7rem'
+      height: dynamic ? (landscape ? '100vh' : '3.1rem') : '3.7rem',
+      'border-radius': landscape ? '0' : '0.2rem'
       }"
     >
       <!-- video或mv -->
-      <img :src="(data.coverUrl ? data.coverUrl : data.imgurl) + '?param=350y200'" alt="">
+      <img
+        :src="(data.coverUrl ? data.coverUrl : data.imgurl ? data.imgurl : data.cover) + (landscape ? '' : '?param=350y200')"
+        :style="{'border-radius': landscape ? '0' : '0.1rem'}"
+      >
       <div class="mask"></div>
-      <span class="tag" v-if="!dynamic">{{ data.videoGroup ? data.videoGroup[0].name : ''}}</span>
+      <span class="tag" v-if="!dynamic">{{ data.videoGroup ? (data.videoGroup[0] || {}).name : ''}}</span>
       <span class="playtime">
         <i class="iconfont icon-gedanbofangliang_"></i>
         {{data.playTime || data.playCount | filterPlayCount}}
@@ -20,27 +24,47 @@
         <i class="iconfont icon-paihangbang"></i>
         {{data.durationms || data.duration | filterSetTime}}
       </span>
-      <i class="iconfont icon-bofang" @click="getUrl"></i>
+      <i class="iconfont icon-bofang" @click="clickTostar"></i>
     </div>
     <!-- 视频播放 -->
     <div
       class="play-video"
-      :style="{display: videoCanPlay ? 'block': 'none'}"
+      :style="{
+        display: videoCanPlay ? 'block': 'none',
+        height: landscape ? '100vh' : 'auto',
+        'border-radius': landscape ? '0' : '0.2rem'
+      }"
     >
       <video
         @canplay="startPlay"
         @timeupdate="playing"
+        @play="play = true"
+        @pause="play = false"
         class="video-mp4"
         ref="video"
         src="url"
       ></video>
       <!-- 显示隐藏 -->
-      <div class="action" ref="action" @click="sliderToggle">
+      <div class="action"
+        ref="action"
+        @click="sliderToggle"
+        :style="{height: !dynamic ? '98%' : landscape ? '100%' : '96%'}"
+      >
+        <div class="top van-ellipsis" v-if="landscape">
+          <i class="iconfont icon-zuo" @click="goback"></i>
+          <span class="title">{{data.title || data.name}}</span>
+        </div>
+        <i class="iconfont icon-quanping"
+          v-if="!landscape"
+          @click="$router.push(`/landscape?vid=${vid}&type=${type}`)"
+        >
+        </i>
         <!-- 播放暂停 -->
         <i
           class="iconfont"
           :class="{'icon-bofang': !play, 'icon-zantingtingzhi': play}"
           @click.stop="videoToggle"
+          :style="{'font-size': landscape ? '0.6rem' : '0.8rem'}"
         >
         </i>
         <p class="time">
@@ -64,20 +88,20 @@
     <!-- 底部信息,动态页隐藏 -->
     <div class="video-bottom" v-if="!dynamic">
       <!-- video或mv -->
-      <p class="title van-multi-ellipsis--l2">{{data.title}}</p>
+      <p class="title van-multi-ellipsis--l2">{{data.title || data.name}}</p>
       <div class="content-box">
-        <div class="info" @click="$router.push('/userInfo?accountUid=' + data.creator.userId)">
-          <img :src="data.creator.avatarUrl + '?param=50y50'" alt />
-          <span class="name van-ellipsis">{{data.creator.nickname}}</span>
+        <div class="info" @click="goUserInfo(data)">
+          <img :src="(data.creator ? data.creator.avatarUrl : (data.artists[0] || {}).img1v1Url) + '?param=50y50'" alt />
+          <span class="name van-ellipsis">{{data.creator ? data.creator.nickname : (data.artists[0] || {}).name}}</span>
         </div>
         <div class="right">
           <span @click="noAchieve">
             <i class="iconfont icon-zanpress"></i>
-            <i class="num">{{data.praisedCount | filterPlayCount}}</i>
+            <i class="num">{{data.praisedCount || data.likeCount | filterPlayCount}}</i>
           </span>
           <span @click="noAchieve">
             <i class="iconfont icon-pinglun"></i>
-            <i class="num">{{data.commentCount | filterPlayCount}}</i>
+            <i class="num">{{data.commentCount || data.commentCount | filterPlayCount}}</i>
           </span>
           <i class="iconfont icon-sandian" @click="noAchieve"></i>
         </div>
@@ -88,18 +112,28 @@
 <script>
 import { filterPlayCount, filterSetTime } from 'utils/filters'
 import { videoUrl, mvUrl } from 'api/apis'
+import screenfull from 'screenfull'
 export default {
   name: 'VideoCard',
   props: {
     data: {
-      type: Object
+      type: [Object, Array]
     },
     active: {
       type: Number
     },
-    // 动态传过来的
+    type: {
+      type: Number
+    },
+    // 动态和全屏播放传过来的
     dynamic: {
       type: Boolean
+    },
+    landscape: {
+      type: Boolean
+    },
+    refresh: {
+      type: Number
     }
   },
   data () {
@@ -115,7 +149,8 @@ export default {
       lastIndex: 0,
       playTime: '00:00',
       drag: false,
-      buttonSize: '8px'
+      buttonSize: '8px',
+      vid: 0
     }
   },
   watch: {
@@ -133,40 +168,53 @@ export default {
         this.videoPause()
         this.videoCanPlay = false
       }
+    },
+    refresh: {
+      handler (val, oldV) {
+        this.videoPause()
+        this.videoCanPlay = false
+        // 有数据才获取
+        if (val) {
+          if (this.data) this.getUrl()
+        }
+      }
     }
   },
   methods: {
-    // 获取url
-    getUrl () {
+    // 是否要获取
+    clickTostar () {
       const video = this.$refs.video
       // 给src设置默认值为url,防止重复加载视频
       if (video.src.includes('url')) {
-        // 动态页与视频页的视频
-        if (this.data.videoId || this.data.vid) {
-          const vid = this.data.videoId ? this.data.videoId : this.data.vid
-          videoUrl(vid)
-            .then(data => {
-              // 得到url
-              video.src = data.urls[0].url
-            })
-            .catch(() => {
-              this.$toast('获取视频失败')
-            })
-        } else { // mv
-          // 获取mv
-          mvUrl(this.data.id)
-            .then(data => {
-              // 得到url
-              video.src = data.data.url
-              this.startPlay()
-            })
-            .catch(() => {
-              this.$toast('获取mv失败')
-            })
-        }
+        this.getUrl()
       } else { // 已经加载完的不用再请求,直接播放
-        video.currentTime = 0
         this.videoPlay()
+      }
+    },
+    // 获取url
+    async getUrl () {
+      const video = this.$refs.video
+      this.vid = await this.data.videoId ? this.data.videoId : this.data.vid ? this.data.vid : this.data.id
+      // type 1为video, 0为mv
+      if (this.type === 1) {
+        videoUrl(this.vid)
+          .then(data => {
+            // 得到url
+            video.src = (data.urls[0] || {}).url
+          })
+          .catch(() => {
+            this.$toast('获取视频失败')
+          })
+      } else if (this.type === 0) { // mv
+        // 获取mv
+        mvUrl(this.vid)
+          .then(data => {
+            // 得到url
+            video.src = (data.data || {}).url
+          })
+          .catch(() => {
+            this.$toast('获取mv失败')
+          })
       }
     },
     // 准备就绪
@@ -174,7 +222,7 @@ export default {
       this.videoCanPlay = true
       // 播放前清空歌曲播放列表,暂停其他的视频
       this.$store.dispatch('clearPlayAll')
-      this.pauseAll()
+      this.pauseOther()
       // 播放
       this.videoPlay()
     },
@@ -184,7 +232,6 @@ export default {
       const promise = video.play()
       if (promise !== undefined) {
         promise.then(_ => {
-          this.play = true
           this.sliderToggle()
         }).catch(_ => {
           this.$toast('播放失败')
@@ -195,7 +242,6 @@ export default {
     videoPause () {
       const video = this.$refs.video
       video.pause()
-      this.play = false
       this.sliderToggle()
     },
     // 播放暂停
@@ -263,7 +309,7 @@ export default {
       this.sliderToggle()
     },
     // 暂停其他视频
-    pauseAll () {
+    pauseOther () {
       var video = document.getElementsByTagName('video')
       // 暂停函数
       function pauseAll () {
@@ -288,6 +334,19 @@ export default {
       this.timer = setTimeout(function () {
         _this.$refs.action.classList.add('slider-toggle')
       }, 2000)
+    },
+    goUserInfo (data) {
+      if (data.creator) {
+        this.$router.push('/userInfo?accountUid=' + data.creator.userId)
+      } else {
+        this.$toast('暂不支持歌手信息页')
+      }
+    },
+    goback () {
+      this.$router.go(-1)
+      this.videoPause()
+      // 退出全屏
+      screenfull.exit()
     },
     noAchieve () {
       this.$toast('此功能尚未开通, 敬请期待')
@@ -368,7 +427,6 @@ export default {
   // 视频
   .play-video {
     position: relative;
-    border-radius: .2rem;
     overflow: hidden;
     .video-mp4 {
       width: 100%;
@@ -378,26 +436,50 @@ export default {
       top: 0;
       left: 0;
       width: 100%;
-      height: 98%;
+      height: 96%;
       box-shadow: 0px 0px 18px 18px rgba(0, 0, 0, .4) inset;
-      .iconfont {
+      .icon-quanping {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: .2rem;
+        font-size: .4rem;
+        color: #fff;
+      }
+      .top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: .5rem;
+        width: 80%;
+        line-height: .5rem;
+        color: #fff;
+        .icon-zuo {
+          padding: .1rem;
+          font-size: .3rem;
+        }
+        .title {
+          font-size: .22rem;
+        }
+      }
+      .icon-bofang,
+      .icon-zantingtingzhi {
         position: absolute;
         top: 50%;
         left: 50%;
         color: rgba(255, 255, 255, .7);
-        font-size: .8rem;
         transform: translate(-50%, -50%);
       }
       .time {
         position: absolute;
         left: .2rem;
-        bottom: .2rem;
+        bottom: .25rem;
         color: #fff;
         font-size: .2rem;
       }
       .slider{
         position: absolute;
-        bottom: 0;
+        bottom: .1rem;
         width: 100%;
         padding: 0 .15rem;
         box-sizing: border-box;

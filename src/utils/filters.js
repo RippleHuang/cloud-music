@@ -93,5 +93,3 @@ export const filterAge = time => {
   }
   return age
 }
-
-export const filterJson = json => JSON.parse(json.toString())

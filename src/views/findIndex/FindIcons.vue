@@ -31,7 +31,11 @@ export default {
       this.$toast('该功能尚未完成,敬请期待')
     },
     goRecommend () {
-      this.$router.push('/recommend')
+      if (this.$store.state.loginState) {
+        this.$router.push('/recommend')
+      } else {
+        this.$toast('需要登录')
+      }
     },
     moreSonglist () {
       this.$router.push('/songlistsquare')

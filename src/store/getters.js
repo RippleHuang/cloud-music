@@ -10,8 +10,6 @@ export default {
   playList: state => state.playList,
   mode: state => state.mode,
   fullScreen: state => state.fullScreen,
-  audioIngSong: state => {
-    // 返回当前播放歌曲对象的信息
-    return state.playList[state.audioIngIndex] || {}
-  }
+  audioIngSong: state => state.playList[state.audioIngIndex] || {}, // 返回当前播放歌曲对象的信息
+  searchHistory: state => state.searchHistory
 }

@@ -1,5 +1,6 @@
 /* 首页 */
 import Default from 'views/default/Default'
+
 const HomeIndex = () => import(/* webpackChunkName: "home" */ 'views/homeIndex/HomeIndex')
 const VillageIndex = () => import(/* webpackChunkName: "village" */ 'views/villageIndex/VillageIndex')
 const FindIndex = () => import(/* webpackChunkName: "find" */ 'views/findIndex/FindIndex')
