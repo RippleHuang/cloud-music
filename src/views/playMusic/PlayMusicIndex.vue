@@ -133,8 +133,8 @@
       :src="url"
       ref="audio"
       autoplay="autoplay"
-      @canplay="ready"
       @timeupdate="playing"
+      @canplay="ready"
       @error="error"
       preload="auto"
       @ended="end"
@@ -205,37 +205,38 @@ export default {
   },
   watch: {
     // 当前歌曲变化，获取歌曲信息
-    audioIngSong: {
-      handler (val, oldV) {
-        if (this.playList.length) {
-          // 查看当前播放歌曲是否已喜欢
-          this.getLikeMusicList(val.id)
-          // 播放
-          if (val.dj) {
-            this.checkSong(val.mainTrackId)
-          } else {
-            this.checkSong(val.id)
-          }
-          this.allTime = val.duration ? val.duration : val.dt ? val.dt : 0
-          this.artist = val.album ? (val.album.artists || val.artists) : val.ar ? val.ar : ''
-          this.imgUrl = val.album ? (val.album.picUrl || val.album.artist.img1v1Url) : val.al ? val.al.picUrl
-            : val.coverUrl ? val.coverUrl : ''
-          this.name = val.name
-          // 延迟加载图片 防止闪屏
-          const bgc = document.querySelector('#mask')
-          if (this.timer) {
-            clearTimeout(this.timer)
-          }
-          this.timer = setTimeout(() => {
-            bgc.style.background = 'url(' + this.imgUrl + ') center'
-          }, 800)
-        } else {
-          // 暂停歌曲, 清空时长
-          this.$refs.audio.currentTime = 0
-          this.toPause()
+    audioIngSong (val, oldVal) {
+      if (this.playList.length) {
+        // 查看当前播放歌曲是否已喜欢
+        this.getLikeMusicList(val.id)
+        // 防止切换模式时重新请求
+        if (val.id === oldVal.id) {
+          return
         }
-      },
-      deep: true
+        // 播放
+        if (val.dj) {
+          this.checkSong(val.mainTrackId)
+        } else {
+          this.checkSong(val.id)
+        }
+        this.allTime = val.duration ? val.duration : val.dt ? val.dt : 0
+        this.artist = val.album ? (val.album.artists || val.artists) : val.ar ? val.ar : ''
+        this.imgUrl = val.album ? (val.album.picUrl || val.album.artist.img1v1Url) : val.al ? val.al.picUrl
+          : val.coverUrl ? val.coverUrl : ''
+        this.name = val.name
+        // 延迟加载图片 防止闪屏
+        const bgc = document.querySelector('#mask')
+        if (this.timer) {
+          clearTimeout(this.timer)
+        }
+        this.timer = setTimeout(() => {
+          bgc.style.background = 'url(' + this.imgUrl + ') center'
+        }, 800)
+      } else {
+        // 暂停歌曲, 清空时长
+        this.$refs.audio.currentTime = 0
+        this.toPause()
+      }
     },
     // 歌词偏移量
     offsetLyric (val, oldVal) {
