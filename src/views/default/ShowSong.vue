@@ -128,6 +128,7 @@ export default {
     }
   },
   activated () {
+    window.scrollTo(0, 0)
     // 进来前清空
     this.albumId = 0
     this.dishId = 0

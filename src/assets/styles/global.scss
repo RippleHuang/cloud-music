@@ -172,7 +172,7 @@ html {
   @extend .video-index;
   // 滚动条问题
   .van-tab__pane {
-    height: 100vh;
+    height: 100%;
   }
 }
 .search-result {

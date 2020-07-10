@@ -125,6 +125,7 @@ export default {
     .icon-kong {
       color: #dd001b;
       font-size: 3rem;
+      -webkit-text-stroke: 4px #fff;
     }
   }
 }

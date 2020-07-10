@@ -5,16 +5,18 @@
       <p class="title van-ellipsis">歌曲:{{name}}</p>
       <p class="title">{{uid !== accountUid ? '添加到' : '删除'}}</p>
     </div>
-    <ul class="song-group action-sheet" v-if="uid !== accountUid">
-      <song-list-li
-        v-for="(item, index) in createList" :key="index"
-        :coverImgUrl="item.coverImgUrl"
-        :name="item.name"
-        :trackCount="item.trackCount"
-        :privacy="item.privacy"
-        :description="item.description"
-        @click.native="addOrDelSongInList(item.id)"
-      />
+    <ul class="song-group" v-if="uid !== accountUid">
+      <div class="action-sheet">
+        <song-list-li
+          v-for="(item, index) in createList" :key="index"
+          :coverImgUrl="item.coverImgUrl"
+          :name="item.name"
+          :trackCount="item.trackCount"
+          :privacy="item.privacy"
+          :description="item.description"
+          @click.native="addOrDelSongInList(item.id)"
+        />
+      </div>
     </ul>
     <!-- 是自己的歌单, 删除 -->
     <p class="delete on-touch" @click="addOrDelSongInList" v-else>
@@ -59,6 +61,7 @@ export default {
         .then(() => {
           this.$emit('update:showActionSheet', false)
           this.$toast(text)
+          this.$store.commit('REFRESH') // 刷新
           if (addOrdel === 'del') this.$router.go(-1)
         })
         .catch(() => {
@@ -88,7 +91,7 @@ export default {
     }
   }
   .action-sheet {
-    height: 50vh;
+    height: 55vh;
     margin-top: 1rem;
     overflow: scroll;
     scrollbar-width: none;

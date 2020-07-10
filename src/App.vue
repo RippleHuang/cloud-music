@@ -15,6 +15,14 @@
       <!-- 通过是否有播放列表控制显示 -->
       <play-music-index v-show="$store.state.audioList.length" />
     </div>
+    <!-- 加载 -->
+    <div id="load">
+      <p class="load-title">音樂的力量</p>
+      <p class="load-bottom">
+        <span class="load-icon"><i class="iconfont icon-551488821353490553221"></i></span>
+        网易云音乐
+      </p>
+    </div>
   </div>
 </template>
 <script>
@@ -31,15 +39,17 @@ export default {
       isReload: true,
       show: false,
       exclude: false,
-      transition: ''
+      transition: '',
+      timer: ''
     }
   },
+  mounted () {
+    if (!sessionStorage.getItem('load')) this.loadLogo()
+  },
   watch: {
-    // 希望进入展示歌单时可以缓存,离开时销毁
+    // 进入展示歌单时可以缓存,离开时销毁
     $route (to, from) {
-      const exp = /showsong/g
-      const exp1 = /userInfo/g
-      if (exp.test(to.path) || exp1.test(to.path)) {
+      if (to.path === '/showsong' || to.path === '/userInfo') {
         this.exclude = false
       } else {
         this.exclude = true
@@ -47,11 +57,25 @@ export default {
     }
   },
   methods: {
+    // 刷新
     reload () {
       this.isReload = false
       this.$nextTick(function () {
         this.isReload = true
       })
+    },
+    // 加载
+    loadLogo () {
+      const load = document.getElementById('load')
+      load.style.display = 'block'
+      // 保存,关闭网页后自动销毁
+      sessionStorage.setItem('load', 'load')
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        load.style.display = 'none'
+      }, 4000)
     }
   },
   components: {
@@ -64,12 +88,41 @@ export default {
   letter-spacing: .005rem;
 }
 #app {
+  position: relative;
   // 禁止文字被选中
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   .container {
     position: relative;
+  }
+  #load {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2020;
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    font-size: .6rem;
+    color: #fff;
+    background-color: #dd001b;
+    overflow: hidden;
+    .load-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+    }
+    .load-bottom {
+      font-size: .4rem;
+      text-align: center;
+      opacity: 0;
+      animation: icon 3s both;
+      i {
+        font-size: .45rem;
+      }
+    }
   }
 }
 // 一开始是不让 #app 滚动
@@ -79,5 +132,10 @@ export default {
 // }
 .hidden {
   display: none;
+}
+@keyframes icon {
+  100% {
+    opacity: 1;
+  }
 }
 </style>

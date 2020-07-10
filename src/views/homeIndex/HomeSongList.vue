@@ -226,32 +226,20 @@ export default {
     ...mapGetters(['accountUid', 'loginState'])
   },
   watch: {
-    // 当值第一次绑定的时候，不会执行监听函数，只有值发生改变才会执行
-    // 需要在最初绑定值的时候也执行函数，则就需要用到immediate属性
-    // 监听数组的变化 深度监视deep
-    songListNum: {
-      deep: true,
-      handler (val, oldVal) {
-        this.createIndex = val.createNum
-        this.favoritesIndex = val.favoritesNum
-        this.getPlaylist(this.accountUid)
-      },
-      immediate: true
-    },
-    songList: {
-      deep: true,
-      handler (val, oldVal) {
-        // 继续传递给父组件
-        this.$emit('songList', val)
-      }
-    },
     $route (to, from) {
       // 从歌单信息更新页过来更新
-      const exp = /compilesonglist/g
-      if (exp.test(from.path)) {
+      if (from.path === '/compilesonglist') {
         // 重新获取
         this.getPlaylist(this.accountUid)
       }
+    },
+    '$store.state.refreshState': {
+      handler (val, oldVal) {
+        if (this.loginState) {
+          this.getPlaylist(this.accountUid)
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -291,12 +279,12 @@ export default {
     },
     // 分割歌单
     sliceInfo (arr) {
-      const from = this.createIndex
-      const len = this.createIndex + this.favoritesIndex
-      const SongListCreate = arr.slice(0, from)
+      const create = this.songListNum.createNum
+      const favorites = this.songListNum.createNum + this.songListNum.favoritesNum
+      const SongListCreate = arr.slice(0, create)
       this.myLoveList = SongListCreate.slice(0, 1)
       this.createList = SongListCreate.slice(1)
-      this.favoritesList = arr.slice(from, len)
+      this.favoritesList = arr.slice(create, favorites)
       // 保存收藏歌单的id
       // 有本地数据先清空
       if (localStorage.getItem('favoriteId')) localStorage.removeItem('favoriteId')
@@ -430,5 +418,8 @@ export default {
     border-bottom: .01rem solid #eee;
     color: rgb(99, 96, 96);
   }
+}
+.first {
+  width: 3rem;
 }
 </style>

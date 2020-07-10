@@ -9,7 +9,7 @@
         compile
         is="icon"
         class="home-icon-list"
-        @click="noAction"
+        @click.native="noAction"
       >
       </li>
     </ul>

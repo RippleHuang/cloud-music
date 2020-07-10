@@ -4,7 +4,7 @@
     <div class="header">
       <div class="mask"></div>
       <!-- 头部登录,显示登录 -->
-      <popup-top />
+      <popup-top :visible="visible" />
       <!-- 头部卡片 -->
       <div class="card">
         <div class="left">
@@ -75,6 +75,11 @@ import { logout } from 'api/apis'
 import { mapGetters } from 'vuex'
 export default {
   name: 'LeftPopup',
+  props: {
+    visible: {
+      type: Boolean
+    }
+  },
   data () {
     return {
       PopupTopIcons: [],

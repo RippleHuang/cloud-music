@@ -5,7 +5,7 @@
     class="viedo-img"
     :style="{
       display: videoCanPlay ? 'none': 'block',
-      height: dynamic ? (landscape ? '100vh' : '3.1rem') : '3.7rem',
+      height: dynamic ? (isFullscreen ? '100vh' : '3.1rem') : '3.7rem',
       'border-radius': landscape ? '0' : '0.2rem'
       }"
     >
@@ -31,7 +31,7 @@
       class="play-video"
       :style="{
         display: videoCanPlay ? 'block': 'none',
-        height: landscape ? '100vh' : 'auto',
+        height: isFullscreen ? '100vh' : 'auto',
         'border-radius': landscape ? '0' : '0.2rem'
       }"
     >
@@ -134,6 +134,9 @@ export default {
     },
     refresh: {
       type: Number
+    },
+    isFullscreen: {
+      type: Boolean
     }
   },
   data () {

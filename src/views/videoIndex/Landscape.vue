@@ -6,6 +6,7 @@
       dynamic
       landscape
       :refresh="refresh"
+      :isFullscreen="isFullscreen"
     />
   </div>
 </template>
@@ -25,6 +26,7 @@ export default {
   watch: {
     '$route.query.vid': {
       handler (val, oldV) {
+        this.initScreenfull()
         if (val) {
           this.getDetail(val)
         }
@@ -38,8 +40,8 @@ export default {
       }
     }
   },
-  activated () {
-    this.initScreenfull()
+  created () {
+    screenfull.request()
   },
   methods: {
     // 获取视频详情
@@ -64,7 +66,15 @@ export default {
     },
     // 全屏
     initScreenfull () {
-      screenfull.toggle()
+      if (screenfull.isEnabled) {
+        screenfull.request()
+        screenfull.on('change', () => {
+          this.isFullscreen = screenfull.isFullscreen
+        })
+      } else {
+        this.$toast('该浏览器不支持全屏')
+        this.isFullscreen = false
+      }
     }
   },
   components: {

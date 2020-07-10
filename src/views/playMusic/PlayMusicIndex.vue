@@ -231,8 +231,8 @@ export default {
           }, 800)
         } else {
           // 暂停歌曲, 清空时长
-          this.toPause()
           this.$refs.audio.currentTime = 0
+          this.toPause()
         }
       },
       deep: true

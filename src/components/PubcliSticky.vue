@@ -79,7 +79,7 @@
     </div>
     <!-- 歌曲为空 -->
     <div class="empty" v-if="!show">
-      <button class="add-button">添加歌曲</button>
+      <button class="add-button" @click="$router.push('/find')">添加歌曲</button>
     </div>
     <!-- 动作面板 -->
     <van-action-sheet v-model="showActionSheet" close-on-popstate>

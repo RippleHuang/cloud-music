@@ -20,13 +20,13 @@
         <span
           class="sign"
           @click.stop="signInClick"
-          v-show="!signIn"
+          v-show="!getSign"
         >
           <i class="iconfont icon-tubiaozhizuo-"></i>签到
         </span>
         <span
           class="signin"
-          v-show="signIn"
+          v-show="getSign"
           @click.stop="signInClick"
         >
           已签到
@@ -42,6 +42,11 @@ import { signIn } from 'api/apis'
 import { format } from 'utils/date'
 export default {
   name: 'PopupTop',
+  props: {
+    visible: {
+      type: Boolean
+    }
+  },
   data () {
     return {
       // 默认未签到
@@ -52,49 +57,50 @@ export default {
     ...mapGetters(['loginState', 'level', 'nickName', 'avatarUrl', 'accountUid'])
   },
   watch: {
-    signIn: {
-      handler (val, oldVal) {
-        const date = new Date()
-        const nowTime = format(date).slice(0, 10) // 截取当前日期 yyyy.mm.dd
-        // 把日期转化为数值 转化为数字
-        const nowSign = +nowTime.split('.').join('')
-        // 有本地记录
-        if (localStorage.getItem('signIn')) {
-          const local = JSON.parse(localStorage.getItem('signIn'))
-          // 遍历数组中的对象
-          var getAccountUid = []
-          var getSignInNum = []
-          local.forEach((val, index) => {
-            getAccountUid[index] = val.accountUid
-            getSignInNum[index] = val.signInNum
-          })
-          if (getAccountUid.includes(this.accountUid)) {
-            // 通过位置找到对应的最后签到时间
-            const lastSign = getSignInNum[getAccountUid.indexOf(this.accountUid)]
-            this.signIn = !(nowSign > lastSign)
-          } else { // 无则默认未签到
-            this.signIn = false
-          }
-        } else { // 无则直接api验证并保存记录
-          signIn()
-            .then(() => {
-              return false
-            })
-            .catch(err => {
-              if (err.response.status === 400) {
-                this.signIn = true
-                this.setSignIn()
-              }
-            })
-        }
-      },
-      immediate: true
+    visible (val, oldV) {
+      if (val) this.getSign()
     }
   },
   methods: {
     toPass () {
       // 默认有体验按钮
       this.$router.push({ path: '/login', query: { login: localStorage.getItem('login') || 'login' } })
+    },
+    // 确定是否签到
+    getSign () {
+      const date = new Date()
+      const nowTime = format(date).slice(0, 10) // 截取当前日期 yyyy.mm.dd
+      // 把日期转化为数值 转化为数字
+      const nowSign = +nowTime.split('.').join('')
+      // 有本地记录
+      if (localStorage.getItem('signIn')) {
+        const local = JSON.parse(localStorage.getItem('signIn'))
+        // 遍历数组中的对象
+        var getAccountUid = []
+        var getSignInNum = []
+        local.forEach((val, index) => {
+          getAccountUid[index] = val.accountUid
+          getSignInNum[index] = val.signInNum
+        })
+        if (getAccountUid.includes(this.accountUid)) {
+          // 通过位置找到对应的最后签到时间
+          const lastSign = getSignInNum[getAccountUid.indexOf(this.accountUid)]
+          this.signIn = !(nowSign > lastSign)
+        } else { // 无则默认未签到
+          this.signIn = false
+        }
+      } else { // 无则直接api验证并保存记录
+        signIn()
+          .then(() => {
+            return false
+          })
+          .catch(err => {
+            if (err.response.status === 400) {
+              this.signIn = true
+              this.setSignIn()
+            }
+          })
+      }
     },
     // 用户信息页
     userInfo () {

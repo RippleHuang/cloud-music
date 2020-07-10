@@ -67,7 +67,7 @@
 <script>
 import { filterPlayCountInfo, filterSetDate } from 'utils/filters'
 import { format } from 'utils/date'
-import { albumDetail } from 'api/apis'
+import { playlistDetail, heartMode } from 'api/apis'
 export default {
   name: 'SongListLi',
   props: {
@@ -146,22 +146,44 @@ export default {
       type: Boolean
     }
   },
+  data () {
+    return {
+      heartModeList: []
+    }
+  },
   methods: {
     // 返回一个随机数
     randomNum (min, max) {
       return parseInt(Math.random() * (max - min + 1) + min, 10)
     },
     heartMode () {
-      albumDetail(this.id)
+      playlistDetail(this.id)
         .then(data => {
           const arr = data.playlist.trackIds
           const index = this.randomNum(0, arr.length)
           const item = arr[index]
-          this.$emit('getHeartMode', item.id, this.id)
+          this.startHeartMode(item.id, this.id)
         })
         .catch(() => {
           this.$toast('获取失败')
         })
+    },
+    // 开启心动模式
+    startHeartMode (id, pid) {
+      heartMode(id, pid)
+        .then(data => {
+          this.ruleModeList(data.data, 'songInfo')
+          this.$store.dispatch('startPlayAll', { list: this.heartModeList })
+        })
+        .catch(() => {
+          this.$toast('请求失败,请稍后尝试')
+        })
+    },
+    // 对请求到的心动模式数据进行修改，使得可以播放
+    ruleModeList (arr, item) {
+      arr.forEach(ele => {
+        this.heartModeList.push(ele[item])
+      })
     },
     playSong () {
       this.$emit('playSong')

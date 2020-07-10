@@ -65,10 +65,18 @@ export default {
       this.$emit('deleteSongList')
     },
     goMyRadio () {
-      this.$router.push('/myradio')
+      if (this.$store.state.loginState) {
+        this.$router.push('/myradio')
+      } else {
+        this.$toast('需要登录')
+      }
     },
     goMyFavorite () {
-      this.$router.push('/myfavorite')
+      if (this.$store.state.loginState) {
+        this.$router.push('/myfavorite')
+      } else {
+        this.$toast('需要登录')
+      }
     }
   }
 }

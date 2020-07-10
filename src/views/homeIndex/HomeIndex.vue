@@ -7,7 +7,6 @@
   />
   <home-song-list
     :songListNum="songListNum"
-    @songList="heartMode"
     @reload="getUserInfo"
   />
 </div>
@@ -16,8 +15,8 @@
 import HomeIcons from './HomeIcons'
 import HomeApply from './HomeApply'
 import HomeSongList from './HomeSongList'
-import { userInfo, heartMode, favoriteAlbums, favoriteVideos } from 'api/apis'
-import { mapGetters, mapActions } from 'vuex'
+import { userInfo, favoriteAlbums, favoriteVideos } from 'api/apis'
+import { mapGetters } from 'vuex'
 export default {
   name: 'HomeIndex',
   data () {
@@ -49,7 +48,9 @@ export default {
     // 暂时没有对视频进行操作,只监听用户id就行
     '$store.state.accountUid': {
       handler () {
-        this.getVideos()
+        if (this.loginState) {
+          this.getVideos()
+        }
       },
       immediate: true
     }
@@ -58,7 +59,6 @@ export default {
     ...mapGetters(['loginState'])
   },
   methods: {
-    ...mapActions(['startPlayAll']),
     // 获取用户信息
     getUserInfo () {
       userInfo()
@@ -93,25 +93,6 @@ export default {
         .catch(() => {
           this.$toast('获取视频失败')
         })
-    },
-    // 开启心动模式
-    heartMode (val) {
-      heartMode(val.id, val.pid)
-        .then(data => {
-          this.ruleModeList(data.data, 'songInfo')
-          this.startPlayAll({
-            list: this.heartModeList
-          })
-        })
-        .catch(() => {
-          this.$toast('请求失败,请稍后尝试')
-        })
-    },
-    // 对请求到的心动模式数据进行修改，使得可以播放
-    ruleModeList (arr, item) {
-      arr.forEach(ele => {
-        this.heartModeList.push(ele[item])
-      })
     }
   },
   components: {
