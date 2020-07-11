@@ -35,7 +35,7 @@ Vue.use(Lazyload, {
   lazyComponent: true,
   preLoad: 1.3,
   loading: require('assets/img/loading.jpg'),
-  attempt: 3,
+  attempt: 1,
   listenEvents: ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']
 })
 Vue.use(Collapse)

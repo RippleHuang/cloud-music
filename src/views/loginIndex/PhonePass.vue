@@ -13,7 +13,7 @@
   </div>
 </template>
 <script>
-import { phoneLogin, loginStatus, userDetail } from 'api/apis'
+import { phoneLogin, userDetail, loginStatus } from 'api/apis'
 import { mapMutations } from 'vuex'
 export default {
   name: 'PhonePass',
@@ -64,11 +64,20 @@ export default {
     passVerity (phone, pass) {
       phoneLogin(phone, pass)
         .then(data => {
-          this.$toast('登录成功')
           // code 200密码正确,502密码错误
           if (data.code === 200) {
             // 得到用户数据
-            this.getUserinfo()
+            // 修改按钮text
+            this.text = '登录'
+            // 存取用户信息
+            const accountInfo = data.profile
+            // 修改状态为 true
+            this.LOGIN_STATE(true)
+            this.AVATAR_URL(accountInfo.avatarUrl)
+            this.NICK_NAME(accountInfo.nickname)
+            this.ACCOUNT_UID(accountInfo.userId)
+            this.skipFind(accountInfo.userId)
+            this.getLoginState(data.cookie)
           } else {
             // 修改按钮text
             this.text = '登录'
@@ -80,26 +89,17 @@ export default {
           }
         })
         .catch(() => {
-          this.$toast('请求失败,请稍后尝试')
+          this.$toast('登录失败,请稍后尝试')
         })
     },
-    // 用户信息,状态码
-    getUserinfo () {
+    // 获得登录状态
+    getLoginState () {
       loginStatus()
-        .then(data => {
-          // 修改按钮text
-          this.text = '登录'
-          // 存取用户信息
-          const accountInfo = data.profile
-          // 修改状态为 true
-          this.LOGIN_STATE(true)
-          this.AVATAR_URL(accountInfo.avatarUrl)
-          this.NICK_NAME(accountInfo.nickname)
-          this.ACCOUNT_UID(accountInfo.userId)
-          this.skipFind(accountInfo.userId)
+        .then(() => {
+          this.$toast('登录成功')
         })
         .catch(() => {
-          this.$toast('请求失败,请稍后尝试')
+          this.$toast('登录失败,请稍后尝试')
         })
     },
     // 跳转find页面

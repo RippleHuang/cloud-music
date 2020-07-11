@@ -197,7 +197,11 @@ export default {
       })
     },
     addSong () {
-      this.$emit('addSong', { songid: this.songid, name: this.name })
+      if (this.$store.state.loginState) {
+        this.$emit('addSong', { songid: this.songid, name: this.name })
+      } else {
+        this.$toast('需要登录')
+      }
     },
     no () {
       this.$toast('该功能尚未实装,敬请期待')

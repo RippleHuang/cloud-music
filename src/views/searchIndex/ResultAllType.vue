@@ -40,14 +40,14 @@
         @click.native="$router.push(`/showsong?albumId=${item.id}`)"
       />
     </ul>
-    <div class="more on-touch" v-if="(data.playList || {}).moreText" @click="moreList(2)">{{(data.playList || {}).moreText}}&nbsp;&gt;</div>
+    <div class="more on-touch" v-if="(data.playList || {}).moreText" @click="moreList(5)">{{(data.playList || {}).moreText}}&nbsp;&gt;</div>
     <!-- 视频 -->
     <div class="title" v-if="data.video">视频</div>
     <video-list
       :data="(data.video || {}).videos"
       search
     />
-    <div class="more on-touch" v-if="(data.video || {}).moreText" @click="moreList(3)">{{(data.video || {}).moreText}}&nbsp;&gt;</div>
+    <div class="more on-touch" v-if="(data.video || {}).moreText" @click="moreList(2)">{{(data.video || {}).moreText}}&nbsp;&gt;</div>
     <!-- 相关搜索 -->
     <div class="title" v-if="data.sim_query">相关搜索</div>
     <div class="sim-query">
@@ -65,7 +65,7 @@
       :data="(data.artist || {}).artists"
       songer
     />
-    <div class="more on-touch" v-if="(data.artist || {}).moreText" @click="moreList(4)">{{(data.artist || {}).moreText}}&nbsp;&gt;</div>
+    <div class="more on-touch" v-if="(data.artist || {}).moreText" @click="moreList(3)">{{(data.artist || {}).moreText}}&nbsp;&gt;</div>
     <!-- 专辑 -->
     <div class="title" v-if="data.album">专辑</div>
     <ul class="song-group">
@@ -81,7 +81,7 @@
         @click.native="$router.push(`/showsong?dishId=${item.id}`)"
       />
     </ul>
-    <div class="more on-touch" v-if="(data.album || {}).moreText" @click="moreList(5)">{{(data.album || {}).moreText}}&nbsp;&gt;</div>
+    <div class="more on-touch" v-if="(data.album || {}).moreText" @click="moreList(4)">{{(data.album || {}).moreText}}&nbsp;&gt;</div>
     <!-- 用户 -->
     <div class="title" v-if="data.user">用户</div>
     <artists-or-user

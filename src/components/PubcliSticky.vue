@@ -99,7 +99,7 @@ import Loading from 'components/Loading'
 import SongListLi from 'components/SongListLi'
 import AddSong from 'components/AddSong'
 import { mapGetters, mapActions } from 'vuex'
-import { editFavoritePlayList, editFavoriteAlbum, albumDetailDynamic, playlist } from 'api/apis'
+import { editFavoritePlayList, editFavoriteAlbum, albumDetailDynamic, playlist, userInfo } from 'api/apis'
 import { filterPlayCountInfo } from 'utils/filters'
 export default {
   name: 'PubcliSticky',
@@ -170,28 +170,30 @@ export default {
     }
   },
   created () {
-    this.getPlaylist()
+    if (this.loginState) this.getUserSongNum()
   },
   watch: {
     uid: {
       handler (val, oldV) {
-        // 获取存储的pid
-        const pid = JSON.parse(localStorage.getItem('favoriteId'))
-        const id = JSON.parse(localStorage.getItem('albumsId'))
-        // 获取收藏数
-        if (this.dishId !== 0 && this.accountUid !== val) {
-          this.add = id.includes(this.dishId)
-          this.getSub()
-        } else {
-          // 是否有这个歌单id 来确定 add
-          this.add = pid.includes(this.albumId)
-          this.subNum = this.subNumber
+        if (this.dishId !== 0) this.getSub()
+        else this.subNum = this.subNumber
+        if (this.loginState) {
+          // 获取存储的pid
+          const pid = JSON.parse(localStorage.getItem('favoriteId'))
+          const id = JSON.parse(localStorage.getItem('albumsId'))
+          // 获取收藏数
+          if (this.dishId !== 0) {
+            this.add = localStorage.getItem('albumsId') ? id.includes(this.dishId) : false
+          } else {
+            // 是否有这个歌单id 来确定 add
+            this.add = localStorage.getItem('favoriteId') ? pid.includes(this.albumId) : false
+          }
         }
       }
     }
   },
   computed: {
-    ...mapGetters(['audioIngSong', 'audioList', 'accountUid'])
+    ...mapGetters(['audioIngSong', 'audioList', 'accountUid', 'loginState'])
   },
   methods: {
     ...mapActions(['selectPlay', 'startPlayAll']),
@@ -209,47 +211,51 @@ export default {
     },
     // 收藏或取消收藏
     addOrDel (boolean) {
-      const t = boolean ? 1 : 2
-      var messageEdit = ''
-      // 判定歌单和专辑收藏
-      if (this.albumId) {
-        editFavoritePlayList(t, this.albumId)
-          .then(() => {
-            if (t === 1) {
-              this.subNum += 1
-              this.add = true
-              messageEdit = '收藏成功'
-            } else {
-              this.subNum -= 1
-              this.add = false
-              messageEdit = '已取消收藏'
-            }
-            // 刷新
-            this.$store.commit('REFRESH')
-            this.$toast(messageEdit)
-          })
-          .catch(() => {
-            this.$toast('歌单收藏操作失败')
-          })
+      if (this.loginState) {
+        const t = boolean ? 1 : 2
+        var messageEdit = ''
+        // 判定歌单和专辑收藏
+        if (this.albumId) {
+          editFavoritePlayList(t, this.albumId)
+            .then(() => {
+              if (t === 1) {
+                this.subNum += 1
+                this.add = true
+                messageEdit = '收藏成功'
+              } else {
+                this.subNum -= 1
+                this.add = false
+                messageEdit = '已取消收藏'
+              }
+              // 刷新
+              this.$store.commit('REFRESH')
+              this.$toast(messageEdit)
+            })
+            .catch(() => {
+              this.$toast('歌单收藏操作失败')
+            })
+        } else {
+          editFavoriteAlbum(t, this.dishId)
+            .then(() => {
+              if (t === 1) {
+                this.subNum += 1
+                this.add = true
+                messageEdit = '收藏成功'
+              } else {
+                this.subNum -= 1
+                this.add = false
+                messageEdit = '已取消收藏'
+              }
+              // 刷新
+              this.$store.commit('REFRESH')
+              this.$toast(messageEdit)
+            })
+            .catch(() => {
+              this.$toast('歌单收藏操作失败')
+            })
+        }
       } else {
-        editFavoriteAlbum(t, this.dishId)
-          .then(() => {
-            if (t === 1) {
-              this.subNum += 1
-              this.add = true
-              messageEdit = '收藏成功'
-            } else {
-              this.subNum -= 1
-              this.add = false
-              messageEdit = '已取消收藏'
-            }
-            // 刷新
-            this.$store.commit('REFRESH')
-            this.$toast(messageEdit)
-          })
-          .catch(() => {
-            this.$toast('歌单收藏操作失败')
-          })
+        this.$toast('需要登录')
       }
     },
     // 得到专辑收藏数
@@ -262,12 +268,21 @@ export default {
           this.$toast('获取专辑收藏数')
         })
     },
+    getUserSongNum () {
+      userInfo()
+        .then(data => {
+          // 创建的歌单数
+          const createNum = data.createdPlaylistCount
+          this.getPlaylist(createNum)
+        })
+        .catch(() => {
+          this.$toast('请求失败,请稍后尝试')
+        })
+    },
     // 获取创建列表
-    getPlaylist () {
+    getPlaylist (createNum) {
       playlist(this.accountUid)
         .then(data => {
-          const favoriteNum = JSON.parse(localStorage.getItem('favoriteId')).length
-          const createNum = data.playlist.length - favoriteNum
           this.createList = data.playlist.slice(0, createNum)
         })
         .catch(() => {

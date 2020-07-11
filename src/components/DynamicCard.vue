@@ -367,16 +367,26 @@ export default {
     // 用户发的图片
     .image-box {
       // 瀑布流
-      width: 96.5%;
-      column-count: 3;
+      // width: 96.5%;
+      // column-count: 3; 不兼容
+      // flex 方法
+      display: flex;
+      flex-flow: wrap;
+      justify-content: space-between;
+      width: 100%;
       .image {
+        // flex 方法
+        display: flex;
+        flex-direction: row;
+        width: 32%;
         padding-bottom: .1rem;
         // 瀑布流
-        break-inside: avoid;
+        // break-inside: avoid;
+
         img {
           display: block;
-          width: 112%;
-          height: auto;
+          width: 100%;
+          height: 100%;
           border-radius: .1rem;
         }
       }

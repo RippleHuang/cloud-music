@@ -58,7 +58,8 @@ export default {
   methods: {
     goUserInfo (id) {
       if (this.user) {
-        this.$router.push('/userinfo?accountUid=' + id)
+        if (this.$store.state.loginState) this.$router.push('/userinfo?accountUid=' + id)
+        else this.$toast('需要登录')
       } else {
         this.$toast('尚未实装,敬请期待')
       }

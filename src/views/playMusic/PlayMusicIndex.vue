@@ -14,7 +14,7 @@
       <img-cover
         class="img-bgc"
         v-show="imgCoverShow"
-        :imgUrl="imgUrl + '?param=300y300'"
+        :imgUrl="imgUrl"
         @click.native="imgCoverShow = !imgCoverShow"
       />
       <!-- 歌词 -->
@@ -59,7 +59,7 @@
     <!-- 迷你播放器 -->
     <small-play
       v-show="!fullScreen"
-      :imgUrl="imgUrl + '?param=80y80'"
+      :imgUrl="imgUrl"
       @play="toggle"
       @showAudioList="showAudioList"
       :name="name"
@@ -200,7 +200,8 @@ export default {
       'mode',
       'audioIngSong',
       'fullScreen',
-      'accountUid'
+      'accountUid',
+      'loginState'
     ])
   },
   watch: {
@@ -208,7 +209,7 @@ export default {
     audioIngSong (val, oldVal) {
       if (this.playList.length) {
         // 查看当前播放歌曲是否已喜欢
-        this.getLikeMusicList(val.id)
+        if (this.loginState) this.getLikeMusicList(val.id)
         // 防止切换模式时重新请求
         if (val.id === oldVal.id) {
           return

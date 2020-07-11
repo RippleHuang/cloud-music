@@ -27,20 +27,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['audioIngSong'])
+    ...mapGetters(['audioIngSong', 'loginState'])
   },
   methods: {
     // 取消 添加 喜欢歌曲
     changeLike (id) {
-      likeMusic(id, !this.isLike)
-        .then(() => {
-          const message = !this.isLike ? '已添加喜欢列表' : '已取消喜欢'
-          this.$toast(message)
-          this.$emit('update:isLike', !this.isLike)
-        })
-        .catch(() => {
-          this.$toast('请求失败')
-        })
+      if (this.loginState) {
+        likeMusic(id, !this.isLike)
+          .then(() => {
+            const message = !this.isLike ? '已添加喜欢列表' : '已取消喜欢'
+            this.$toast(message)
+            this.$emit('update:isLike', !this.isLike)
+          })
+          .catch(() => {
+            this.$toast('请求失败')
+          })
+      } else this.$toast('需要登录')
     },
     unfinished () {
       this.$toast('心动与翻译可用,其他未实装,敬请期待')

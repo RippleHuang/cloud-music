@@ -42,7 +42,6 @@
         @pause="play = false"
         class="video-mp4"
         ref="video"
-        src="url"
       ></video>
       <!-- 显示隐藏 -->
       <div class="action"
@@ -187,8 +186,8 @@ export default {
     // 是否要获取
     clickTostar () {
       const video = this.$refs.video
-      // 给src设置默认值为url,防止重复加载视频
-      if (video.src.includes('url')) {
+      // src不为空
+      if (!video.src) {
         this.getUrl()
       } else { // 已经加载完的不用再请求,直接播放
         this.videoPlay()

@@ -167,7 +167,7 @@ export default {
     height: 1.2rem;
     flex: 1;
     .search-text {
-      width: 94%;
+      width: 88%;
       height: .6rem;
       position: relative;
       font-size: 0.36rem;

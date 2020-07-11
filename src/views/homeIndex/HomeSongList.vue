@@ -32,7 +32,7 @@
                   </div>
                 </div>
                 <div class="list-info">
-                  <p class="list-title first">我喜欢的音乐</p>
+                  <p class="list-title" style="width: 3rem;">我喜欢的音乐</p>
                   <p class="list-num">0首</p>
                 </div>
               </div>

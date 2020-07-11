@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from 'router'
 import store from 'store'
 import fastclick from 'fastclick'
 import 'plugins/vant.js'
 import 'utils/rem'
 import 'assets/styles/reset.css'
 import 'assets/styles/global.scss'
+import router from 'router'
 Vue.config.productionTip = false
 
 // 移动端0.3s延迟

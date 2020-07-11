@@ -108,7 +108,7 @@ export default {
       }
     }
     .history-box {
-      overflow-x: auto;
+      overflow-x: scroll;
       // 隐藏滚动条 火狐 IE 谷歌
       scrollbar-width: none;
       -ms-overflow-style: none;
@@ -119,10 +119,11 @@ export default {
         display: flex;
         align-items: center;
         flex-wrap: nowrap;
-        width: fit-content;
+        width: max-content;
         .tags-item {
-          display: flex;
-          width: max-content;
+          display: inline-block;
+          *display: inline;
+          *zoom:1;
           height: .6rem;
           padding: 0 .2rem;
           margin-right: .3rem;

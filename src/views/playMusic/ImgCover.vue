@@ -1,6 +1,6 @@
 <template>
-  <div class="img-cover">
-    <img class="img-circle" :src="imgUrl" v-show="loaded" @load="loaded = true" alt="">
+  <div class="img-cover" v-if="imgUrl">
+    <img class="img-circle" :src="imgUrl + '?param=300y300'" v-show="loaded" @load="loaded = true" alt="">
   </div>
 </template>
 <script>
@@ -23,7 +23,9 @@ export default {
   watch: {
     playState: {
       handler (val, oldVal) {
-        document.querySelector('.img-circle').style.animationPlayState = val ? 'running' : 'paused'
+        this.$nextTick(() => {
+          document.querySelector('.img-circle').style.animationPlayState = val ? 'running' : 'paused'
+        })
       }
     }
   }

@@ -4,7 +4,8 @@ import Qs from 'qs'
 if (process.env.NODE_ENV === 'development') {
   axios.defaults.baseURL = '/api'
 } else {
-  axios.defaults.baseURL = ''
+  axios.defaults.baseURL = 'http://8.129.170.77:3000'
+  axios.defaults.withCredentials = true
 }
 // 请求超时时间
 axios.defaults.timeout = 30000

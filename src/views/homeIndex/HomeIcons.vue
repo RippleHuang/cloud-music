@@ -43,7 +43,7 @@ export default {
 </script>
 <style lang='scss' scoped>
 .home-icons-content {
-  overflow-x: auto;
+  overflow-x: scroll;
   // 隐藏滚动条 火狐 IE 谷歌
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -53,9 +53,11 @@ export default {
   .icons-group {
     display: flex;
     align-items: center;
+    width: fit-content;
     height: 1.6rem;
     padding: .4rem 0;
     .home-icon-list {
+      width: 1rem;
       margin-left: .52rem;
       &:first-of-type {
         margin-left: .25rem;

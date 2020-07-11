@@ -156,6 +156,7 @@ export default {
   position: relative;
   // 固定高度,否则list无限load
   height: 100vh;
+  overflow-y: scroll;
 }
 .empty {
   display: flex;

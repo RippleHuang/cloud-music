@@ -72,6 +72,7 @@ export default {
       const nowTime = format(date).slice(0, 10) // 截取当前日期 yyyy.mm.dd
       // 把日期转化为数值 转化为数字
       const nowSign = +nowTime.split('.').join('')
+      console.log('nowSign-get: ', nowSign)
       // 有本地记录
       if (localStorage.getItem('signIn')) {
         const local = JSON.parse(localStorage.getItem('signIn'))
@@ -89,17 +90,8 @@ export default {
         } else { // 无则默认未签到
           this.signIn = false
         }
-      } else { // 无则直接api验证并保存记录
-        signIn()
-          .then(() => {
-            return false
-          })
-          .catch(err => {
-            if (err.response.status === 400) {
-              this.signIn = true
-              this.setSignIn()
-            }
-          })
+      } else { // 无则默认签到
+        this.signIn = false
       }
     },
     // 用户信息页
@@ -112,6 +104,7 @@ export default {
       const nowTime = format(date).slice(0, 10) // 截取当前日期
       // 把日期转化为数值,uid 保存到localStorage
       const signInNum = +nowTime.split('.').join('')
+      console.log('signInNum-set: ', signInNum)
       var newO = { signInNum, accountUid: this.accountUid }
       if (localStorage.getItem('signIn')) {
         var arr = []
@@ -147,7 +140,6 @@ export default {
             this.$toast('签到成功')
             this.signIn = true
           }
-          this.reload()
         })
         .catch(() => {
           this.setSignIn()

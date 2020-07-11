@@ -114,14 +114,16 @@ export default {
     // active 变化清空数据
     active: {
       handler (val, oldV) {
-        // 到达顶部
-        window.scrollTo(0, 0)
         // 需要清空数据
         this.finished = false
         this.list = []
         // 请求综合
         if (this.searchData[0].data.length === 0) {
-          if (val === 0) this.getSearch(this.keyword, 0, 1018)
+          if (val === 0) {
+            // 到达顶部
+            window.scrollTo(0, 0)
+            this.getSearch(this.keyword, 0, 1018)
+          }
         }
       }
     },
@@ -156,8 +158,14 @@ export default {
     getSearch (keyword, offset, type) {
       search(keyword, 30, offset, type)
         .then(data => {
-          this.list = data.result
-          this.division()
+          if (data.result) {
+            this.list = data.result
+            this.division()
+          } else {
+            // 直接结束
+            this.finished = true
+            this.reload = false
+          }
         })
         .catch(() => {
           this.$toast('获取搜索结果失败')

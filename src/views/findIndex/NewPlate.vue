@@ -38,10 +38,10 @@
         <img-card
           v-for="(item, index) in newSongsList"
           :key="index"
-          :imgUrl="item.album.blurPicUrl"
-          :dec="item.name"
+          :imgUrl="((item.song || {}).album || {}).blurPicUrl"
+          :dec="(item.song || {}).name"
           :newPlatetype="type"
-          @click.native="$store.dispatch('addToAudioList', item)"
+          @click.native="$store.dispatch('addToAudioList', item.song)"
           @loadingImg="loadingImg"
         />
       </div>
@@ -50,7 +50,7 @@
 </template>
 <script>
 import ImgCard from 'components/ImgCard'
-import { newDish, newSongs } from 'api/apis'
+import { newDish, findNewSong } from 'api/apis'
 import { getRandomNumberArray } from 'utils/randomNumberArray'
 export default {
   name: 'NewPlate',
@@ -69,7 +69,8 @@ export default {
   },
   methods: {
     getNewDish () {
-      newDish()
+      const limit = 10
+      newDish(limit)
         .then(data => {
           this.dishList = getRandomNumberArray(data.albums, 3)
           this.total = data.total
@@ -79,9 +80,9 @@ export default {
         })
     },
     getNewSongs () {
-      newSongs()
+      findNewSong()
         .then(data => {
-          this.newSongsList = getRandomNumberArray(data.data, 3)
+          this.newSongsList = getRandomNumberArray(data.result, 3)
         })
         .catch(() => {
           this.$toast('加载新歌,请稍后尝试')

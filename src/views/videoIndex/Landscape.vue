@@ -26,9 +26,9 @@ export default {
   watch: {
     '$route.query.vid': {
       handler (val, oldV) {
-        this.initScreenfull()
         if (val) {
           this.getDetail(val)
+          this.initScreenfull()
         }
       },
       immediate: true
@@ -39,9 +39,6 @@ export default {
         this.refresh = +new Date()
       }
     }
-  },
-  created () {
-    screenfull.request()
   },
   methods: {
     // 获取视频详情

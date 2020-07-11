@@ -63,7 +63,9 @@ export default {
     },
     // 未登录
     getSongList () {
-      recSongList()
+      // 取出数量
+      const limit = 10
+      recSongList(limit)
         .then(data => {
           this.songList = getRandomNumberArray(data.playlists, 6)
           this.$nextTick(() => {

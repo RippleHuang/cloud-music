@@ -4,7 +4,7 @@ export const phoneLogin = (phone, password) => post(`/login/cellphone?timestamp=
 export const phoneRegistered = phone => post(`/cellphone/existence/check?timestamp=${+new Date()}`, { phone })// 手机号是否被注册 参数 手机号
 export const sendVerify = phone => post(`/captcha/sent?timestamp=${+new Date()}`, { phone }) // 发送验证码 参数 手机号
 export const verify = (phone, captcha) => post(`/captcha/verify?timestamp=${+new Date()}`, { phone, captcha }) // 验证验证码 参数 手机号 验证码
-export const loginStatus = () => get(`/login/status?timestamp=${+new Date()}`) // 登录状态
+export const loginStatus = () => get(`/login/status?timestamp=${+new Date()}`) // 获得登录状态
 export const logout = () => get(`/logout?timestamp=${+new Date()}`) // 退出登录
 export const signIn = type => post(`/daily_signin?timestamp=${+new Date()}`, { type }) // 签到 type 默认 0, 其中 0 为安卓端签到 ,1 为 web/PC 签到
 export const register = (phone, password, captcha, nickname) => post(`/register/cellphone?timestamp=${+new Date()}`, { phone, password, captcha, nickname }) // 注册修改密码 参数 手机号 密码 验证码 昵称, 修改密码可以不需要昵称
@@ -20,6 +20,7 @@ export const loginRecSongList = () => get(`/recommend/resource?timestamp=${+new 
 export const newDish = (limit, offset) => post('/top/album', { limit, offset }) // 发现页新碟, 参数 个数 默认50 页数
 export const albumDetail = id => post(`/album?timestamp=${+new Date()}`, { id }) // 获取专辑内容 参数 专辑id
 export const albumDetailDynamic = id => post(`/album/detail/dynamic?timestamp=${+new Date()}`, { id }) // 获取专辑动态内容 参数 专辑id
+export const findNewSong = () => get('/personalized/newsong') // 发现页新歌
 export const newSongs = type => post(`/top/song?timestamp=${+new Date()}`, { type }) // 最新音乐 参数 类型
 export const personalFm = () => get('/personal_fm') // 发现页私人FM
 // ======我的或用户页面======

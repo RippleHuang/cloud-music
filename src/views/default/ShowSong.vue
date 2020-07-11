@@ -3,13 +3,13 @@
     <DefaultNav
       :title="opacity < 0.5 ? data.name : title"
       :background="'transparent'"
-      :imgUrl="imgUrl + '?param=300y300'"
+      :imgUrl="imgUrl"
       :isFixedTitle="opacity < 0.5"
       :height="opacity < 0.05 ? '1.6rem' : '1.2rem'"
       isFixedSong
       songList
     />
-    <div class="mask" :style="{ background: `url(${imgUrl}?param=300y300) center` }"></div>
+    <div class="mask" :style="{ background: `url(${imgUrl}) center` }"></div>
     <div class="body" :style="{opacity}">
       <div class="container" @click="showPreview = true">
         <div class="left">
@@ -24,7 +24,7 @@
           <span class="song-list-title van-multi-ellipsis--l2" v-show="!loading">{{data.name}}</span>
           <!-- 去用户信息页 -->
           <div class="info van-ellipsis" v-show="!loading" @click.stop="goUserInfo">
-            <img :src="avatarUrl + '?param=50y50'" alt="">
+            <img v-if="avatarUrl" :src="avatarUrl + '?param=50y50'" alt="">
             <span>{{nickname}} <i class="iconfont icon-arrow-right"></i></span>
           </div>
           <p class="song-list-info" v-show="!loading">

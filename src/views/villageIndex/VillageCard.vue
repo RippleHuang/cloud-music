@@ -1,5 +1,5 @@
 <template>
-  <div class="village-box on-touch"  @click="$router.push(`/userInfo??accountUid=${userId}`)">
+  <div class="village-box on-touch"  @click="goUserInfo">
     <div class="image">
       <img v-lazy="imgUrl + '?param=200y250'" alt="">
     </div>
@@ -37,9 +37,11 @@ export default {
       type: Number
     }
   },
-  mounted () {
-    // 到达顶部
-    window.scrollTo(0, 0)
+  methods: {
+    goUserInfo () {
+      if (this.$store.state.loginState) this.$router.push('/userInfo??accountUid=' + this.userId)
+      else this.$toast('需要登录')
+    }
   },
   filters: {
     filterPlayCount

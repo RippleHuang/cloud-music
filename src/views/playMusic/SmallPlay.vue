@@ -1,8 +1,8 @@
 <template>
 <footer class="small-play van-hairline--top">
   <div class="music" @click="returnFull">
-    <div class="img-info" ref="circle">
-      <img :src="imgUrl">
+    <div class="img-info" ref="circle" v-if="imgUrl">
+      <img :src="imgUrl + '?param=80y80'">
     </div>
     <div class="music-info">
       <p class="music-name">{{name}}</p>
@@ -20,6 +20,7 @@
         v-model="currentRate"
         size="7.5vw"
         color="#d03c32"
+        :rate="0"
         :layer-color="color"
         :stroke-width="55"
       >
@@ -67,11 +68,16 @@ export default {
     ...mapGetters(['playState'])
   },
   watch: {
-    playState: function (val) {
-      this.$refs.circle.style.animationPlayState = val ? 'running' : 'paused'
+    playState (val, oldV) {
+      this.$nextTick(() => {
+        this.$refs.circle.style.animationPlayState = val ? 'running' : 'paused'
+      })
     },
-    progressWidth: function (val) {
-      this.currentRate = val
+    progressWidth: {
+      handler (val, oldV) {
+        this.currentRate = val
+      },
+      immediate: true
     }
   },
   methods: {

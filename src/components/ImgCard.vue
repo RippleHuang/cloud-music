@@ -1,5 +1,5 @@
 <template>
-  <div class="img-card" :style="{width}" v-show="!reload">
+  <div class="img-card" :style="{width}">
     <!-- 发现页面歌单显示播放数 -->
     <span class="tag" v-if="playCount">
       <i class="iconfont icon-gedanbofangliang_"></i>
@@ -50,14 +50,8 @@ export default {
   filters: {
     filterPlayCount
   },
-  data () {
-    return {
-      reload: true
-    }
-  },
   methods: {
     imgLoad () {
-      this.reload = false
       this.$emit('loadingImg', true)
     }
   }

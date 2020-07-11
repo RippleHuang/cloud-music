@@ -31,7 +31,7 @@ module.exports = {
         secure: false,
         // 设置代理
         pathRewrite: {
-          '^/api': 'http://localhost:3000' // 重写接口
+          '^/api': '/'
         }
       }
     }
