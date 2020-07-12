@@ -33,8 +33,8 @@
           <van-list
             v-model="reload"
             :finished="finish"
-            :finished-text="'没有更多了'"
-            :offset="50"
+            finished-text="没有更多了"
+            :offset="10"
             @load="reLoad"
           >
             <div class="listOne" v-if="!newSong">

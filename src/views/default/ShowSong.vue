@@ -65,7 +65,7 @@
       :loading="loading"
       :trackCount="trackCount"
       :songList="songList"
-      :songListAll="songListAll"
+      :songListAll="this.albumId !== 0 ? songList : songListAll"
       :load="load"
       :finish="finish"
       :albumId="albumId"

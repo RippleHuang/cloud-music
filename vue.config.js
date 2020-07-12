@@ -20,7 +20,7 @@ const cdn = {
   ]
 }
 module.exports = {
-  // productionSourceMap: false, // 关闭生产环境的 source map
+  productionSourceMap: false, // 关闭生产环境的 source map
   chainWebpack: (config) => {
     // 添加别名
     config.resolve.alias

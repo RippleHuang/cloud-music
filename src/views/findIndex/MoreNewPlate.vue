@@ -72,7 +72,8 @@ export default {
     filterData (arr) {
       // 获取星期一
       const date = new Date()
-      const week = date.getDay()
+      // 星期天特殊处理
+      const week = date.getDay() ? date.getDay() : 7
       const monday = date.getTime() - ((week - 1) * 24 * 60 * 60 * 1000)
       // 本周数据
       this.filterAlbums[0].data = arr.filter(val => val.publishTime >= monday)

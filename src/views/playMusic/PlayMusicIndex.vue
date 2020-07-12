@@ -208,12 +208,12 @@ export default {
     // 当前歌曲变化，获取歌曲信息
     audioIngSong (val, oldVal) {
       if (this.playList.length) {
-        // 查看当前播放歌曲是否已喜欢
-        if (this.loginState) this.getLikeMusicList(val.id)
         // 防止切换模式时重新请求
         if (val.id === oldVal.id) {
           return
         }
+        // 查看当前播放歌曲是否已喜欢
+        if (this.loginState) this.getLikeMusicList(val.id)
         // 播放
         if (val.dj) {
           this.checkSong(val.mainTrackId)
@@ -231,7 +231,7 @@ export default {
           clearTimeout(this.timer)
         }
         this.timer = setTimeout(() => {
-          bgc.style.background = 'url(' + this.imgUrl + ') center'
+          bgc.style.background = 'url(' + this.imgUrl + '?param=800y800) center'
         }, 800)
       } else {
         // 暂停歌曲, 清空时长
