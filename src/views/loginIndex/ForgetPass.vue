@@ -15,7 +15,6 @@
 </template>
 <script>
 import { sendVerify } from 'api/apis'
-import CryptoJS from 'crypto-js'
 export default {
   name: 'ForgetPass',
   props: {
@@ -95,10 +94,7 @@ export default {
     // 跳转到相应页面
     pushPage () {
       // 加密密码保存到 sessionStorage
-      const cipherText = CryptoJS.AES.encrypt(
-        this.forgetPhonePass,
-        'PhonePassword'
-      ).toString()
+      const cipherText = this.$encrypt(this.forgetPhonePass, 'PhonePassword')
       sessionStorage.setItem('cipherText', cipherText)
       if (this.path === 'phonepass') {
         this.sendVerifyNum(this.phone)

@@ -54,7 +54,7 @@ export const scroll = {
   methods: {
     // 粘性时变化样式
     scrollHandler () {
-      throttle(this.scroll(), 0.08)
+      throttle(this.scroll(), 0.02)
     },
     scroll () {
       const scrollTop = document.documentElement.scrollTop || document.body.scrollTop

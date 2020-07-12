@@ -33,7 +33,7 @@
           <van-list
             v-model="reload"
             :finished="finish"
-            :finished-text="trackCount >= 800 ? '上限为800' : '没有更多了'"
+            :finished-text="'没有更多了'"
             :offset="50"
             @load="reLoad"
           >

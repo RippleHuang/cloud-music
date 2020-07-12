@@ -20,13 +20,13 @@
         <span
           class="sign"
           @click.stop="signInClick"
-          v-show="!getSign"
+          v-show="!signIn"
         >
           <i class="iconfont icon-tubiaozhizuo-"></i>签到
         </span>
         <span
           class="signin"
-          v-show="getSign"
+          v-show="signIn"
           @click.stop="signInClick"
         >
           已签到
@@ -57,8 +57,11 @@ export default {
     ...mapGetters(['loginState', 'level', 'nickName', 'avatarUrl', 'accountUid'])
   },
   watch: {
-    visible (val, oldV) {
-      if (val) this.getSign()
+    visible: {
+      handler (val, oldV) {
+        if (val) this.getSign()
+      },
+      immediate: true
     }
   },
   methods: {
@@ -72,7 +75,6 @@ export default {
       const nowTime = format(date).slice(0, 10) // 截取当前日期 yyyy.mm.dd
       // 把日期转化为数值 转化为数字
       const nowSign = +nowTime.split('.').join('')
-      console.log('nowSign-get: ', nowSign)
       // 有本地记录
       if (localStorage.getItem('signIn')) {
         const local = JSON.parse(localStorage.getItem('signIn'))
@@ -104,7 +106,6 @@ export default {
       const nowTime = format(date).slice(0, 10) // 截取当前日期
       // 把日期转化为数值,uid 保存到localStorage
       const signInNum = +nowTime.split('.').join('')
-      console.log('signInNum-set: ', signInNum)
       var newO = { signInNum, accountUid: this.accountUid }
       if (localStorage.getItem('signIn')) {
         var arr = []

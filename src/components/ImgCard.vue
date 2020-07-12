@@ -120,8 +120,8 @@ export default {
     }
   }
   .dec {
-    padding-top: .15rem;
-    line-height: .28rem;
+    padding-top: .13rem;
+    line-height: 1.2;
     box-sizing: border-box;
     font-size: 3.5vw;
     letter-spacing: none;

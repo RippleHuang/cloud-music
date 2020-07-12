@@ -51,7 +51,7 @@ export default {
     }
     // 获取要请求的个数, 这里设置120个
     // const limit = this.$route.query.total
-    this.getNewDish('120')
+    this.getNewDish(120)
   },
   methods: {
     getNewDish (limit) {

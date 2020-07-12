@@ -9,7 +9,7 @@
       isFixedSong
       songList
     />
-    <div class="mask" :style="{ background: `url(${imgUrl}) center` }"></div>
+    <div class="mask" :style="{ background: `url(${imgUrl}?param=500y500) center` }"></div>
     <div class="body" :style="{opacity}">
       <div class="container" @click="showPreview = true">
         <div class="left">
@@ -72,7 +72,7 @@
       :dishId="dishId"
       :subNumber="subNumber"
       :uid="uid"
-      @reLoad="onLoad"
+      @reLoad="showSongLoad"
     />
     <!-- 预览图片 -->
     <van-image-preview v-model="showPreview" :images="[imgUrl]" closeable class-name="show-preview">
@@ -108,6 +108,7 @@ export default {
         name: '',
         description: ''
       },
+      playListId: [],
       nickname: '',
       imgUrl: '',
       avatarUrl: '',
@@ -133,6 +134,7 @@ export default {
     this.albumId = 0
     this.dishId = 0
     this.show = true
+    this.playListId = []
     const albumId = this.$route.query.albumId
     if (albumId) {
       this.albumId = JSON.parse(albumId)
@@ -164,12 +166,12 @@ export default {
             data.playlist.trackIds.forEach((val, index) => {
               arr[index] = val.id
             })
-            // 歌曲超过一定数量接口会请求失败,这里设置上限为800
-            if (arr.length >= 800) {
-              this.getSongInfo(arr.slice(0, 800).join())
-            } else {
-              this.getSongInfo(arr.join())
+            // 分割为30个为一组
+            for (var i = 0; i < arr.length; i += 30) {
+              this.playListId.push(arr.slice(i, i + 30))
             }
+            // 先请求第一组数据,后面依靠vant list列表请求
+            this.getSongInfo(this.playListId[0].join())
           } else {
             this.loading = false
             this.show = false
@@ -217,8 +219,7 @@ export default {
       // ids 支持多个参数,逗号分开
       songInfo(ids)
         .then(data => {
-          this.songListAll = data.songs
-          this.division()
+          this.showSongDivision(data.songs)
         })
         .catch(() => {
           this.$toast('获取歌曲失败')
@@ -247,6 +248,32 @@ export default {
             description: this.data.description ? this.data.description : ''
           }
         })
+      }
+    },
+    // 瀑布流滚动加载
+    showSongDivision (song) {
+      this.songList.push(...song)
+      this.$nextTick(() => {
+        this.loading = false
+        // 加载状态结束
+        this.load = false
+      })
+      // 数据全部加载完成
+      if (song.length < 30) {
+        this.finish = true
+      }
+    },
+    // 下拉加载
+    showSongLoad () {
+      this.sum++
+      if (this.albumId !== 0) { // 歌单
+        if (this.playListId[this.sum]) {
+          this.getSongInfo(this.playListId[this.sum].join())
+        } else {
+          this.finish = true
+        }
+      } else { // 专辑
+        this.division()
       }
     },
     no () {

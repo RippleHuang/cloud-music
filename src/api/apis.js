@@ -17,7 +17,7 @@ export const playlistDetail = (id, s) => post(`/playlist/detail?timestamp=${+new
 export const songInfo = ids => post(`/song/detail?timestamp=${+new Date()}`, { ids }) // 歌曲详情 参数 歌曲id, 可多个,逗号分开
 export const recSongs = () => get('/recommend/songs') // 每日推荐歌曲
 export const loginRecSongList = () => get(`/recommend/resource?timestamp=${+new Date()}`) // 每日推荐歌单，登录后
-export const newDish = (limit, offset) => post('/top/album', { limit, offset }) // 发现页新碟, 参数 个数 默认50 页数
+export const newDish = (limit, offset) => post(`/top/album?timestamp=${+new Date()}`, { limit, offset }) // 发现页新碟, 参数 个数 默认50 页数
 export const albumDetail = id => post(`/album?timestamp=${+new Date()}`, { id }) // 获取专辑内容 参数 专辑id
 export const albumDetailDynamic = id => post(`/album/detail/dynamic?timestamp=${+new Date()}`, { id }) // 获取专辑动态内容 参数 专辑id
 export const findNewSong = () => get('/personalized/newsong') // 发现页新歌

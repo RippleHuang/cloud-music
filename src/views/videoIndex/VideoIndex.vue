@@ -121,16 +121,16 @@ export default {
     },
     // 接口默认8个为一组
     division () {
+      // 数据全部加载完成
+      if (this.data.length === 0) {
+        this.finished = true
+      }
       this.listTag[this.active].data.push(...this.data)
       // 加载状态结束
       this.$nextTick(() => {
         this.loading = false
         this.reload = false
       })
-      // 数据全部加载完成
-      if (this.listTag[this.active].data.length >= 80) {
-        this.finished = true
-      }
     },
     onLoad () {
       if (this.$store.state.loginState) {

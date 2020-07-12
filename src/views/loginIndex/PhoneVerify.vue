@@ -23,7 +23,6 @@
 </template>
 <script>
 import { sendVerify, verify, register } from 'api/apis'
-import CryptoJS from 'crypto-js'
 export default {
   name: 'PhoneVerify',
   props: {
@@ -121,8 +120,7 @@ export default {
           // 得到加密密码
           const cipherText = sessionStorage.getItem('cipherText')
           // Decrypt 解密
-          const bytes = CryptoJS.AES.decrypt(cipherText, 'PhonePassword')
-          const pass = bytes.toString(CryptoJS.enc.Utf8)
+          const pass = this.$decrypt(cipherText, 'PhonePassword')
           // 修改密码
           this.changePass(this.phone, pass, this.code)
         } else if (this.path === 'phone') {

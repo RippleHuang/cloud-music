@@ -1,11 +1,11 @@
 /* 登录页面 */
 const Login = () => import(/* webpackChunkName: "login-index" */ 'views/loginIndex/Login')
 const LoginPage = () => import(/* webpackChunkName: "login-loginPage" */ 'views/loginIndex/LoginPage')
-const LoginPhone = () => import(/* webpackChunkName: "login-loginPhone" */ 'views/loginIndex/LoginPhone')
-const PhonePass = () => import(/* webpackChunkName: "login-phonepass" */ 'views/loginIndex/PhonePass')
-const ForgetPass = () => import(/* webpackChunkName: "login-forgetpass" */ 'views/loginIndex/ForgetPass')
-const PhoneVerify = () => import(/* webpackChunkName: "login-phoneverify" */ 'views/loginIndex/PhoneVerify')
-const NickName = () => import(/* webpackChunkName: "login-nickName" */ 'views/loginIndex/NickName')
+const LoginPhone = () => import(/* webpackChunkName: "loginPhone" */ 'views/loginIndex/LoginPhone')
+const PhonePass = () => import(/* webpackChunkName: "phonepass" */ 'views/loginIndex/PhonePass')
+const ForgetPass = () => import(/* webpackChunkName: "forgetpass" */ 'views/loginIndex/ForgetPass')
+const PhoneVerify = () => import(/* webpackChunkName: "phoneverify" */ 'views/loginIndex/PhoneVerify')
+const NickName = () => import(/* webpackChunkName: "nickName" */ 'views/loginIndex/NickName')
 export default [
   // 登录相关路由
   {

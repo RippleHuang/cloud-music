@@ -19,7 +19,6 @@
 </template>
 <script>
 import { register } from 'api/apis'
-import CryptoJS from 'crypto-js'
 export default {
   name: 'NickName',
   props: {
@@ -55,8 +54,7 @@ export default {
         // 得到加密密码
         const cipherText = sessionStorage.getItem('cipherText')
         // Decrypt 解密
-        const bytes = CryptoJS.AES.decrypt(cipherText, 'PhonePassword')
-        const pass = bytes.toString(CryptoJS.enc.Utf8)
+        const pass = this.$decrypt(cipherText, 'PhonePassword')
         this.registerPass(phone, pass, code, this.nickName)
       } else {
         this.$toast('请输入不少于2个汉字或4个字符的昵称')
