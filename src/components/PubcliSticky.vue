@@ -169,9 +169,6 @@ export default {
       name: ''
     }
   },
-  created () {
-    if (this.loginState) this.getUserSongNum()
-  },
   watch: {
     uid: {
       handler (val, oldV) {
@@ -190,6 +187,12 @@ export default {
           }
         }
       }
+    },
+    '$store.state.refreshState': {
+      handler () {
+        if (this.loginState) this.getUserSongNum()
+      },
+      immediate: true
     }
   },
   computed: {
