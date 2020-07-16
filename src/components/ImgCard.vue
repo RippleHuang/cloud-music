@@ -15,7 +15,7 @@
       <!-- 排行榜time更新 -->
       <span class="time" v-if="updateTime">{{ updateTime }}</span>
       <!-- 图片地址加上 ?param=数字y数字 可以控制尺寸 -->
-      <img class="image-con" v-lazy="imgUrl + '?param=150y150'" alt="" @load="imgLoad" />
+      <img class="image-con" v-lazy="imgUrl + '?param=250y250'" alt="" @load="imgLoad" />
     </div>
     <div v-if="dec" class="dec van-multi-ellipsis--l2" >{{ dec }}</div>
   </div>
