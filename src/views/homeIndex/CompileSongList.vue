@@ -55,6 +55,7 @@ export default {
     listUpdata () {
       playlistUpdata(this.id, this.name, this.message)
         .then(data => {
+          this.$store.commit('REFRESH') // 刷新
           this.$toast('修改成功')
         })
         .catch(() => {
@@ -79,5 +80,7 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-
+.manage-list {
+  padding-top: 1.2rem;
+}
 </style>

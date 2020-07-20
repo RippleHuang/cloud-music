@@ -32,7 +32,7 @@
       :style="{
         display: videoCanPlay ? 'block': 'none',
         height: isFullscreen ? '100vh' : 'auto',
-        'border-radius': landscape ? '0' : '0.2rem'
+        'border-radius': !dynamic ? '0.2rem' : landscape ? '0' : '0.1rem'
       }"
     >
       <video
@@ -47,7 +47,7 @@
       <div class="action"
         ref="action"
         @click="sliderToggle"
-        :style="{height: !dynamic ? '98%' : landscape ? '100%' : '96%'}"
+        :style="{height: landscape ? '100%' : '99%'}"
       >
         <div class="top van-ellipsis" v-if="landscape">
           <i class="iconfont icon-zuo" @click="goback"></i>

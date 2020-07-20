@@ -176,9 +176,6 @@ export default {
   props: {
     songListNum: {
       type: Object
-    },
-    refresh: {
-      type: Number
     }
   },
   data () {
@@ -190,11 +187,6 @@ export default {
       createList: [],
       // 我的喜欢歌单
       myLoveList: [],
-      // 歌单id
-      songList: {
-        id: 0,
-        pid: 0
-      },
       // 动作面板
       show: false,
       createAction: [],
@@ -226,13 +218,6 @@ export default {
     ...mapGetters(['accountUid', 'loginState'])
   },
   watch: {
-    $route (to, from) {
-      // 从歌单信息更新页过来更新
-      if (from.path === '/compilesonglist') {
-        // 重新获取
-        this.getPlaylist(this.accountUid)
-      }
-    },
     '$store.state.refreshState': {
       handler (val, oldVal) {
         if (this.loginState) {
@@ -295,11 +280,6 @@ export default {
       // 保存
       localStorage.setItem('favoriteId', JSON.stringify(favoritesPid))
     },
-    // 子组件传来的值
-    getHeartMode (id, pid) {
-      this.songList.id = id
-      this.songList.pid = pid
-    },
     // 激活模态框
     createSongList () {
       if (!this.loginState) {
@@ -320,6 +300,7 @@ export default {
             .then(() => {
               this.$toast('删除成功')
               // 重新获取
+              this.getPlaylist(this.accountUid)
               this.$emit('reload')
             })
             .catch(() => {
@@ -341,6 +322,7 @@ export default {
         .then(() => {
           this.$toast('添加成功')
           // 重新获取
+          this.getPlaylist(this.accountUid)
           this.$emit('reload')
         })
         .catch(() => {
